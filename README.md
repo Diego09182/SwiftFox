@@ -13,4 +13,4 @@ An online student communication system developed using Laravel, offering support
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This Project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
