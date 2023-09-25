@@ -7,8 +7,6 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
 ## About Project
 
 An online student communication system developed using Laravel, offering support for forums, voting, and image uploads, with multifunctional capabilities.
