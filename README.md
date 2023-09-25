@@ -25,10 +25,6 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 An online student communication system developed using Laravel, offering support for forums, voting, and image uploads, with multifunctional capabilities.
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
