@@ -11,6 +11,10 @@
 
 An online student communication system developed using Laravel, offering support for forums, voting, and image uploads, with multifunctional capabilities.
 
+## Installation 
+
+Install XAMPP to place this project into htdocs
+
 ## License
 
 This Project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
