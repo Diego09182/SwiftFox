@@ -15,6 +15,11 @@ An online student communication system developed using Laravel, offering support
 
 Install XAMPP to place this project into htdocs
 
+## Data table migration 
+
+Start command line tool execution 
+"php artisan migrate"
+
 ## License
 
 This Project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
