@@ -9,17 +9,16 @@
 
 ## About Project
 
-An online student communication system developed using Laravel, offering support for forums, voting, and image uploads, with multifunctional capabilities.
+一個藉由Laravel開發支援論壇、文章、投票、圖片上傳的學生交流系統
 
 ## Installation 
 
-Install XAMPP to place this project into htdocs
+安裝XAMPP並放置於htdocs資料夾
 
 ## Data table migration 
 
-Start command line tool execution 
-"php artisan migrate"
+在控制台打開專案目錄執行"php artisan migrate"
 
 ## License
 
-This Project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+這個開源專案適用於 [MIT license](https://opensource.org/licenses/MIT).
