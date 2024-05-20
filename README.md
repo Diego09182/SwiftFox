@@ -7,18 +7,24 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Project
+## 關於專案
 
 一個藉由Laravel開發支援論壇、文章、投票、圖片上傳的學生交流系統
 
-## Installation 
+## 安裝
 
-安裝XAMPP並放置於htdocs資料夾
+安裝XAMPP並放置於htdocs資料夾，啟動伺服器與MySQL
 
-## Data table migration 
+## 執行
 
-在控制台打開專案目錄執行"php artisan migrate"
+在控制台打開專案目錄執行 
 
-## License
+php artisan key:generate
+
+php artisan migrate
+
+npm run build
+
+## 授權條款
 
 這個開源專案適用於 [MIT license](https://opensource.org/licenses/MIT).
