@@ -45,8 +45,6 @@ class ActivityController extends Controller
         ]);
 
         $validatedData['content'] = nl2br($validatedData['content']);
-        
-        $activity = Activity::create($validatedData);
 
         // 儲存活動後清除相關快取
         $this->clearCache();
