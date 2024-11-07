@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Club extends Model
@@ -10,5 +9,4 @@ class Club extends Model
     protected $fillable = [
         'title', 'tag', 'content', 'teacher', 'director', 'vice_director',
     ];
-    
 }

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 use App\Models\Work;
 use App\Services\WorkService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class WorkController extends Controller
 {
@@ -31,7 +32,7 @@ class WorkController extends Controller
         $page = $request->input('page', 1);
 
         // 使用快取來儲存作品集列表
-        $works = Cache::tags(['works'])->remember("works_index_page_{$page}", 600, function() {
+        $works = Cache::tags(['works'])->remember("works_index_page_{$page}", 600, function () {
             return Work::orderBy('id', 'desc')->paginate(6);
         });
 
@@ -75,7 +76,7 @@ class WorkController extends Controller
         $user = Auth::user();
 
         // 使用快取來儲存特定作品集的詳細信息
-        $work = Cache::tags(['works'])->remember("work_show_{$id}", 600, function() use ($id) {
+        $work = Cache::tags(['works'])->remember("work_show_{$id}", 600, function () use ($id) {
             return Work::with('photos')->findOrFail($id);
         });
 
@@ -83,7 +84,7 @@ class WorkController extends Controller
 
         // 使用 Storage facade 獲取圖片的 URL
         foreach ($photos as $photo) {
-            $photo->url = Storage::url('public/photos/' . $photo->filename);
+            $photo->url = Storage::url('public/photos/'.$photo->filename);
         }
 
         return view('swiftfox.work.show', ['work' => $work, 'user' => $user, 'photos' => $photos]);
@@ -94,7 +95,7 @@ class WorkController extends Controller
     {
         $work = Work::findOrFail($id);
 
-        if ($work->user_id != Auth::id() && Auth::user()->administration != 5) {
+        if (Gate::denies('delete-work', $work)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 

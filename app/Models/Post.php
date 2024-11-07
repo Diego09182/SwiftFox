@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['title', 'content', 'tag', 'like', 'dislike', 'user_id'];
 
     public function user()
@@ -25,5 +25,4 @@ class Post extends Model
     {
         return $this->hasMany(Evaluation::class);
     }
-
 }

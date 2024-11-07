@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Opinion;
+use App\Services\OpinionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Opinion;
-use App\Services\OpinionService;
+use Illuminate\Support\Facades\Gate;
 
 class OpinionController extends Controller
 {
@@ -24,12 +25,12 @@ class OpinionController extends Controller
         $cacheKey = 'opinions_index_page_' . $page;
 
         // 使用 Redis Tags 優化投票快取
-        $opinions = Cache::tags(['opinions'])->remember($cacheKey, 600, function() {
+        $opinions = Cache::tags(['opinions'])->remember($cacheKey, 600, function () {
             return Opinion::orderBy('id', 'desc')->paginate(3);
         });
 
         $user = Auth::user();
-        
+
         return view('swiftfox.opinion.index', compact('opinions', 'user'));
     }
 
@@ -67,8 +68,7 @@ class OpinionController extends Controller
         $opinion = Opinion::findOrFail($id);
         $user = Auth::user();
 
-        // 權限檢查
-        if ($opinion->user_id != $user->id && $user->administration != 5) {
+        if (Gate::denies('delete-opinion', $opinion)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
@@ -91,5 +91,4 @@ class OpinionController extends Controller
             Cache::forget('opinion_' . $opinion->id);
         }
     }
-    
 }

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
+use App\Services\NoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Note;
-use App\Services\NoteService;
+use Illuminate\Support\Facades\Gate;
 
 class NoteController extends Controller
 {
@@ -24,7 +25,7 @@ class NoteController extends Controller
         $cacheKey = 'notes_index_page_' . $page;
 
         // 使用 Redis Tags 優化日記快取
-        $notes = Cache::tags(['notes'])->remember($cacheKey, 600, function() {
+        $notes = Cache::tags(['notes'])->remember($cacheKey, 600, function () {
             return Note::orderBy('id', 'desc')->paginate(4);
         });
 
@@ -75,11 +76,12 @@ class NoteController extends Controller
         $cacheKey = 'note_show_' . $id;
 
         // 使用快取存儲特定日記
-        $note = Cache::tags(['notes'])->remember($cacheKey, 600, function() use ($id) {
+        $note = Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
             return Note::findOrFail($id);
         });
 
         $user = Auth::user();
+
         return view('swiftfox.home.show', compact('note', 'user'));
     }
 
@@ -88,7 +90,7 @@ class NoteController extends Controller
     {
         $note = Note::findOrFail($id);
 
-        if ($note->user_id != Auth::id() && Auth::user()->administration != 5) {
+        if (Gate::denies('delete-note', $note)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 

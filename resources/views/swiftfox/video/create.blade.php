@@ -32,7 +32,7 @@
 					</div>
 					<div class="row">
 						<div class="file-field input-field col m12">
-							<div class="btn">
+							<div class="btn brown">
 								<span>選擇檔案</span>
 								<input type="file" name="video">
 							</div>

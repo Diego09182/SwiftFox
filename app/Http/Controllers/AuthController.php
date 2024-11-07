@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\AuthService;
 
 class AuthController extends Controller
 {
@@ -51,6 +51,7 @@ class AuthController extends Controller
 
         if ($user) {
             Auth::login($user);
+
             return redirect()->route('main')->with('success', '註冊成功！');
         } else {
             return back()->with('error', '註冊失敗，請稍後再試');

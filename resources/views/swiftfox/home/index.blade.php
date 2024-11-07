@@ -66,7 +66,7 @@
 						@foreach ($notes as $note)
 							<ul class="collection">
 								<li class="collection-item avatar">
-									<img src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="評論者頭像" class="circle">
+									<img src="{{ asset('storage/avatars/' . $note->user->avatar_filename) }}" alt="評論者頭像" class="circle">
 									<h5 class="left">日記主題:{{ $note->title }}</h5>
 									<br><br>
 									<div class="row">

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Article;
 use App\Models\Bulletin;
+use App\Models\Club;
+use App\Models\Opinion;
+use App\Models\Post;
 use App\Models\Report;
 use App\Models\User;
-use App\Models\Post;
-use App\Models\Opinion;
-use App\Models\Article;
-use App\Models\Club;
 use App\Models\Work;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ManagementController extends Controller
 {
@@ -20,7 +20,8 @@ class ManagementController extends Controller
         $user = Auth::user();
 
         if ($user->administration != 5) {
-            Auth::logout(); // 登出使用者
+            Auth::logout();
+
             return redirect()->route('welcome')->with('error', '權限不足，無法進入後台');
         }
     }

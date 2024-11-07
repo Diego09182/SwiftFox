@@ -20,5 +20,4 @@ class Work extends Model
     {
         return $this->hasMany(Photo::class);
     }
-
 }

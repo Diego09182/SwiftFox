@@ -94,5 +94,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bulletin::class);
     }
-
 }

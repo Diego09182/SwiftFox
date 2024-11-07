@@ -20,5 +20,4 @@ class Opinion extends Model
     {
         return $this->hasMany(Record::class);
     }
-
 }

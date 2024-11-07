@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Opinion;
-use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateExpiredOpinions extends Command
 {
@@ -30,8 +29,8 @@ class UpdateExpiredOpinions extends Command
         $currentTime = now();
 
         Opinion::where('finished_time', '<=', $currentTime)
-                ->where('status', '=', 1)
-                ->update(['status' => 0]);
+            ->where('status', '=', 1)
+            ->update(['status' => 0]);
 
         $this->info('Expired opinions updated successfully.');
     }

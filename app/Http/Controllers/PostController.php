@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evaluation;
+use App\Models\Post;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Post;
-use App\Models\Evaluation;
-use App\Services\PostService;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -24,10 +25,10 @@ class PostController extends Controller
         $page = $request->input('page', 1);
         $cacheKey = 'posts_filter_' . $filter . '_page_' . $page;
 
-        $posts = Cache::tags(['posts', 'filter_' . $filter])->remember($cacheKey, 600, function() use ($filter) {
+        $posts = Cache::tags(['posts', 'filter_' . $filter])->remember($cacheKey, 600, function () use ($filter) {
             return match ($filter) {
-                "觀看次數" => Post::orderBy('view', 'desc')->paginate(9),
-                "喜歡次數" => Post::orderBy('like', 'desc')->paginate(9),
+                '觀看次數' => Post::orderBy('view', 'desc')->paginate(9),
+                '喜歡次數' => Post::orderBy('like', 'desc')->paginate(9),
                 default => Post::orderBy('id', 'desc')->paginate(9),
             };
         });
@@ -41,14 +42,15 @@ class PostController extends Controller
         $page = $request->input('page', 1);
         $cacheKey = 'posts_search_' . md5($search) . '_page_' . $page;
 
-        $posts = Cache::tags(['posts', 'search'])->remember($cacheKey, 600, function() use ($search) {
+        $posts = Cache::tags(['posts', 'search'])->remember($cacheKey, 600, function () use ($search) {
             if (empty($search)) {
                 return Post::latest()->paginate(9);
             }
+
             return Post::where('title', 'LIKE', "%$search%")
-                        ->orWhere('content', 'LIKE', "%$search%")
-                        ->orWhere('tag', 'LIKE', "%$search%")
-                        ->paginate(9);
+                ->orWhere('content', 'LIKE', "%$search%")
+                ->orWhere('tag', 'LIKE', "%$search%")
+                ->paginate(9);
         });
 
         return view('swiftfox.forum.search', compact('posts', 'search'));
@@ -60,8 +62,8 @@ class PostController extends Controller
 
         // 檢查是否已經評價過這篇文章
         $evaluation = Evaluation::where('post_id', $post->id)
-                    ->where('user_id', $user->id)
-                    ->first();
+            ->where('user_id', $user->id)
+            ->first();
 
         if ($evaluation) {
             return response()->json([
@@ -75,7 +77,7 @@ class PostController extends Controller
         Evaluation::create([
             'post_id' => $post->id,
             'user_id' => $user->id,
-            'evaluation' => 1, // 1表示喜歡
+            'evaluation' => 1,
         ]);
 
         // 更新文章的喜歡數
@@ -96,22 +98,22 @@ class PostController extends Controller
 
         // 檢查是否已經評價過這篇文章
         $evaluation = Evaluation::where('post_id', $post->id)
-                    ->where('user_id', $user->id)
-                    ->first();
+            ->where('user_id', $user->id)
+            ->first();
 
         if ($evaluation) {
             return response()->json([
                 'message' => '已經評價過了',
                 'like' => $post->like,
                 'dislike' => $post->dislike,
-            ], 403); // 回應403 Forbidden，表明已評價過
+            ], 403);
         }
 
         // 新增評價紀錄
         Evaluation::create([
             'post_id' => $post->id,
             'user_id' => $user->id,
-            'evaluation' => -1, // -1表示不喜歡
+            'evaluation' => -1,
         ]);
 
         // 更新文章的不喜歡數
@@ -136,7 +138,7 @@ class PostController extends Controller
         $page = $request->input('page', 1);
         $cacheKey = 'posts_index_page_' . $page;
 
-        $posts = Cache::tags(['posts'])->remember($cacheKey, 600, function() {
+        $posts = Cache::tags(['posts'])->remember($cacheKey, 600, function () {
             return Post::orderBy('id', 'desc')->paginate(9);
         });
 
@@ -153,7 +155,7 @@ class PostController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:60', 
+            'content' => 'required|min:2|max:60',
             'tag' => 'required|in:學科問題,社團問題,自主學習,大學面試,活動宣傳',
         ], [
             'title.required' => '標題為必填項目',
@@ -161,7 +163,7 @@ class PostController extends Controller
             'title.max' => '標題不能超過20個字',
             'content.required' => '內容為必填項目',
             'content.min' => '內容至少需要2個字',
-            'content.max' => '內容不能超過60個字', 
+            'content.max' => '內容不能超過60個字',
             'tag.required' => '標籤為必填項目',
             'tag.in' => '標籤必須符合選項',
         ]);
@@ -178,7 +180,7 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $post = Cache::tags(['posts'])->remember("post_{$id}", 600, function() use ($id) {
+        $post = Cache::tags(['posts'])->remember("post_{$id}", 600, function () use ($id) {
             return Post::with('comments')->findOrFail($id);
         });
 
@@ -195,7 +197,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ($post->user_id != Auth::id() && Auth::user()->administration != 5) {
+        if (Gate::denies('delete-post', $post)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->timestamp('finished_time')->nullable();
             $table->timestamps();
-                       
+
             $table->unsignedBigInteger('user_id')->foreign('user_id')->references('id')->on('users');
         });
     }

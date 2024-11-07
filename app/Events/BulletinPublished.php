@@ -4,8 +4,6 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -15,13 +13,14 @@ class BulletinPublished implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $title;
+
     public $content;
 
     /**
      * Create a new event instance.
      *
-     * @param string $title
-     * @param string $content
+     * @param  string  $title
+     * @param  string  $content
      * @return void
      */
     public function __construct($title, $content)
@@ -37,7 +36,6 @@ class BulletinPublished implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // 發送到所有用戶的公共頻道
         return new Channel('public.bulletins');
     }
 

@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Article;
+use App\Models\Note;
+use App\Models\Opinion;
+use App\Models\Post;
+use App\Models\User;
+use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Post;
-use App\Models\Article;
-use App\Models\Work;
-use App\Models\Opinion;
-use App\Models\Note;
 
 class AuthService
 {
@@ -31,11 +31,12 @@ class AuthService
     public function loginUser(array $credentials)
     {
         if (Auth::attempt($credentials)) {
-            
+
             $user = Auth::user();
 
             if ($user->status == 0) {
                 Auth::logout();
+
                 return ['success' => false, 'message' => '登入失敗，帳號被停用'];
             }
 
@@ -53,14 +54,13 @@ class AuthService
                 'articleCount' => $articleCount,
                 'workCount' => $workCount,
                 'opinionCount' => $opinionCount,
-                'noteCount' => $noteCount
+                'noteCount' => $noteCount,
             ]);
 
             $user->increment('times');
 
             return ['success' => true, 'message' => '登入成功'];
-        } 
-        else {
+        } else {
             return ['success' => false, 'message' => '登入失敗，請檢查帳號與密碼'];
         }
     }
@@ -68,6 +68,7 @@ class AuthService
     public function logoutUser()
     {
         Auth::logout();
+
         return ['success' => true, 'message' => '登出成功'];
     }
 }

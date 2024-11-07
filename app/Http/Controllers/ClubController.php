@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Club;
+use Illuminate\Support\Facades\Gate;
 
 class ClubController extends Controller
 {
@@ -13,14 +14,15 @@ class ClubController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
+
         $cacheKey = 'club_index_page_' . $page;
 
-        // 使用 Redis Tags 標記社團相關的快取
-        $clubs = Cache::tags(['clubs'])->remember($cacheKey, 600, function() {
+        $clubs = Cache::tags(['clubs'])->remember($cacheKey, 600, function () {
             return Club::orderBy('id', 'desc')->paginate(9);
         });
 
         $user = Auth::user();
+
         return view('swiftfox.club.index', compact('clubs', 'user'));
     }
 
@@ -60,21 +62,19 @@ class ClubController extends Controller
         ]);
     }
 
-
     // 刪除社團
     public function destroy($id)
     {
         $club = Club::findOrFail($id);
-        
+
         $user = Auth::user();
 
-        if ($club->user_id != $user->id && $user->administration != 5) {
+        if (Gate::denies('delete-club', $club)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
         $club->delete();
 
-        // 清除相關快取
         $this->clearCache();
 
         return redirect()->route('club.index')->with('success', '社團已成功刪除！');

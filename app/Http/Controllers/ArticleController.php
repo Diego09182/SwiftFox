@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Services\ArticleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Article;
-use App\Services\ArticleService;
+use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {
@@ -22,10 +23,10 @@ class ArticleController extends Controller
     {
         $search = $request->input('search');
         $cacheKey = 'search_articles_' . md5($search);
-        
-        $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function() use ($search) {
-            return empty($search) 
-                ? Article::latest()->paginate(6) 
+
+        $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($search) {
+            return empty($search)
+                ? Article::latest()->paginate(6)
                 : Article::where('title', 'LIKE', "%$search%")->paginate(6);
         });
 
@@ -36,10 +37,10 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        
+
         $cacheKey = 'articles_page_' . $page;
 
-        $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function() {
+        $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function () {
             return Article::orderBy('id', 'desc')->paginate(6);
         });
 
@@ -77,9 +78,8 @@ class ArticleController extends Controller
         $validatedData['content'] = nl2br($validatedData['content']);
         $validatedData['user_id'] = auth()->id();
 
-        $article = Article::create($validatedData);
+        Article::create($validatedData);
 
-        // 清除相關快取
         $this->clearCache();
 
         return redirect()->route('article.index')->with('success', '文章已創建成功！');
@@ -89,28 +89,34 @@ class ArticleController extends Controller
     public function show($id)
     {
         $cacheKey = 'article_' . $id;
-        
-        $article = Cache::tags(['articles'])->remember($cacheKey, 600, function() use ($id) {
+
+        $article = Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($id) {
             return Article::findOrFail($id);
         });
 
         $user = Auth::user();
+
         return view('swiftfox.article.show', compact('article', 'user'));
+    }
+
+    public function create()
+    {
+        return view('swiftfox.article.create');
     }
 
     // 刪除文章
     public function destroy($id)
     {
         $article = Article::findOrFail($id);
+
         $user = Auth::user();
 
-        if ($article->user_id != $user->id && $user->administration != 5) {
+        if (Gate::denies('delete-article', $article)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }        
+        }
 
         $article->delete();
 
-        // 清除相關快取
         $this->clearCache();
 
         return redirect()->route('article.index')->with('success', '文章已成功刪除！');
@@ -119,7 +125,6 @@ class ArticleController extends Controller
     // 清除所有相關快取
     private function clearCache()
     {
-        // 清除文章相關的快取
         Cache::tags(['articles'])->flush();
     }
 }

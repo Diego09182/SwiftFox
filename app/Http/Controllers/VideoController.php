@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
+use App\Jobs\ProcessVideo;
 use App\Models\Video;
 use App\Services\VideoService;
-use App\Jobs\ProcessVideo;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class VideoController extends Controller
 {
@@ -26,7 +27,7 @@ class VideoController extends Controller
         $page = $request->input('page', 1);
 
         // 使用快取來儲存影片列表
-        $videos = Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function() {
+        $videos = Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function () {
             return Video::orderBy('id', 'desc')->paginate(6);
         });
 
@@ -39,7 +40,7 @@ class VideoController extends Controller
         $user = Auth::user();
 
         // 使用快取來儲存單個影片的詳細信息
-        $video = Cache::tags(['videos'])->remember("video_show_{$id}", 600, function() use ($id) {
+        $video = Cache::tags(['videos'])->remember("video_show_{$id}", 600, function () use ($id) {
             return Video::findOrFail($id);
         });
 
@@ -80,7 +81,7 @@ class VideoController extends Controller
         $path = $uploadedFile->storeAs('videos', $filename, 'public');
 
         // 建立影片
-        $video = new Video();
+        $video = new Video;
         $video->title = $request->title;
         $video->content = $request->content;
         $video->filename = $filename;
@@ -103,8 +104,7 @@ class VideoController extends Controller
         // 查找影片
         $video = Video::findOrFail($id);
 
-        // 檢查影片是否屬於當前用戶或用戶具有管理權限
-        if ($video->user_id != Auth::id() && Auth::user()->administration != 5) {
+        if (Gate::denies('delete-video', $video)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 

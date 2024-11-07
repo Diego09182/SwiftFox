@@ -9,7 +9,7 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','content', 'user_id', 'post_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'post_id'];
 
     public function user()
     {
@@ -20,5 +20,4 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class);
     }
-
 }

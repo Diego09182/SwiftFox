@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\Report;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Report;
-use App\Models\Post;
-use App\Services\ReportService;
 
 class ReportController extends Controller
 {
-
     protected $reportService;
 
     public function __construct(ReportService $reportService)
@@ -19,7 +18,7 @@ class ReportController extends Controller
     }
 
     // 儲存檢舉
-    public function store(Request $request,Post $post)
+    public function store(Request $request, Post $post)
     {
 
         // 檢查檢舉數量限制
@@ -64,9 +63,9 @@ class ReportController extends Controller
         if ($report->user_id != Auth::id() && Auth::user()->administration != 5) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
-        
+
         $report->delete();
-        
+
         // 重定向到檢舉列表，並顯示成功消息
         return redirect()->route('management.index')->with('success', '檢舉已成功刪除！');
     }

@@ -63,14 +63,14 @@ class ProfileController extends Controller
         $user->birthday = $validatedData['birthday'];
 
         // 如果有新密碼，更新密碼
-        if (!empty($validatedData['new_password'])) {
+        if (! empty($validatedData['new_password'])) {
             $user->password = bcrypt($validatedData['new_password']);
         }
 
         // 如果有上傳頭像，處理上傳
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
-            $avatar_filename = time() . '_' . mt_rand() . '.' . $avatar->getClientOriginalExtension();
+            $avatar_filename = time().'_'.mt_rand().'.'.$avatar->getClientOriginalExtension();
             $avatar_path = $avatar->storeAs('avatars', $avatar_filename, 'public');
             $user->avatar_filename = $avatar_filename;
             $user->avatar_path = $avatar_path;
@@ -84,9 +84,8 @@ class ProfileController extends Controller
 
         // 保存使用者數據
         $user->save();
-        
+
         // 重定向到使用者資料頁面或其他頁面
         return redirect()->route('profile.index')->with('success', '使用者資料已更新');
     }
-
 }

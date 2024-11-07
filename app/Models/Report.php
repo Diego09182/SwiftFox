@@ -9,7 +9,7 @@ class Report extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','tag','content', 'post_id', 'user_id'];
+    protected $fillable = ['title', 'tag', 'content', 'post_id', 'user_id'];
 
     public function user()
     {
@@ -20,5 +20,4 @@ class Report extends Model
     {
         return $this->belongsTo(Post::class);
     }
-
 }

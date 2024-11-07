@@ -1,22 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MainController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\BulletinController;
+use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OpinionController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\WorkController;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ManagementController;
-use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ClubController;
-use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\WorkController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,7 +148,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/article', [ArticleController::class, 'store'])->name('article.store');
     // 刪除文章
     Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('article.destroy');
-    
+
     // 社團系統
     // 顯示所有社團
     Route::get('/clubs', [ClubController::class, 'index'])->name('club.index');
@@ -184,7 +184,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/works/{work}/photo/{photo}', [PhotoController::class, 'show'])->name('photo.show');
     // 刪除相片
     Route::delete('/works/{work}/photo/{photo}', [PhotoController::class, 'destroy'])->name('photo.destroy');
-    
+
     // 顯示所有影片
     Route::get('/videos', [VideoController::class, 'index'])->name('video.index');
     // 顯示單個影片

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BulletinPublished;
+use App\Models\Bulletin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Bulletin;
-use App\Events\BulletinPublished;
 
 class BulletinController extends Controller
 {
@@ -15,7 +15,7 @@ class BulletinController extends Controller
         if (Auth::user()->administration != 5) {
             return response()->json([
                 'success' => false,
-                'message' => '您沒有權限'
+                'message' => '您沒有權限',
             ], 403);
         }
 

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Photo;
+use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Work;
-use App\Models\Photo;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class PhotoController extends Controller
 {
@@ -98,8 +99,7 @@ class PhotoController extends Controller
         // 查找特定相片
         $photo = Photo::findOrFail($photoId);
 
-        // 檢查用戶權限
-        if ($photo->user_id != Auth::id()) {
+        if (Gate::denies('update-photo', $photo)) {
             return redirect()->back()->with('error', '沒有權限更新此相片！');
         }
 
@@ -125,8 +125,7 @@ class PhotoController extends Controller
         // 查找特定相片
         $photo = Photo::findOrFail($photoId);
 
-        // 檢查用戶權限
-        if ($photo->user_id != Auth::id() && Auth::user()->administration != 5) {
+        if (Gate::denies('delete-photo', $photo)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 

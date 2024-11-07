@@ -21,11 +21,10 @@ return new class extends Migration
             $table->integer('dislike')->default(0);
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
-
 
     /**
      * Reverse the migrations.

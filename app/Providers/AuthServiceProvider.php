@@ -4,6 +4,17 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\Post;
+use App\Models\Activity;
+use App\Models\Article;
+use App\Models\Club;
+use App\Models\Comment;
+use App\Models\Note;
+use App\Models\Opinion;
+use App\Models\Video;
+use App\Models\Work;
+use App\Models\Photo;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +32,50 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        Gate::define('delete-post', function ($user, Post $post) {
+            return $user->id === $post->user_id || $user->administration == 5;
+        });
+
+        Gate::define('delete-activity', function ($user, Activity $activity) {
+            return $activity->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-article', function ($user, Article $article) {
+            return $article->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-club', function ($user, Club $club) {
+            return $club->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-comment', function ($user, Comment $comment) {
+            return $comment->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-note', function ($user, Note $note) {
+            return $note->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-opinion', function ($user, Opinion $opinion) {
+            return $opinion->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-video', function ($user, Video $video) {
+            return $video->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-work', function ($user, Work $work) {
+            return $work->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('update-photo', function ($user, Photo $photo) {
+            return $photo->user_id == $user->id;
+        });
+
+        Gate::define('delete-photo', function ($user, Photo $photo) {
+            return $photo->user_id == $user->id || $user->administration == 5;
+        });
     }
 }
