@@ -38,13 +38,15 @@ DB_PASSWORD=your_database_password
 
 ## 版本
 
-Vue v3.5.7
+Vue         v3.5.7
 
-Laravel v10.48.4
+Vue-router  v4.4.5
+
+Laravel     v10.48.4
 
 Materialize v1.0.0
 
-jQuery v3.7.1
+jQuery      v3.7.1
 
 ## 授權條款
 
