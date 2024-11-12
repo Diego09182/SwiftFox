@@ -30,5 +30,5 @@ window.Echo = new Echo({
 
 window.Echo.channel('public.bulletins')
     .listen('BulletinPublished', (event) => {
-        M.toast({html: '新公告發布: ' + event.title});
+        M.toast({ html: '新公告發布: ' + event.title });
     });

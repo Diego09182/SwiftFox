@@ -109,8 +109,6 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
 
-        $user = Auth::user();
-
         if (Gate::denies('delete-article', $article)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
