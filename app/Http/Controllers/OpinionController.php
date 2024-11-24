@@ -18,13 +18,11 @@ class OpinionController extends Controller
         $this->opinionService = $opinionService;
     }
 
-    // 顯示所有投票
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        $cacheKey = 'opinions_index_page_' . $page;
+        $cacheKey = 'opinions_index_page_'.$page;
 
-        // 使用 Redis Tags 優化投票快取
         $opinions = Cache::tags(['opinions'])->remember($cacheKey, 600, function () {
             return Opinion::orderBy('id', 'desc')->paginate(3);
         });
@@ -34,12 +32,8 @@ class OpinionController extends Controller
         return view('swiftfox.opinion.index', compact('opinions', 'user'));
     }
 
-    // 儲存新投票
     public function store(Request $request)
     {
-        // 檢查投票數量限制
-        $this->opinionService->checkOpinionLimit();
-
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:50',
@@ -56,13 +50,11 @@ class OpinionController extends Controller
         $opinion->user_id = auth()->user()->id;
         $opinion->save();
 
-        // 清除相關快取
         $this->clearCache();
 
         return redirect()->route('opinion.index')->with('success', '投票已創建成功！');
     }
 
-    // 刪除投票
     public function destroy($id)
     {
         $opinion = Opinion::findOrFail($id);
@@ -74,21 +66,17 @@ class OpinionController extends Controller
 
         $opinion->delete();
 
-        // 清除特定投票的快取
         $this->clearCache($opinion);
 
         return redirect()->route('opinion.index')->with('success', '投票已成功刪除！');
     }
 
-    // 清除所有快取
     private function clearCache($opinion = null)
     {
-        // 使用 Redis Tags 清除所有與意見相關的快取
         Cache::tags(['opinions'])->flush();
 
-        // 清除特定投票的快取
         if ($opinion) {
-            Cache::forget('opinion_' . $opinion->id);
+            Cache::forget('opinion_'.$opinion->id);
         }
     }
 }

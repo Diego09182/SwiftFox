@@ -9,16 +9,13 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        // 獲取使用者訊息
         $user = Auth::user();
 
-        // 返回文章列表，並將分頁結果傳遞到視圖
         return view('swiftfox.profile.index', ['user' => $user]);
     }
 
     public function update(Request $request)
     {
-        // 驗證表單數據
         $validatedData = $request->validate([
             'new_password' => 'nullable|string|min:8|max:15|confirmed|different:password',
             'name' => 'required|string|min:1|max:8',
@@ -53,21 +50,17 @@ class ProfileController extends Controller
             'avatar.max' => '上傳的圖片大小不能超過2048KB',
         ]);
 
-        // 獲取使用者實例
         $user = Auth::user();
 
-        // 更新使用者數據
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
         $user->cellphone = $validatedData['cellphone'];
         $user->birthday = $validatedData['birthday'];
 
-        // 如果有新密碼，更新密碼
         if (! empty($validatedData['new_password'])) {
             $user->password = bcrypt($validatedData['new_password']);
         }
 
-        // 如果有上傳頭像，處理上傳
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
             $avatar_filename = time().'_'.mt_rand().'.'.$avatar->getClientOriginalExtension();
@@ -76,16 +69,13 @@ class ProfileController extends Controller
             $user->avatar_path = $avatar_path;
         }
 
-        // 更新其他信息
         $user->info = $request->input('info');
         $user->interest = $request->input('interest');
         $user->club = $request->input('club');
         $user->url = $request->input('url');
 
-        // 保存使用者數據
         $user->save();
 
-        // 重定向到使用者資料頁面或其他頁面
         return redirect()->route('profile.index')->with('success', '使用者資料已更新');
     }
 }

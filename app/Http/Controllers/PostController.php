@@ -23,9 +23,9 @@ class PostController extends Controller
     {
         $filter = $request->input('filter');
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_filter_' . $filter . '_page_' . $page;
+        $cacheKey = 'posts_filter_'.$filter.'_page_'.$page;
 
-        $posts = Cache::tags(['posts', 'filter_' . $filter])->remember($cacheKey, 600, function () use ($filter) {
+        $posts = Cache::tags(['posts', 'filter_'.$filter])->remember($cacheKey, 600, function () use ($filter) {
             return match ($filter) {
                 '觀看次數' => Post::orderBy('view', 'desc')->paginate(9),
                 '喜歡次數' => Post::orderBy('like', 'desc')->paginate(9),
@@ -40,7 +40,7 @@ class PostController extends Controller
     {
         $search = $request->input('search');
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_search_' . md5($search) . '_page_' . $page;
+        $cacheKey = 'posts_search_'.md5($search).'_page_'.$page;
 
         $posts = Cache::tags(['posts', 'search'])->remember($cacheKey, 600, function () use ($search) {
             if (empty($search)) {
@@ -60,43 +60,6 @@ class PostController extends Controller
     {
         $user = Auth::user();
 
-        // 檢查是否已經評價過這篇文章
-        $evaluation = Evaluation::where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if ($evaluation) {
-            return response()->json([
-                'message' => '已經評價過了',
-                'like' => $post->like,
-                'dislike' => $post->dislike,
-            ], 403); // 回應403 Forbidden，表明已評價過
-        }
-
-        // 新增評價紀錄
-        Evaluation::create([
-            'post_id' => $post->id,
-            'user_id' => $user->id,
-            'evaluation' => 1,
-        ]);
-
-        // 更新文章的喜歡數
-        $post->increment('like');
-
-        // 清除文章快取
-        $this->clearPostCache($post->id);
-
-        return response()->json([
-            'like' => $post->like,
-            'dislike' => $post->dislike,
-        ]);
-    }
-
-    public function dislike(Post $post)
-    {
-        $user = Auth::user();
-
-        // 檢查是否已經評價過這篇文章
         $evaluation = Evaluation::where('post_id', $post->id)
             ->where('user_id', $user->id)
             ->first();
@@ -109,17 +72,46 @@ class PostController extends Controller
             ], 403);
         }
 
-        // 新增評價紀錄
+        Evaluation::create([
+            'post_id' => $post->id,
+            'user_id' => $user->id,
+            'evaluation' => 1,
+        ]);
+
+        $post->increment('like');
+
+        $this->clearPostCache($post->id);
+
+        return response()->json([
+            'like' => $post->like,
+            'dislike' => $post->dislike,
+        ]);
+    }
+
+    public function dislike(Post $post)
+    {
+        $user = Auth::user();
+
+        $evaluation = Evaluation::where('post_id', $post->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($evaluation) {
+            return response()->json([
+                'message' => '已經評價過了',
+                'like' => $post->like,
+                'dislike' => $post->dislike,
+            ], 403);
+        }
+
         Evaluation::create([
             'post_id' => $post->id,
             'user_id' => $user->id,
             'evaluation' => -1,
         ]);
 
-        // 更新文章的不喜歡數
         $post->increment('dislike');
 
-        // 清除文章快取
         $this->clearPostCache($post->id);
 
         return response()->json([
@@ -136,7 +128,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_index_page_' . $page;
+        $cacheKey = 'posts_index_page_'.$page;
 
         $posts = Cache::tags(['posts'])->remember($cacheKey, 600, function () {
             return Post::orderBy('id', 'desc')->paginate(9);

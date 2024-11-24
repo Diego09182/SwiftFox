@@ -46,7 +46,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 // 身分驗證
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'share-user-data'])->group(function () {
 
     //首頁
     Route::get('/main', [MainController::class, 'index'])->name('main');

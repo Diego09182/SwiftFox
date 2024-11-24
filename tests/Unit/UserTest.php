@@ -9,7 +9,6 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
     public function user_can_be_created()
     {
         $response = $this->post('/register', [
@@ -21,10 +20,8 @@ class UserTest extends TestCase
             'birthday' => '2000-01-01',
         ]);
 
-        // 更新這行來檢查重定向而不是狀態碼
-        $response->assertRedirect(route('main')); // 檢查是否重定向到 main 路由
+        $response->assertRedirect(route('main'));
 
-        // 確保用戶已經創建到數據庫中
         $this->assertDatabaseHas('users', ['account' => 'testuser']);
     }
 }

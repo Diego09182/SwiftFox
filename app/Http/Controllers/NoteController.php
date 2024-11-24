@@ -18,13 +18,12 @@ class NoteController extends Controller
         $this->noteService = $noteService;
     }
 
-    // 顯示所有日記
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        $cacheKey = 'notes_index_page_' . $page;
 
-        // 使用 Redis Tags 優化日記快取
+        $cacheKey = 'notes_index_page_'.$page;
+
         $notes = Cache::tags(['notes'])->remember($cacheKey, 600, function () {
             return Note::orderBy('id', 'desc')->paginate(4);
         });
@@ -36,7 +35,6 @@ class NoteController extends Controller
         return view('swiftfox.home.index', compact('user', 'totalPosts', 'totalNotes', 'notes'));
     }
 
-    // 儲存新日記
     public function store(Request $request)
     {
         try {
@@ -64,18 +62,15 @@ class NoteController extends Controller
         $note->user_id = auth()->user()->id;
         $note->save();
 
-        // 清除日記相關的快取
         $this->clearCache();
 
         return redirect()->route('home.index')->with('success', '日記已創建成功！');
     }
 
-    // 顯示日記
     public function show($id)
     {
-        $cacheKey = 'note_show_' . $id;
+        $cacheKey = 'note_show_'.$id;
 
-        // 使用快取存儲特定日記
         $note = Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
             return Note::findOrFail($id);
         });
@@ -85,7 +80,6 @@ class NoteController extends Controller
         return view('swiftfox.home.show', compact('note', 'user'));
     }
 
-    // 刪除日記
     public function destroy($id)
     {
         $note = Note::findOrFail($id);
@@ -96,13 +90,11 @@ class NoteController extends Controller
 
         $note->delete();
 
-        // 清除日記相關的快取
         $this->clearCache();
 
         return redirect()->route('home.index')->with('success', '日記已成功刪除！');
     }
 
-    // 清除所有相關快取
     private function clearCache()
     {
         Cache::tags(['notes'])->flush();

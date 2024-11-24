@@ -15,10 +15,8 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    // 處理註冊請求
     public function register(Request $request)
     {
-        // 驗證使用者輸入
         $validatedData = $request->validate([
             'account' => 'required|string|min:5|max:8|unique:users',
             'password' => 'required|string|min:8|max:15',
@@ -58,7 +56,6 @@ class AuthController extends Controller
         }
     }
 
-    // 處理登入請求
     public function login(Request $request)
     {
         $credentials = $request->only('account', 'password');
@@ -72,7 +69,6 @@ class AuthController extends Controller
         }
     }
 
-    // 處理登出請求
     public function logout()
     {
         $result = $this->authService->logoutUser();

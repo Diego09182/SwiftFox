@@ -10,12 +10,11 @@ use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
 {
-    // 顯示所有活動列表
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
 
-        $cacheKey = 'activities_page_' . $page;
+        $cacheKey = 'activities_page_'.$page;
 
         $activities = Cache::tags(['activities'])->remember($cacheKey, 600, function () {
             return Activity::orderBy('id', 'desc')->paginate(6);
@@ -23,10 +22,9 @@ class ActivityController extends Controller
 
         $user = Auth::user();
 
-        return view('swiftfox.activity.index', ['activities' => $activities, 'user' => $user]);
+        return view('swiftfox.activity.index', compact('activities', 'user'));
     }
 
-    // 儲存新活動
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -53,7 +51,6 @@ class ActivityController extends Controller
         return response()->json(['success' => true, 'message' => '活動創建成功']);
     }
 
-    // 刪除活動
     public function destroy($id)
     {
         $activity = Activity::findOrFail($id);

@@ -5,15 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
-    // 儲存新評論
     public function store(Request $request, Post $post)
     {
-        // 驗證並儲存新評論
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:40',
@@ -32,24 +29,19 @@ class CommentController extends Controller
         $comment->user_id = auth()->user()->id;
         $comment->save();
 
-        // 重定向回文章詳情頁面，並顯示成功消息
         return redirect()->route('forum.show', ['post' => $post->id])->with('success', '評論成功');
     }
 
-    // 刪除評論
     public function destroy($post, $comment)
     {
-        // 找到對應的評論
         $comment = Comment::where('post_id', $post)->findOrFail($comment);
 
         if (Gate::denies('delete-comment', $comment)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        // 刪除評論
         $comment->delete();
 
-        // 重定向到貼文詳情頁面，並顯示成功消息
         return redirect()->route('forum.show', ['post' => $post])->with('success', '評論已刪除');
     }
 }

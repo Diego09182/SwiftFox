@@ -18,11 +18,10 @@ class ArticleController extends Controller
         $this->articleService = $articleService;
     }
 
-    // 搜索文章
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $cacheKey = 'search_articles_' . md5($search);
+        $cacheKey = 'search_articles_'.md5($search);
 
         $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($search) {
             return empty($search)
@@ -33,12 +32,11 @@ class ArticleController extends Controller
         return view('swiftfox.article.search', compact('articles', 'search'));
     }
 
-    // 顯示所有文章列表
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
 
-        $cacheKey = 'articles_page_' . $page;
+        $cacheKey = 'articles_page_'.$page;
 
         $articles = Cache::tags(['articles'])->remember($cacheKey, 600, function () {
             return Article::orderBy('id', 'desc')->paginate(6);
@@ -49,17 +47,15 @@ class ArticleController extends Controller
         return view('swiftfox.article.index', compact('articles', 'user'));
     }
 
-    // 儲存新文章
     public function store(Request $request)
     {
-        // 檢查文章數量限制
+
         try {
             $this->articleService->checkArticleLimit();
         } catch (\Exception $e) {
             return redirect()->route('article.index')->with('error', $e->getMessage());
         }
 
-        // 驗證並儲存新文章
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:30',
             'content' => 'required|min:50|max:1000',
@@ -85,10 +81,9 @@ class ArticleController extends Controller
         return redirect()->route('article.index')->with('success', '文章已創建成功！');
     }
 
-    // 顯示特定文章詳情
     public function show($id)
     {
-        $cacheKey = 'article_' . $id;
+        $cacheKey = 'article_'.$id;
 
         $article = Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($id) {
             return Article::findOrFail($id);
@@ -104,7 +99,6 @@ class ArticleController extends Controller
         return view('swiftfox.article.create');
     }
 
-    // 刪除文章
     public function destroy($id)
     {
         $article = Article::findOrFail($id);
@@ -120,7 +114,6 @@ class ArticleController extends Controller
         return redirect()->route('article.index')->with('success', '文章已成功刪除！');
     }
 
-    // 清除所有相關快取
     private function clearCache()
     {
         Cache::tags(['articles'])->flush();

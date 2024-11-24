@@ -3,18 +3,18 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use App\Models\Post;
 use App\Models\Activity;
 use App\Models\Article;
 use App\Models\Club;
 use App\Models\Comment;
 use App\Models\Note;
 use App\Models\Opinion;
+use App\Models\Photo;
+use App\Models\Post;
 use App\Models\Video;
 use App\Models\Work;
-use App\Models\Photo;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {

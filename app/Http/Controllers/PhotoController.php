@@ -7,8 +7,8 @@ use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
@@ -72,7 +72,7 @@ class PhotoController extends Controller
 
         // 儲存上傳的檔案
         $uploadedFile = $request->file('file');
-        $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+        $filename = time().'_'.$uploadedFile->getClientOriginalName();
         $path = $uploadedFile->storeAs('photos', $filename, 'public');
 
         // 創建新相片記錄
@@ -88,7 +88,7 @@ class PhotoController extends Controller
         $photo->save();
 
         // 清除與該作品相關的快取
-        Cache::tags(['work_' . $workId])->flush();
+        Cache::tags(['work_'.$workId])->flush();
 
         return redirect()->route('work.show', ['work' => $workId])->with('success', '相片已添加！');
     }
@@ -114,7 +114,7 @@ class PhotoController extends Controller
         $photo->save();
 
         // 清除作品集的快取
-        Cache::tags(['work_' . $workId])->flush();
+        Cache::tags(['work_'.$workId])->flush();
 
         return redirect()->route('work.show', ['work' => $workId])->with('success', '相片訊息已更新！');
     }
@@ -130,13 +130,13 @@ class PhotoController extends Controller
         }
 
         // 刪除相片檔案
-        Storage::delete('public/photos/' . $photo->filename);
+        Storage::delete('public/photos/'.$photo->filename);
 
         // 刪除相片記錄
         $photo->delete();
 
         // 清除作品集的快取
-        Cache::tags(['work_' . $workId])->flush();
+        Cache::tags(['work_'.$workId])->flush();
 
         return redirect()->route('work.show', ['work' => $workId])->with('success', '相片已刪除！');
     }
