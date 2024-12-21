@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
 {
@@ -68,21 +67,19 @@ class VideoController extends Controller
             'video.max' => '影片大小不能超過200MB。',
         ]);
 
-        $uploadedFile = $request->file('video');
-        $filename = time().'_'.mt_rand().'.'.$uploadedFile->getClientOriginalExtension();
-        $path = $uploadedFile->storeAs('videos', $filename, 'public');
+        $videoData = $this->videoService->storeVideo($request);
 
         $video = new Video;
         $video->title = $request->title;
         $video->content = $request->content;
-        $video->filename = $filename;
-        $video->path = $path;
+        $video->filename = $videoData['filename'];
+        $video->path = $videoData['path'];
         $video->user_id = Auth::id();
         $video->save();
 
         ProcessVideo::dispatch($video);
 
-        $this->clearCache();
+        $this->videoService->clearCache();
 
         return redirect()->route('video.index')->with('success', '影片發布成功！');
     }
@@ -95,21 +92,10 @@ class VideoController extends Controller
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        Storage::delete('public/videos/'.$video->filename);
+        $this->videoService->deleteVideo($video);
 
-        $video->delete();
-
-        $this->clearCache($id);
+        $this->videoService->clearCache($id);
 
         return redirect()->route('video.index')->with('success', '影片刪除成功！');
-    }
-
-    private function clearCache($videoId = null)
-    {
-        Cache::tags(['videos'])->flush();
-
-        if ($videoId) {
-            Cache::tags(['videos'])->forget("video_{$videoId}");
-        }
     }
 }

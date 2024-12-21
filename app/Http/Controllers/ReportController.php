@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\Report;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -19,13 +17,14 @@ class ReportController extends Controller
 
     public function store(Request $request, Post $post)
     {
-
+        // 檢查檢舉數量限制
         try {
             $this->reportService->checkReportLimit();
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
 
+        // 驗證請求數據
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:10',
             'content' => 'required|min:2|max:50',
@@ -41,11 +40,8 @@ class ReportController extends Controller
             'tag.in' => '標籤必須符合選項',
         ]);
 
-        $report = new Report($validatedData);
-        $report->content = nl2br($validatedData['content']);
-        $report->user_id = auth()->user()->id;
-        $report->post_id = $post->id;
-        $report->save();
+        // 創建檢舉
+        $this->reportService->createReport($validatedData, $post->id);
 
         return redirect()->back()->with('success', '檢舉已創建成功！');
     }
@@ -54,11 +50,11 @@ class ReportController extends Controller
     {
         $report = Report::findOrFail($id);
 
-        if ($report->user_id != Auth::id() && Auth::user()->administration != 5) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        try {
+            $this->reportService->deleteReport($report);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        $report->delete();
 
         return redirect()->route('management.index')->with('success', '檢舉已成功刪除！');
     }

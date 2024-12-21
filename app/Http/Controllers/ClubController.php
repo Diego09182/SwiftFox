@@ -3,23 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Club;
+use App\Services\ClubService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class ClubController extends Controller
 {
+    protected $clubService;
+
+    public function __construct(ClubService $clubService)
+    {
+        $this->clubService = $clubService;
+    }
+
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
 
-        $cacheKey = 'club_index_page_'.$page;
-
-        $clubs = Cache::tags(['clubs'])->remember($cacheKey, 600, function () {
-            return Club::orderBy('id', 'desc')->paginate(9);
-        });
-
+        $clubs = $this->clubService->getClubsByPage($page);
         $user = Auth::user();
 
         return view('swiftfox.club.index', compact('clubs', 'user'));
@@ -45,11 +47,7 @@ class ClubController extends Controller
             'content.max' => '內容不能超過50個字',
         ]);
 
-        $club = new Club($validatedData);
-        $club->content = nl2br($validatedData['content']);
-        $club->save();
-
-        $this->clearCache();
+        $this->clubService->createClub($validatedData);
 
         return response()->json([
             'success' => true,
@@ -61,21 +59,12 @@ class ClubController extends Controller
     {
         $club = Club::findOrFail($id);
 
-        $user = Auth::user();
-
         if (Gate::denies('delete-club', $club)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        $club->delete();
-
-        $this->clearCache();
+        $this->clubService->deleteClub($club);
 
         return redirect()->route('club.index')->with('success', '社團已成功刪除！');
-    }
-
-    private function clearCache()
-    {
-        Cache::tags(['clubs'])->flush();
     }
 }

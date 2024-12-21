@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Evaluation;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -23,15 +21,8 @@ class PostController extends Controller
     {
         $filter = $request->input('filter');
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_filter_'.$filter.'_page_'.$page;
 
-        $posts = Cache::tags(['posts', 'filter_'.$filter])->remember($cacheKey, 600, function () use ($filter) {
-            return match ($filter) {
-                '觀看次數' => Post::orderBy('view', 'desc')->paginate(9),
-                '喜歡次數' => Post::orderBy('like', 'desc')->paginate(9),
-                default => Post::orderBy('id', 'desc')->paginate(9),
-            };
-        });
+        $posts = $this->postService->getPostsByFilter($filter, $page);
 
         return view('swiftfox.forum.filter', compact('posts', 'filter'));
     }
@@ -40,47 +31,23 @@ class PostController extends Controller
     {
         $search = $request->input('search');
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_search_'.md5($search).'_page_'.$page;
 
-        $posts = Cache::tags(['posts', 'search'])->remember($cacheKey, 600, function () use ($search) {
-            if (empty($search)) {
-                return Post::latest()->paginate(9);
-            }
-
-            return Post::where('title', 'LIKE', "%$search%")
-                ->orWhere('content', 'LIKE', "%$search%")
-                ->orWhere('tag', 'LIKE', "%$search%")
-                ->paginate(9);
-        });
+        $posts = $this->postService->searchPosts($search, $page);
 
         return view('swiftfox.forum.search', compact('posts', 'search'));
     }
 
     public function like(Post $post)
     {
-        $user = Auth::user();
-
-        $evaluation = Evaluation::where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if ($evaluation) {
+        try {
+            $post = $this->postService->likePost($post);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => '已經評價過了',
+                'message' => $e->getMessage(),
                 'like' => $post->like,
                 'dislike' => $post->dislike,
             ], 403);
         }
-
-        Evaluation::create([
-            'post_id' => $post->id,
-            'user_id' => $user->id,
-            'evaluation' => 1,
-        ]);
-
-        $post->increment('like');
-
-        $this->clearPostCache($post->id);
 
         return response()->json([
             'like' => $post->like,
@@ -90,29 +57,15 @@ class PostController extends Controller
 
     public function dislike(Post $post)
     {
-        $user = Auth::user();
-
-        $evaluation = Evaluation::where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if ($evaluation) {
+        try {
+            $post = $this->postService->dislikePost($post);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => '已經評價過了',
+                'message' => $e->getMessage(),
                 'like' => $post->like,
                 'dislike' => $post->dislike,
             ], 403);
         }
-
-        Evaluation::create([
-            'post_id' => $post->id,
-            'user_id' => $user->id,
-            'evaluation' => -1,
-        ]);
-
-        $post->increment('dislike');
-
-        $this->clearPostCache($post->id);
 
         return response()->json([
             'like' => $post->like,
@@ -128,23 +81,13 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        $cacheKey = 'posts_index_page_'.$page;
-
-        $posts = Cache::tags(['posts'])->remember($cacheKey, 600, function () {
-            return Post::orderBy('id', 'desc')->paginate(9);
-        });
+        $posts = $this->postService->getPostsByFilter('最新', $page);
 
         return view('swiftfox.forum.index', compact('posts'));
     }
 
     public function store(Request $request)
     {
-        try {
-            $this->postService->checkPostLimit();
-        } catch (\Exception $e) {
-            return redirect()->route('forum.index')->with('error', $e->getMessage());
-        }
-
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:60',
@@ -160,27 +103,18 @@ class PostController extends Controller
             'tag.in' => '標籤必須符合選項',
         ]);
 
-        $post = new Post($validatedData);
-        $post->content = nl2br($validatedData['content']);
-        $post->user_id = Auth::id();
-        $post->save();
-
-        $this->clearCache();
+        $this->postService->createPost($validatedData);
 
         return redirect()->route('forum.index')->with('success', '貼文已創建成功！');
     }
 
     public function show($id)
     {
-        $post = Cache::tags(['posts'])->remember("post_{$id}", 600, function () use ($id) {
-            return Post::with('comments')->findOrFail($id);
-        });
+        $post = Post::with('comments')->findOrFail($id);
+        
+        $this->postService->incrementPostView($post);
 
         $comments = $post->comments()->paginate(6);
-
-        $post->increment('view');
-
-        $this->clearPostCache($post->id);
 
         return view('swiftfox.forum.show', compact('post', 'comments'));
     }
@@ -195,18 +129,6 @@ class PostController extends Controller
 
         $post->delete();
 
-        $this->clearCache();
-
         return redirect()->route('forum.index')->with('success', '貼文已成功刪除！');
-    }
-
-    private function clearCache()
-    {
-        Cache::tags(['posts'])->flush();
-    }
-
-    private function clearPostCache($postId)
-    {
-        Cache::tags(['posts'])->forget("post_{$postId}");
     }
 }

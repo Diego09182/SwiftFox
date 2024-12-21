@@ -3,23 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
 {
+    protected $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
+
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
 
-        $cacheKey = 'activities_page_'.$page;
-
-        $activities = Cache::tags(['activities'])->remember($cacheKey, 600, function () {
-            return Activity::orderBy('id', 'desc')->paginate(6);
-        });
-
+        $activities = $this->activityService->getActivitiesByPage($page);
+        
         $user = Auth::user();
 
         return view('swiftfox.activity.index', compact('activities', 'user'));
@@ -44,9 +47,7 @@ class ActivityController extends Controller
             'content.max' => '內容不能超過50個字',
         ]);
 
-        $validatedData['content'] = nl2br($validatedData['content']);
-
-        $this->clearCache();
+        $this->activityService->createActivity($validatedData);
 
         return response()->json(['success' => true, 'message' => '活動創建成功']);
     }
@@ -55,21 +56,12 @@ class ActivityController extends Controller
     {
         $activity = Activity::findOrFail($id);
 
-        $user = Auth::user();
-
         if (Gate::denies('delete-activity', $activity)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        $activity->delete();
-
-        $this->clearCache();
+        $this->activityService->deleteActivity($activity);
 
         return redirect()->route('activity.index')->with('success', '活動已成功刪除！');
-    }
-
-    private function clearCache()
-    {
-        Cache::tags(['activities'])->flush();
     }
 }

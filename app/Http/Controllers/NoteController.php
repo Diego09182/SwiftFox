@@ -6,7 +6,6 @@ use App\Models\Note;
 use App\Services\NoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class NoteController extends Controller
@@ -22,12 +21,7 @@ class NoteController extends Controller
     {
         $page = $request->input('page', 1);
 
-        $cacheKey = 'notes_index_page_'.$page;
-
-        $notes = Cache::tags(['notes'])->remember($cacheKey, 600, function () {
-            return Note::orderBy('id', 'desc')->paginate(4);
-        });
-
+        $notes = $this->noteService->getNotesByPage($page);
         $user = Auth::user();
         $totalPosts = $user->posts->count();
         $totalNotes = $user->notes->count();
@@ -57,23 +51,14 @@ class NoteController extends Controller
             'tag.max' => '標籤不能超過4個字',
         ]);
 
-        $note = new Note($validatedData);
-        $note->content = nl2br($validatedData['content']);
-        $note->user_id = auth()->user()->id;
-        $note->save();
-
-        $this->clearCache();
+        $this->noteService->createNote($validatedData);
 
         return redirect()->route('home.index')->with('success', '日記已創建成功！');
     }
 
     public function show($id)
     {
-        $cacheKey = 'note_show_'.$id;
-
-        $note = Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
-            return Note::findOrFail($id);
-        });
+        $note = $this->noteService->getNoteById($id);
 
         $user = Auth::user();
 
@@ -88,15 +73,8 @@ class NoteController extends Controller
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        $note->delete();
-
-        $this->clearCache();
+        $this->noteService->deleteNote($note);
 
         return redirect()->route('home.index')->with('success', '日記已成功刪除！');
-    }
-
-    private function clearCache()
-    {
-        Cache::tags(['notes'])->flush();
     }
 }
