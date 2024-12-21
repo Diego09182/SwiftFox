@@ -36,6 +36,7 @@
 	@include('component.form.report')
 	
 	<br>
+	
 	<div class="container">
 		<div class="row">
 			<div class="col s12 m3">
