@@ -46,7 +46,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 // 身分驗證
-Route::middleware(['auth', 'share-user-data'])->group(function () {
+Route::middleware(['auth', 'user.data'])->group(function () {
 
     //首頁
     Route::get('/main', [MainController::class, 'index'])->name('main');
@@ -62,8 +62,7 @@ Route::middleware(['auth', 'share-user-data'])->group(function () {
     Route::delete('/management/report/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
     // 使用者權限更新
     Route::put('/management/management/{user}', [ManagementController::class, 'update'])->name('management.update');
-
-    // 資源管理
+    // 使用者管理
     Route::get('/management/users', [ManagementController::class, 'user'])->name('management.users');
     // 貼文管理
     Route::get('/management/posts', [ManagementController::class, 'posts'])->name('management.posts');
