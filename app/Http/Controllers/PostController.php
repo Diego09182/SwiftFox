@@ -81,7 +81,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
-        $posts = $this->postService->getPostsByFilter('最新', $page);
+        $posts = $this->postService->getPostsByPage($page);
 
         return view('swiftfox.forum.index', compact('posts'));
     }
@@ -110,7 +110,7 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $post = Post::with('comments')->findOrFail($id);
+        $post = $this->postService->getPostById($id);
         
         $this->postService->incrementPostView($post);
 

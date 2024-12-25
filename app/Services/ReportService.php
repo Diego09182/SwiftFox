@@ -13,7 +13,7 @@ class ReportService
     {
         $reportCount = Report::where('user_id', Auth::id())->whereDate('created_at', today())->count();
 
-        if ($reportCount >= 5) { // 例如：每天最多提交5個檢舉
+        if ($reportCount >= 5) {
             throw new \Exception('您今天的檢舉次數已達上限');
         }
     }

@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Cache;
 
 class PostService
 {
+
+    public function getPostsByPage(int $page)
+    {
+        $cacheKey = 'posts_page_' . $page;
+
+        return Cache::tags(['posts'])->remember($cacheKey, 600, function () {
+            return Post::latest()->paginate(9);
+        });
+    }
+
     public function getPostsByFilter(string $filter, int $page)
     {
         $cacheKey = 'posts_filter_' . $filter . '_page_' . $page;
@@ -36,6 +46,11 @@ class PostService
                 ->orWhere('tag', 'LIKE', "%$search%")
                 ->paginate(9);
         });
+    }
+
+    public function getPostById(int $id)
+    {
+        return Post::with('comments')->findOrFail($id);
     }
 
     public function createPost(array $data)
@@ -98,8 +113,8 @@ class PostService
         Cache::tags(['posts'])->flush();
     }
 
-    private function clearPostCache($postId)
+    private function clearPostCache($id)
     {
-        Cache::tags(['posts'])->forget("post_{$postId}");
+        Cache::tags(['posts'])->forget("post_{$id}");
     }
 }

@@ -23,10 +23,7 @@ class VideoController extends Controller
     {
         $user = Auth::user();
         $page = $request->input('page', 1);
-
-        $videos = Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function () {
-            return Video::orderBy('id', 'desc')->paginate(6);
-        });
+        $videos = $this->videoService->getVideosByPage($page);
 
         return view('swiftfox.video.index', compact('videos', 'user'));
     }
@@ -34,10 +31,7 @@ class VideoController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-
-        $video = Cache::tags(['videos'])->remember("video_{$id}", 600, function () use ($id) {
-            return Video::findOrFail($id);
-        });
+        $video = $this->videoService->getVideoById($id);
 
         return view('swiftfox.video.show', compact('video', 'user'));
     }

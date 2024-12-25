@@ -36,7 +36,7 @@ class PostTest extends TestCase
         ]);
 
         $response->assertRedirect(route('forum.index'));
-
+        
         $this->assertDatabaseHas('posts', [
             'title' => '測試文章標題',
             'content' => '這是一篇測試文章內容',

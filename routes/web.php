@@ -41,12 +41,11 @@ Route::get('/welcome', function () {
 
 // 登入
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-
 // 註冊
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 // 身分驗證
-Route::middleware(['auth', 'user.data'])->group(function () {
+Route::middleware(['auth','user.data'])->group(function () {
 
     //首頁
     Route::get('/main', [MainController::class, 'index'])->name('main');
@@ -59,9 +58,9 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     // 公布更新
     Route::post('/management/bulletin', [BulletinController::class, 'store'])->name('bulletin.store');
     // 刪除檢舉
-    Route::delete('/management/report/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
+    Route::delete('/management/reports/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
     // 使用者權限更新
-    Route::put('/management/management/{user}', [ManagementController::class, 'update'])->name('management.update');
+    Route::put('/management/users/{user}', [ManagementController::class, 'update'])->name('management.update');
     // 使用者管理
     Route::get('/management/users', [ManagementController::class, 'user'])->name('management.users');
     // 貼文管理
@@ -83,25 +82,25 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     //篩選貼文
     Route::get('/forum/filter', [PostController::class, 'filter'])->name('forum.filter');
     // 認同貼文
-    Route::post('/forum/post/{post}/like', [PostController::class, 'like'])->name('forum.like');
+    Route::post('/forum/posts/{post}/like', [PostController::class, 'like'])->name('forum.like');
     // 不認同貼文
-    Route::post('/forum/post/{post}/dislike', [PostController::class, 'dislike'])->name('forum.dislike');
+    Route::post('/forum/posts/{post}/dislike', [PostController::class, 'dislike'])->name('forum.dislike');
     // 顯示所有貼文
     Route::get('/forum', [PostController::class, 'index'])->name('forum.index');
     // 顯示單個貼文
-    Route::get('/forum/{post}/comment', [PostController::class, 'show'])->name('forum.show');
+    Route::get('/forum/posts/{post}/comment', [PostController::class, 'show'])->name('forum.show');
     // 發布貼文頁面
     Route::get('/forum/post', [PostController::class, 'create'])->name('forum.create');
     // 發布貼文
     Route::post('/forum/post', [PostController::class, 'store'])->name('forum.store');
     // 刪除貼文
-    Route::delete('/forum/post/{post}', [PostController::class, 'destroy'])->name('forum.destroy');
+    Route::delete('/forum/posts/{post}', [PostController::class, 'destroy'])->name('forum.destroy');
     // 發布評論
-    Route::post('/forum/post/{post}/comment', [CommentController::class, 'store'])->name('comment.store');
+    Route::post('/forum/posts/{post}/comments', [CommentController::class, 'store'])->name('comment.store');
     // 刪除評論
-    Route::delete('/forum/post/{post}/comment/{comment}', [CommentController::class, 'destroy'])->name('comment.destroy');
+    Route::delete('/forum/posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comment.destroy');
     // 發布檢舉
-    Route::post('/forum/post/{post}/report', [ReportController::class, 'store'])->name('report.store');
+    Route::post('/forum/posts/{post}/report', [ReportController::class, 'store'])->name('report.store');
 
     // 個人系統
     // 個人資訊
@@ -112,11 +111,11 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     // 顯示所有日記
     Route::get('/home', [NoteController::class, 'index'])->name('home.index');
     // 顯示單個日記
-    Route::get('/home/note/{note}', [NoteController::class, 'show'])->name('note.show');
+    Route::get('/home/notes/{note}', [NoteController::class, 'show'])->name('note.show');
     // 發布日記
     Route::post('/home/note', [NoteController::class, 'store'])->name('note.store');
     // 刪除日記
-    Route::delete('/home/note/{note}', [NoteController::class, 'destroy'])->name('note.destroy');
+    Route::delete('/home/notes/{note}', [NoteController::class, 'destroy'])->name('note.destroy');
 
     // 投票系統
     // 認同投票

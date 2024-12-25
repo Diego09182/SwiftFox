@@ -23,7 +23,7 @@ class WorkController extends Controller
 
         $page = $request->input('page', 1);
 
-        $works = $this->workService->getAllWorks($page);
+        $works = $this->workService->getWorksByPage($page);
 
         return view('swiftfox.work.index', ['works' => $works, 'user' => $user]);
     }

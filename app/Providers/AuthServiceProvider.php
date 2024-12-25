@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use App\Models\Activity;
 use App\Models\Article;
 use App\Models\Club;
@@ -68,10 +67,6 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('delete-work', function ($user, Work $work) {
             return $work->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('update-photo', function ($user, Photo $photo) {
-            return $photo->user_id == $user->id;
         });
 
         Gate::define('delete-photo', function ($user, Photo $photo) {

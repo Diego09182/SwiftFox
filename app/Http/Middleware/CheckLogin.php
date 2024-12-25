@@ -17,9 +17,6 @@ class CheckLogin
         if (auth()->check()) {
             return redirect()->route('main');
         }
-        else{
-            return redirect()->route('welcome');
-        }
 
         return $next($request);
     }

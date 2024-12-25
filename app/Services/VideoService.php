@@ -19,6 +19,20 @@ class VideoService
         }
     }
 
+    public function getVideosByPage($page)
+    {
+        return Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function () {
+            return Video::orderBy('id', 'desc')->paginate(6);
+        });
+    }
+
+    public function getVideoById($id)
+    {
+        return Cache::tags(['videos'])->remember("video_{$id}", 600, function () use ($id) {
+            return Video::findOrFail($id);
+        });
+    }
+
     public function storeVideo($request)
     {
         $uploadedFile = $request->file('video');

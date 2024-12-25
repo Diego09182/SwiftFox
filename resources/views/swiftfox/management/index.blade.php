@@ -60,14 +60,12 @@
 <script type="text/javascript">
 
     $('#bulletinForm').on('submit', function(event) {
-        event.preventDefault(); // 阻止表單的默認提交行為
+        event.preventDefault();
 
-        // 獲取表單數據
         var title = $('#bulletin-title').val();
         var content = $('#bulletin-content').val();
         var _token = $('input[name="_token"]').val();
 
-        // 發送 AJAX POST 請求
         $.ajax({
             url: "{{ route('bulletin.store') }}",
             method: "POST",
@@ -87,9 +85,8 @@
     });
 
 	$('#clubForm').on('submit', function(event) {
-		event.preventDefault(); // 阻止表單的默認提交行為
+		event.preventDefault();
 
-		// 獲取表單數據
 		var title = $('#club-title').val();
 		var tag = $('#tag').val();
 		var teacher = $('#teacher').val();
@@ -98,7 +95,6 @@
 		var content = $('#club-content').val();
 		var _token = $('input[name="_token"]').val();
 
-    	// 發送 AJAX POST 請求
     	$.ajax({
 			url: "{{ route('club.store') }}",
 			method: "POST",
@@ -122,9 +118,8 @@
 	});
 
 	$('#activityForm').on('submit', function(event) {
-		event.preventDefault(); // 阻止表單的默認提交行為
+		event.preventDefault();
 
-		// 獲取表單數據
 		var title = $('#activity-title').val();
 		var content = $('#activity-content').val();
 		var location = $('#activity-location').val();
@@ -132,7 +127,6 @@
 		var url = $('#activity-url').val();
 		var _token = $('input[name="_token"]').val();
 
-    	// 發送 AJAX POST 請求
     	$.ajax({
 			url: "{{ route('activity.store') }}",
 			method: "POST",

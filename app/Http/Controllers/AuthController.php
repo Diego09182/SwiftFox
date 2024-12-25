@@ -49,7 +49,6 @@ class AuthController extends Controller
 
         if ($user) {
             Auth::login($user);
-
             return redirect()->route('main')->with('success', '註冊成功！');
         } else {
             return back()->with('error', '註冊失敗，請稍後再試');

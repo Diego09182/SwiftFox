@@ -17,14 +17,12 @@ class ReportController extends Controller
 
     public function store(Request $request, Post $post)
     {
-        // 檢查檢舉數量限制
         try {
             $this->reportService->checkReportLimit();
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-        // 驗證請求數據
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:10',
             'content' => 'required|min:2|max:50',
@@ -40,7 +38,6 @@ class ReportController extends Controller
             'tag.in' => '標籤必須符合選項',
         ]);
 
-        // 創建檢舉
         $this->reportService->createReport($validatedData, $post->id);
 
         return redirect()->back()->with('success', '檢舉已創建成功！');

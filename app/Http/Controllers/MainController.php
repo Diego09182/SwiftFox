@@ -16,7 +16,6 @@ class MainController extends Controller
 {
     public function index()
     {
-        // 獲取當前登入的使用者
         $user = Auth::user();
 
         $bulletin = Cache::remember('latest_bulletin', 600, function () {
