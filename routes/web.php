@@ -34,10 +34,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// 登入首頁
+// 註冊與登入頁面
+Route::get('/registration', function () {
+    return view('swiftfox.registration');
+})->name('welcome')->middleware('check.login');
+
+// 歡迎頁面
 Route::get('/welcome', function () {
     return view('swiftfox.welcome');
-})->name('welcome')->middleware('check.login');
+})->name('introduction')->middleware('check.login');
 
 // 登入
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -47,11 +52,10 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 // 身分驗證
 Route::middleware(['auth','user.data'])->group(function () {
 
-    //首頁
-    Route::get('/main', [MainController::class, 'index'])->name('main');
-
     //登出
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    //首頁
+    Route::get('/main', [MainController::class, 'index'])->name('main');
 
     // 管理後臺
     Route::get('/management', [ManagementController::class, 'index'])->name('management.index');

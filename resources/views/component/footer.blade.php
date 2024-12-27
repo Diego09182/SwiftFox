@@ -17,7 +17,7 @@
 	</div>
 	<div class="footer-copyright">
 	  	<div class="container">
-			<p class="center-align">© 2023 <a class="white-text">SwiftFox</a></p>
+			<b><p class="center-align">© 2023 <a class="white-text">SwiftFox</a></p></b>
 	  	</div>
 	</div>
 </footer>
