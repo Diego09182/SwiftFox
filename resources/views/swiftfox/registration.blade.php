@@ -10,6 +10,10 @@
 
     @include('component.serve.message')
 
+    @include('component.form.login')
+
+    @include('component.form.register')
+
     <div class="container">
         <div class="row">
             <div class="col m12">
