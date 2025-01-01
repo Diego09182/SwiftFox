@@ -23,9 +23,9 @@ class ArticleService
         $cacheKey = 'search_articles_' . md5($search);
 
         return Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($search) {
-            return empty($search)
-                ? Article::latest()->paginate(6)
-                : Article::where('title', 'LIKE', "%$search%")->paginate(6);
+            return  empty($search)
+                    ? Article::latest()->paginate(6)
+                    : Article::where('title', 'LIKE', "%$search%")->paginate(6);
         });
     }
 
