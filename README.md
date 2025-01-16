@@ -2,7 +2,7 @@
 
 ## 關於專案
 
-一個藉由Laravel開發支援論壇、文章、投票、圖片上傳的學生交流系統
+一個藉由Laravel開發支援多種功能的線上社群軟體
 
 ## 安裝
 
@@ -33,8 +33,9 @@ DB_PASSWORD=your_database_password
 啟動開發伺服器:  
 `php artisan serve`
 
-編譯前端資產  
-`npm run build`
+編譯前端資產:  
+`npm install`  
+`npm run build`  
 
 ## 版本
 
