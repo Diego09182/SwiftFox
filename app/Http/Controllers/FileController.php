@@ -31,15 +31,24 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:20',
             'content' => 'nullable|string',
-            'file' => 'required|file|mimes:jpg,txt,jpeg,png,pdf,doc,docx|max:2048',
+            'file' => 'required|file|mimes:jpg,txt,jpeg,png,pdf,doc,docx|max:20480',
+        ], [
+            'title.required' => '標題是必填的。',
+            'title.string' => '標題必須是字串。',
+            'title.max' => '標題的長度不能超過20個字。',
+            'content.string' => '內容必須是字串。',
+            'file.required' => '檔案是必填的。',
+            'file.file' => '檔案必須是一個有效的檔案。',
+            'file.mimes' => '檔案格式必須是 jpg、txt、jpeg、png、pdf、doc 或 docx。',
+            'file.max' => '檔案大小不能超過 20480 KB。',
         ]);
 
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');
             $filename = time().'_'.$uploadedFile->getClientOriginalName();
-            $path = $uploadedFile->storeAs('uploads', $filename, 'public');
+            $path = $uploadedFile->storeAs('files', $filename, 'public');
 
             $validated['filename'] = $filename;
             $validated['path'] = $path;
