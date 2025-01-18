@@ -12,8 +12,8 @@ class OpinionService
     public function hasUserVoted($userId, $opinionId)
     {
         return Record::where('user_id', $userId)
-            ->where('opinion_id', $opinionId)
-            ->exists();
+                    ->where('opinion_id', $opinionId)
+                    ->exists();
     }
 
     public function vote($userId, $opinion, $voteType)

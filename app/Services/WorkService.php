@@ -7,15 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class WorkService
 {
-    public function checkWorkLimit()
-    {
-        $workCount = Work::where('user_id', Auth::id())->count();
-
-        if ($workCount >= 10) {
-            throw new \Exception('您已達到作品數量限制');
-        }
-    }
-
     public function createWork($validatedData)
     {
         $work = new Work($validatedData);

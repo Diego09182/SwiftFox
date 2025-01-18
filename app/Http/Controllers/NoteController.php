@@ -31,12 +31,6 @@ class NoteController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $this->noteService->checkNoteLimit();
-        } catch (\Exception $e) {
-            return redirect()->route('home.index')->with('error', $e->getMessage());
-        }
-
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:50',

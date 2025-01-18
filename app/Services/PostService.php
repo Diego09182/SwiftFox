@@ -93,8 +93,8 @@ class PostService
         $user = Auth::user();
 
         $evaluation = Evaluation::where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->first();
+                                ->where('user_id', $user->id)
+                                ->first();
 
         if ($evaluation) {
             throw new \Exception('已經評價過了');

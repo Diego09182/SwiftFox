@@ -8,16 +8,6 @@ use Illuminate\Support\Facades\Cache;
 
 class ArticleService
 {
-    public function checkArticleLimit()
-    {
-        $articleCount = Article::count();
-        $maxArticleCount = 500;
-
-        if ($articleCount >= $maxArticleCount) {
-            throw new \Exception('文章數量已達到系統限制');
-        }
-    }
-
     public function searchArticles(?string $search = null)
     {
         $cacheKey = 'search_articles_'.md5($search);

@@ -9,15 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 class VideoService
 {
-    public function checkVideoLimit()
-    {
-        $videoCount = Video::where('user_id', Auth::id())->whereDate('created_at', today())->count();
-
-        if ($videoCount >= 10) {
-            throw new \Exception('您今天的影片上傳次數已達上限');
-        }
-    }
-
     public function getVideosByPage($page)
     {
         return Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function () {

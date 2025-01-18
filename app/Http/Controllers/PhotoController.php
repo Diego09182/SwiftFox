@@ -40,12 +40,6 @@ class PhotoController extends Controller
 
     public function store(Request $request, $workId)
     {
-        try {
-            $this->photoService->checkPhotoLimit($workId);
-        } catch (\Exception $e) {
-            return redirect()->route('work.show', compact('workId'))->with('error', $e->getMessage());
-        }
-
         $photo = $this->photoService->storePhoto($request, $workId);
 
         return redirect()->route('work.show', ['work' => $workId])->with('success', '相片已添加！');

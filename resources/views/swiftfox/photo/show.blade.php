@@ -40,7 +40,7 @@
 			<div class="col s12 m9">
 				<div class="card horizontal">
 					<div class="card-image">
-						<img class="responsive-img materialboxed" alt="avatar" src="{{ asset('storage/photos/' . $photo->filename) }}" alt="Photo">
+						<img class="responsive-img materialboxed" alt="avatar" src="{{ asset('storage/images/' . $photo->filename) }}" alt="Photo">
 					</div>
 					<div class="card-stacked">
 						<div class="card-content">
