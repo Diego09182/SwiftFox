@@ -58,7 +58,7 @@ class VideoController extends Controller
             'video.max' => '影片大小不能超過 30MB。',
         ]);        
 
-        $videoData = $this->videoService->storeVideo($request);
+        $videoData = $this->videoService->createVideo($request);
 
         $video = new Video;
         $video->title = $request->title;

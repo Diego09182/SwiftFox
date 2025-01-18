@@ -23,7 +23,7 @@ class VideoService
         });
     }
 
-    public function storeVideo($request)
+    public function createVideo($request)
     {
         $uploadedFile = $request->file('video');
         $filename = time().'_'.mt_rand().'.'.$uploadedFile->getClientOriginalExtension();

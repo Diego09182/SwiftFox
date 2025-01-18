@@ -40,7 +40,7 @@ class PhotoController extends Controller
 
     public function store(Request $request, $workId)
     {
-        $photo = $this->photoService->storePhoto($request, $workId);
+        $photo = $this->photoService->createPhoto($request, $workId);
 
         return redirect()->route('work.show', ['work' => $workId])->with('success', '相片已添加！');
     }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PhotoService
 {
-    public function storePhoto($request, $workId)
+    public function createPhoto($request, $workId)
     {
         $uploadedFile = $request->file('file');
         $filename = time().'_'.$uploadedFile->getClientOriginalName();
