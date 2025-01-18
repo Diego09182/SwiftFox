@@ -43,16 +43,20 @@ class VideoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'video' => 'required|mimes:mp4,mov,ogg,qt|max:204800',
+            'title' => 'required|min:2|max:20',
+            'content' => 'required|min:2|max:50',
+            'video' => 'required|mimes:mp4,mov,ogg,qt|max:30720',
         ], [
             'title.required' => '標題為必填欄位。',
+            'title.min' => '標題長度至少為 2 個字元。',
+            'title.max' => '標題長度不能超過 20 個字元。',
             'content.required' => '內容為必填欄位。',
+            'content.min' => '內容長度至少為 2 個字元。',
+            'content.max' => '內容長度不能超過 50 個字元。',
             'video.required' => '請選擇一個影片檔案。',
             'video.mimes' => '影片格式必須為 mp4、mov、ogg 或 qt。',
-            'video.max' => '影片大小不能超過200MB。',
-        ]);
+            'video.max' => '影片大小不能超過 30MB。',
+        ]);        
 
         $videoData = $this->videoService->storeVideo($request);
 

@@ -89,7 +89,7 @@ class PostController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:60',
+            'content' => 'required|min:2|max:50',
             'tag' => 'required|in:學科問題,社團問題,自主學習,大學面試,活動宣傳',
         ], [
             'title.required' => '標題為必填項目',

@@ -13,14 +13,14 @@ class CommentController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:40',
+            'content' => 'required|min:2|max:50',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
             'title.max' => '標題不能超過20個字',
             'content.required' => '內容為必填項目',
             'content.min' => '內容至少需要2個字',
-            'content.max' => '內容不能超過40個字',
+            'content.max' => '內容不能超過50個字',
         ]);
 
         $comment = new Comment($validatedData);

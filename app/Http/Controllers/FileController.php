@@ -31,12 +31,13 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:20',
+            'title' => 'required|string|min:2|max:20',
             'content' => 'nullable|string',
             'file' => 'required|file|mimes:jpg,txt,jpeg,png,pdf,doc,docx|max:20480',
         ], [
             'title.required' => '標題是必填的。',
             'title.string' => '標題必須是字串。',
+            'title.min' => '標題的長度不能少於2個字。',
             'title.max' => '標題的長度不能超過20個字。',
             'content.string' => '內容必須是字串。',
             'file.required' => '檔案是必填的。',

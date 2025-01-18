@@ -36,7 +36,7 @@ class WorkController extends Controller
         ], [
             'name.required' => '作品名稱為必填項目',
             'name.min' => '作品名稱至少需要2個字',
-            'name.max' => '作品名稱不能超過10個字',
+            'name.max' => '作品名稱不能超過20個字',
         ]);
 
         $this->workService->createWork($validatedData);
