@@ -47,6 +47,7 @@
 	<div id="bulletinForm" class="col s12">
 		@include('component.form.bulletin')
 	</div>
+	
 	@include('component.managementlist')
 
 	<br>

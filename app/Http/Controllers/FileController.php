@@ -30,10 +30,10 @@ class FileController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|string|min:2|max:20',
             'content' => 'nullable|string',
-            'file' => 'required|file|mimes:jpg,txt,jpeg,png,pdf,doc,docx|max:20480',
+            'file' => 'required|file|max:20480',
         ], [
             'title.required' => '標題是必填的。',
             'title.string' => '標題必須是字串。',
@@ -42,7 +42,6 @@ class FileController extends Controller
             'content.string' => '內容必須是字串。',
             'file.required' => '檔案是必填的。',
             'file.file' => '檔案必須是一個有效的檔案。',
-            'file.mimes' => '檔案格式必須是 jpg、txt、jpeg、png、pdf、doc 或 docx。',
             'file.max' => '檔案大小不能超過 20480 KB。',
         ]);
 
@@ -51,13 +50,13 @@ class FileController extends Controller
             $filename = time().'_'.$uploadedFile->getClientOriginalName();
             $path = $uploadedFile->storeAs('files', $filename, 'public');
 
-            $validated['filename'] = $filename;
-            $validated['path'] = $path;
+            $validatedData['filename'] = $filename;
+            $validatedData['path'] = $path;
         }
 
-        $validated['user_id'] = Auth::id();
+        $validatedData['user_id'] = Auth::id();
 
-        $this->fileService->createFile($validated);
+        $this->fileService->createFile($validatedData);
 
         return redirect()->route('file.index')->with('success', '檔案已成功新增！');
     }

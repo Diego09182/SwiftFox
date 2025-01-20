@@ -80,6 +80,10 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     Route::get('/management/clubs', [ManagementController::class, 'clubs'])->name('management.clubs');
     // 投票管理
     Route::get('/management/opinions', [ManagementController::class, 'opinions'])->name('management.opinions');
+    // 影片管理
+    Route::get('/management/videos', [ManagementController::class, 'videos'])->name('management.videos');
+    // 檔案管理
+    Route::get('/management/files', [ManagementController::class, 'files'])->name('management.files');
 
     // 論壇系統
     //搜尋貼文

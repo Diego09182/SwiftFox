@@ -10,6 +10,8 @@ use App\Models\Post;
 use App\Models\Report;
 use App\Models\User;
 use App\Models\Work;
+use App\Models\Video;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -123,12 +125,34 @@ class ManagementController extends Controller
         return view('swiftfox.management.clubs', compact('clubs'));
     }
 
-    public function update(Request $request, User $user)
+    public function videos()
     {
         if ($this->checkAdmin()) {
             return $this->checkAdmin();
         }
 
+        $videos = Video::orderBy('id', 'desc')->paginate(8);
+
+        return view('swiftfox.management.videos', compact('videos'));
+    }
+
+    public function files()
+    {
+        if ($this->checkAdmin()) {
+            return $this->checkAdmin();
+        }
+
+        $files = File::orderBy('id', 'desc')->paginate(8);
+
+        return view('swiftfox.management.files', compact('files'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        if ($this->checkAdmin()) {
+            return $this->checkAdmin();
+        }
+        
         $validatedData = $request->validate([
             'administration' => 'required|integer|min:1|max:5',
             'status' => 'required|integer|in:0,1',

@@ -96,7 +96,7 @@
                                 </form>
                             </td>
                             <td>
-                                <a href="{{ route('club.show', ['club' => $club->id ]) }}" class="btn waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="查看貼文">
+                                <a href="{{ route('club.show', ['club' => $club->id ]) }}" class="btn waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="查看資源">
                                     查看
                                 </a>
                             </td>

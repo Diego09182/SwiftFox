@@ -98,7 +98,7 @@
                                 </form>
                             </td>
                             <td>
-                                <a href="{{ route('forum.show', ['post' => $post->id ]) }}" class="btn waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="查看貼文">
+                                <a href="{{ route('forum.show', ['post' => $post->id ]) }}" class="btn waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="查看資源">
                                     查看
                                 </a>
                             </td>
