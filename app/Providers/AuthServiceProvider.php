@@ -12,6 +12,7 @@ use App\Models\Photo;
 use App\Models\Post;
 use App\Models\Video;
 use App\Models\Work;
+use App\Models\File;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -71,6 +72,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('delete-photo', function ($user, Photo $photo) {
             return $photo->user_id == $user->id || $user->administration == 5;
+        });
+
+        Gate::define('delete-file', function ($user, File $file) {
+            return $file->user_id == $user->id || $user->administration == 5;
         });
     }
 }

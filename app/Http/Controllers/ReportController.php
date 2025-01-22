@@ -41,11 +41,7 @@ class ReportController extends Controller
     {
         $report = Report::findOrFail($id);
 
-        try {
-            $this->reportService->deleteReport($report);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+        $this->reportService->deleteReport($report);
 
         return redirect()->route('management.index')->with('success', '檢舉已成功刪除！');
     }
