@@ -23,6 +23,7 @@ class FileService
 
     public function deleteFile(File $file)
     {
-        return $file->delete();
+        Storage::delete('public/files/'.$file->filename);
+        $file->delete();
     }
 }

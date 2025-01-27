@@ -77,7 +77,7 @@ class VideoController extends Controller
 
     public function destroy($id)
     {
-        $video = Video::findOrFail($id);
+        $video = $this->videoService->getVideoById($id);
 
         if (Gate::denies('delete-video', $video)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
