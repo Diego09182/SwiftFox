@@ -38,7 +38,11 @@
 				<div class="center">
 					<div class="card">
 						<div class="card-image">
-							<img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+							@if ($video->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $video->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
 						</div>
 						<div class="card-content">
 							<a href="#modal2" class="modal-trigger btn-floating waves-effect waves-light brown right tooltipped" data-delay="50" data-tooltip="個人資料"><i class="material-icons">perm_identity</i></a>
@@ -82,7 +86,11 @@
 				<div class="col s12 m4">
 					<div class="card">
 						<div class="card-image">
-							<img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+							@if ($video->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $video->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
 						</div>
 						<div class="card-content">
 							<h5>使用者: {{ $video->user->account }}</h5>

@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Cache;
 
 class PostService
 {
+    public function getWeeklyTopPosts(int $limit = 10)
+    {
+        $cacheKey = 'weekly_top_posts_'.$limit;
+
+        return Cache::tags(['posts', 'top', 'weekly'])->remember($cacheKey, 600, function () use ($limit) {
+            return Post::withCount('comments')
+                        ->where('created_at', '>=', now()->subDays(7))
+                        ->orderByRaw('(view * 2) + (`like` * 3) DESC')
+                        ->limit($limit)
+                        ->get();
+        });
+    }
+
     public function getPostsByPage(int $page)
     {
         $cacheKey = 'posts_page_'.$page;
@@ -41,9 +54,9 @@ class PostService
             }
 
             return Post::where('title', 'LIKE', "%$search%")
-                ->orWhere('content', 'LIKE', "%$search%")
-                ->orWhere('tag', 'LIKE', "%$search%")
-                ->paginate(9);
+                        ->orWhere('content', 'LIKE', "%$search%")
+                        ->orWhere('tag', 'LIKE', "%$search%")
+                        ->paginate(9);
         });
     }
 
@@ -64,6 +77,12 @@ class PostService
         return $post;
     }
 
+    public function deletePost(Post $post)
+    {
+        $this->clearCache();
+        $post->delete();
+    }
+
     public function likePost(Post $post)
     {
         $this->evaluatePost($post, 1);
@@ -80,12 +99,6 @@ class PostService
         $this->clearPostCache($post->id);
 
         return $post;
-    }
-
-    public function deletePost(Post $post)
-    {
-        $this->clearPostCache($post->id);
-        $post->delete();
     }
 
     private function evaluatePost(Post $post, int $evaluationValue)

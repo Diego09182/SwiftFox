@@ -65,7 +65,7 @@ class PostController extends Controller
                 'dislike' => $post->dislike,
             ], 403);
         }
-
+        
         return response()->json([
             'like' => $post->like,
             'dislike' => $post->dislike,
@@ -80,9 +80,11 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
+        $top_posts_limit = 3;
         $posts = $this->postService->getPostsByPage($page);
+        $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
 
-        return view('swiftfox.forum.index', compact('posts'));
+        return view('swiftfox.forum.index', compact('posts','top_posts'));
     }
 
     public function store(Request $request)

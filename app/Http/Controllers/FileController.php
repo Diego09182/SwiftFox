@@ -6,6 +6,7 @@ use App\Models\File;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class FileController extends Controller
 {
@@ -14,6 +15,42 @@ class FileController extends Controller
     public function __construct(FileService $fileService)
     {
         $this->fileService = $fileService;
+    }
+
+    public function like(File $file)
+    {
+        try {
+            $file = $this->fileService->likeFile($file);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'like' => $file->like,
+                'dislike' => $file->dislike,
+            ], 403);
+        }
+
+        return response()->json([
+            'like' => $file->like,
+            'dislike' => $file->dislike,
+        ]);
+    }
+
+    public function dislike(File $file)
+    {
+        try {
+            $file = $this->fileService->dislikeFile($file);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'like' => $file->like,
+                'dislike' => $file->dislike,
+            ], 403);
+        }
+        
+        return response()->json([
+            'like' => $file->like,
+            'dislike' => $file->dislike,
+        ]);
     }
 
     public function index()
@@ -34,6 +71,7 @@ class FileController extends Controller
             'title' => 'required|string|min:2|max:20',
             'content' => 'nullable|string',
             'file' => 'required|file|max:20480',
+            'donation' => 'nullable|string|max:150',
         ], [
             'title.required' => '標題是必填的。',
             'title.string' => '標題必須是字串。',
@@ -43,11 +81,13 @@ class FileController extends Controller
             'file.required' => '檔案是必填的。',
             'file.file' => '檔案必須是一個有效的檔案。',
             'file.max' => '檔案大小不能超過 20480 KB。',
+            'donation.string' => '贊助必須是字串。',
         ]);
 
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');
-            $filename = time().'_'.$uploadedFile->getClientOriginalName();
+            $filename = uniqid() . '_' . $uploadedFile->getClientOriginalName();
+            $filename = str_replace(' ', '_', $filename);
             $path = $uploadedFile->storeAs('files', $filename, 'public');
 
             $validatedData['filename'] = $filename;
@@ -64,6 +104,8 @@ class FileController extends Controller
     public function show($id)
     {
         $file = $this->fileService->getFileById($id);
+
+        $file->increment('view');
 
         return view('swiftfox.file.show', compact('file'));
     }

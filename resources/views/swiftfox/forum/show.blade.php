@@ -42,7 +42,11 @@
         <div class="col s12 m3">
             <div class="card">
                 <div class="card-image">
+                    @if ($post->user->avatar_filename)
                     <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
+                    @else
+                    <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                    @endif
                 </div>
                 <div class="card-content">
                     <div class="row">
@@ -67,10 +71,10 @@
                     <div class="row">
                         <h3 class="center">{{ $post->title }}</h3>
                     </div>
-					<div class="chip left brown">
+                    <div class="chip left brown">
                         <p class="white-text">#{{ $post->tag }}</p>
                     </div>
-					<br><br>
+                    <br><br>
                     <hr>
                     <h5 id="post-content" class="post-content">{!! $post->content !!}</h5>
                     <br>
@@ -113,7 +117,11 @@
             <div class="col s12 m4">
                 <div class="card">
                     <div class="card-image">
+                        @if ($post->user->avatar_filename)
                         <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
+                        @else
+                        <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                        @endif
                     </div>
                     <div class="card-content">
                         <h5 class="center">{{ $post->user->account }}</h5>
@@ -166,20 +174,20 @@
 @else
 <ul class="pagination center">
     @if ($comments->currentPage() > 1)
-    <li class="waves-effect"><a href="{{ $comments->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a></li>
+        <li class="waves-effect"><a href="{{ $comments->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a></li>
     @endif
     @for ($i = 1; $i <= $comments->lastPage(); $i++)
         @if ($i == 1 || $i == $comments->lastPage() || abs($comments->currentPage() - $i) < 3 || $i==$comments->currentPage())
             <li class="waves-effect {{ $i == $comments->currentPage() ? 'active brown' : '' }}"><a href="{{ $comments->url($i) }}">{{ $i }}</a></li>
-        @elseif (abs($comments->currentPage() - $i) === 3)
+            @elseif (abs($comments->currentPage() - $i) === 3)
             <li class="disabled">
                 <span>...</span>
             </li>
-        @endif
-    @endfor
-    @if ($comments->hasMorePages())
-        <li class="waves-effect"><a href="{{ $comments->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
-    @endif
+            @endif
+            @endfor
+            @if ($comments->hasMorePages())
+            <li class="waves-effect"><a href="{{ $comments->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
+            @endif
 </ul>
 @foreach ($comments as $comment)
 <div class="container">
@@ -218,7 +226,6 @@
 @section('scripts')
 
 <script type="text/javascript">
-
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -227,7 +234,6 @@
 
     $('.like-button').on('click', function() {
         const postId = $(this).data('post-id');
-
         $.ajax({
             url: "{{ route('forum.like', ['post' => 'postId']) }}".replace('postId', postId)
             , type: 'POST'
@@ -244,7 +250,6 @@
 
     $('.dislike-button').on('click', function() {
         const postId = $(this).data('post-id');
-
         $.ajax({
             url: "{{ route('forum.dislike', ['post' => 'postId']) }}".replace('postId', postId)
             , type: 'POST'

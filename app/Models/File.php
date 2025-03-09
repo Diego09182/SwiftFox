@@ -14,6 +14,10 @@ class File extends Model
         'content',
         'filename',
         'path',
+        'donation',
+        'view',
+        'like',
+        'dislike',
         'user_id',
     ];
 
@@ -21,4 +25,10 @@ class File extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function evaluations()
+    {
+        return $this->hasMany(FileEvaluation::class);
+    }
+
 }

@@ -9,17 +9,12 @@
     @include('component.logoutbanner')
 	
 	<br>
-	
+
 	<div class="fixed-action-btn click-to-toggle">
 		<a class="btn-floating btn-large red">
 			<i class="large material-icons brown">menu</i>
 		</a>
 		<ul>
-			<li>
-				<a href="#modal1" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布投票">
-					<i class="material-icons">mode_edit</i>
-				</a>
-			</li>
 			<li>
 				<a href="{{route('home.index')}}"class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
 					<i class="material-icons">view_quilt</i>
@@ -33,8 +28,6 @@
 		</ul>
 	</div>
 
-	@include('component.form.opinion')
-
 	<div id="modal2" class="modal">
 		<div class="modal-content">
 			<h4 class="center-align">個人資料</h4>
@@ -42,7 +35,11 @@
 				<div class="col s12 m4">
 					<div class="card">
 						<div class="card-image">
-							<img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+							@if ($opinion->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $opinion->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
 						</div>
 						<div class="card-content">
 							<h5>使用者: {{ $opinion->user->account }}</h5>
@@ -76,7 +73,11 @@
 				<div class="center">
 					<div class="card">
 						<div class="card-image">
-							<img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+							@if ($opinion->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $opinion->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
 						</div>
 						<div class="card-content">
 							<a href="#modal2" class="modal-trigger btn-floating waves-effect waves-light brown right tooltipped" data-delay="50" data-tooltip="個人資料"><i class="material-icons">perm_identity</i></a>

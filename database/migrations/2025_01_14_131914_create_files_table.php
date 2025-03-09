@@ -19,6 +19,10 @@ return new class extends Migration
             $table->text('content')->nullable(false);
             $table->string('filename')->nullable(false);
             $table->string('path')->nullable(false);
+            $table->text('donation')->nullable(true);
+            $table->integer('view')->default(0);
+            $table->integer('like')->default(0);
+            $table->integer('dislike')->default(0);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

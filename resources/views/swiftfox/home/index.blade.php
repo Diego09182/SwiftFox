@@ -66,7 +66,11 @@
 						@foreach ($notes as $note)
 							<ul class="collection">
 								<li class="collection-item avatar">
-									<img src="{{ asset('storage/avatars/' . $note->user->avatar_filename) }}" alt="評論者頭像" class="circle">
+									@if ($user->avatar_filename)
+										<img class="circle" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+									@else
+										<img class="circle" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="User Avatar">
+									@endif
 									<h5 class="left">日記主題:{{ $note->title }}</h5>
 									<br><br>
 									<div class="row">
@@ -94,7 +98,11 @@
 			<div class="col s12 m3">
 				<div class="card">
 					<div class="card-image">
-						<img src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+						@if ($user->avatar_filename)
+							<img src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+						@else
+							<img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+						@endif
 					</div>
 					<div class="card-content">
 						<span class="card-title activator grey-text text-darken-4"><i class="material-icons right">more_vert</i></span>
@@ -106,11 +114,13 @@
 					</div>
 				</div>
 				<div class="col s12 card-panel right">
-					<h5 class="card-title grey-text text-darken-4 center">自我介紹</h5>
+					<h5 class="card-title grey-text text-darken-4">自我介紹:</h5>
 					<h5>{{ $user->info }}</h5>
-					<h5 class="card-title grey-text text-darken-4 center">興趣</h5>
+					<br>
+					<h5 class="card-title grey-text text-darken-4">興趣:</h5>
 					<h5>{{ $user->interest }}</h5>
-					<h5 class="card-title grey-text text-darken-4 center">社團</h5>
+					<br>
+					<h5 class="card-title grey-text text-darken-4">社團:</h5>
 					<h5>{{ $user->club }}</h5>
 					<br>
 					<h5>登入次數: {{ $user->times }}</h5>

@@ -24,11 +24,6 @@
 		</a>
 		<ul>
 			<li>
-				<a href="{{ route('article.create') }}" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布文章">
-					<i class="material-icons">mode_edit</i>
-				</a>
-			</li>
-			<li>
 				<a href="{{route('home.index')}}"class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
 					<i class="material-icons">view_quilt</i>
 				</a>

@@ -38,7 +38,11 @@
                 <div class="center">
                     <div class="card">
                         <div class="card-image">
-                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+                            @if ($file->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $file->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
                         </div>
                         <div class="card-content">
                             <a href="#modal2" class="modal-trigger btn-floating waves-effect waves-light brown right tooltipped" data-delay="50" data-tooltip="個人資料"><i class="material-icons">perm_identity</i></a>
@@ -56,6 +60,31 @@
                         <h4>{{ $file->content }}</h4>
                         <h4>檔案名稱:</h4>
                         <h4><a href="{{ asset('storage/' . $file->path) }}" download>{{ $file->filename }}</a></h4>
+                        <h4>贊助連結:</h4>
+                        <h4>{{ $file->donation }}</h4>
+                        <div class="row">
+                            <p id="reaction" class="left">讚: {{ $file->like }} 噓: {{ $file->dislike }}</p>
+                            <button class="btn-floating waves-effect waves-light brown right tooltipped like-button" data-file-id="{{ $file->id }}" data-tooltip="按讚"><i class="material-icons">thumb_up</i></button>
+                            <button class="btn-floating waves-effect waves-light brown right tooltipped dislike-button" data-file-id="{{ $file->id }}" data-tooltip="噓他"><i class="material-icons">thumb_down</i></button>
+                            <form action="{{ route('file.like', ['file' => $file->id]) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="按讚">
+                                    <i class="material-icons">thumb_up</i>
+                                </button>
+                            </form>
+                            <form action="{{ route('file.dislike', ['file' => $file->id]) }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="噓他">
+                                    <i class="material-icons">thumb_down</i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="row">
+                            <br>
+                            <p class="right">觀看次數: {{ $file->view }}</p>
+                            <br>
+                            <p class="right">發表時間: {{ $file->created_at }}</p>
+                        </div>
                         <div class="card-action">
                             @if(Auth::user()->administration == 5 || $file->user->id == Auth::user()->id)
                             <form action="{{ route('file.destroy', $file->id) }}" method="POST">
@@ -81,7 +110,11 @@
                 <div class="col s12 m4">
                     <div class="card">
                         <div class="card-image">
-                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
+                            @if ($file->user->avatar_filename)
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $file->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
                         </div>
                         <div class="card-content">
                             <h5>使用者: {{ $file->user->account }}</h5>
@@ -118,5 +151,50 @@
     @include('component.footer')
 
 </div>
+
+@endsection
+
+@section('scripts')
+
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $('.like-button').on('click', function() {
+        const fileId = $(this).data('file-id');
+        $.ajax({
+            url: "{{ route('file.like', ['file' => 'fileId']) }}".replace('fileId', fileId), 
+            type: 'POST',
+            success: function(response) {
+                $('#reaction').html('讚: ' + response.like + ' 噓: ' + response.dislike);
+            },
+            error: function(xhr) {
+                if (xhr.status === 403) {
+                    alert('已經評價過了');
+                }
+            }
+        });
+    });
+
+    $('.dislike-button').on('click', function() {
+        const fileId = $(this).data('file-id');
+        $.ajax({
+            url: "{{ route('file.dislike', ['file' => 'fileId']) }}".replace('fileId', fileId), 
+            type: 'POST', 
+            success: function(response) {
+                $('#reaction').html('讚: ' + response.like + ' 噓: ' + response.dislike);
+            }, 
+            error: function(xhr) {
+                if (xhr.status === 403) {
+                    alert('已經評價過了');
+                }
+            }
+        });
+    });
+
+</script>
 
 @endsection
