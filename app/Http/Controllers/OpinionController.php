@@ -45,7 +45,7 @@ class OpinionController extends Controller
 
         try {
             $opinion = $this->opinionService->vote($userId, $opinion, 'disagree');
-
+            
             return response()->json([
                 'totalVotes' => $opinion->count,
                 'agreeVotes' => $opinion->agree,

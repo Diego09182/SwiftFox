@@ -32,23 +32,7 @@
 			@if ($articles->isEmpty())
             	<h3 class="center-align">目前沒有文章</h3>
         	@else
-				<ul class="pagination center">
-					@if ($articles->currentPage() > 1)
-						<li class="waves-effect"><a href="{{ $articles->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a></li>
-					@endif
-					@for ($i = 1; $i <= $articles->lastPage(); $i++)
-						@if ($i == 1 || $i == $articles->lastPage() || abs($articles->currentPage() - $i) < 3 || $i == $articles->currentPage())
-							<li class="waves-effect {{ $i == $articles->currentPage() ? 'active brown' : '' }}"><a href="{{ $articles->url($i) }}">{{ $i }}</a></li>
-						@elseif (abs($articles->currentPage() - $i) === 3)
-							<li class="disabled">
-								<span>...</span>
-							</li>
-						@endif
-					@endfor
-					@if ($articles->hasMorePages())
-						<li class="waves-effect"><a href="{{ $articles->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
-					@endif
-				</ul>
+				{{ $articles->links('vendor.pagination.materialize') }}
 				@foreach ($articles as $article)
 					<div class="col s12 m12">
 						<div class="card hoverable center" id="article">

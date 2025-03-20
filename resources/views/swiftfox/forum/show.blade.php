@@ -86,7 +86,7 @@
                     <div class="card-action">
                         <div class="row">
                             <p id="reaction" class="left">讚: {{ $post->like }} 噓: {{ $post->dislike }}</p>
-                            <button class="btn-floating waves-effect waves-light brown right tooltipped like-button" data-post-id="{{ $post->id }}" data-tooltip="按讚"><i class="material-icons">thumb_up</i></button>
+                            <button onclick="launchConfetti()" class="btn-floating waves-effect waves-light brown right tooltipped like-button" data-post-id="{{ $post->id }}" data-tooltip="按讚"><i class="material-icons">thumb_up</i></button>
                             <button class="btn-floating waves-effect waves-light brown right tooltipped dislike-button" data-post-id="{{ $post->id }}" data-tooltip="噓他"><i class="material-icons">thumb_down</i></button>
                             <a href="#" class="btn-floating waves-effect waves-light brown right decrease-font-size" data-tooltip="字體縮小"><i class="material-icons">zoom_out</i></a>
                             <a href="#" class="btn-floating waves-effect waves-light brown right increase-font-size" data-tooltip="字體放大"><i class="material-icons">zoom_in</i></a>
@@ -118,9 +118,9 @@
                 <div class="card">
                     <div class="card-image">
                         @if ($post->user->avatar_filename)
-                        <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
+                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
                         @else
-                        <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
                         @endif
                     </div>
                     <div class="card-content">
@@ -162,15 +162,13 @@
             <br>
             <hr>
             <p class="left">記得遵守社群守則</p>
-            <br>
-            <br>
-            <br>
+            <br><br><br>
         </li>
     </ul>
 </div>
 
 @if ($comments->isEmpty())
-<h3 class="center-align">目前沒有留言</h3>
+    <h3 class="center-align">目前沒有留言</h3>
 @else
 <ul class="pagination center">
     @if ($comments->currentPage() > 1)
@@ -178,17 +176,18 @@
     @endif
     @for ($i = 1; $i <= $comments->lastPage(); $i++)
         @if ($i == 1 || $i == $comments->lastPage() || abs($comments->currentPage() - $i) < 3 || $i==$comments->currentPage())
-            <li class="waves-effect {{ $i == $comments->currentPage() ? 'active brown' : '' }}"><a href="{{ $comments->url($i) }}">{{ $i }}</a></li>
+                <li class="waves-effect {{ $i == $comments->currentPage() ? 'active brown' : '' }}"><a href="{{ $comments->url($i) }}">{{ $i }}</a></li>
             @elseif (abs($comments->currentPage() - $i) === 3)
-            <li class="disabled">
-                <span>...</span>
-            </li>
+                <li class="disabled">
+                    <span>...</span>
+                </li>
             @endif
             @endfor
             @if ($comments->hasMorePages())
-            <li class="waves-effect"><a href="{{ $comments->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
+                <li class="waves-effect"><a href="{{ $comments->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
             @endif
 </ul>
+
 @foreach ($comments as $comment)
 <div class="container">
     <ul class="collection">
@@ -279,6 +278,14 @@
             $('#post-content').css('font-size', (currentSize + 5) + 'px');
         }
     });
+
+    function launchConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+    }
 
 </script>
 

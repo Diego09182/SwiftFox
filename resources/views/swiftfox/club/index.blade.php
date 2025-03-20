@@ -35,27 +35,7 @@
 			@if ($clubs->isEmpty())
             	<h3 class="center-align">目前沒有社團</h3>
         	@else
-				<ul class="pagination center">
-					@if ($clubs->lastPage() > 1)
-						<li class="waves-effect {{ $clubs->currentPage() == 1 ? 'disabled' : '' }}">
-							<a href="{{ $clubs->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a>
-						</li>
-						@for ($i = 1; $i <= $clubs->lastPage(); $i++)
-							@if ($i == 1 || $i == $clubs->lastPage() || abs($clubs->currentPage() - $i) < 3 || $i == $clubs->currentPage())
-								<li class="waves-effect {{ $i == $clubs->currentPage() ? 'active brown' : '' }}">
-									<a href="{{ $clubs->url($i) }}">{{ $i }}</a>
-								</li>
-							@elseif (abs($clubs->currentPage() - $i) === 3)
-								<li class="disabled">
-									<span>...</span>
-								</li>
-							@endif
-						@endfor
-						<li class="waves-effect {{ $clubs->currentPage() == $clubs->lastPage() ? 'disabled' : '' }}">
-							<a href="{{ $clubs->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a>
-						</li>
-					@endif
-				</ul>
+				{{ $clubs->links('vendor.pagination.materialize') }}
 				@foreach ($clubs as $club)
 					<div class="col s12 m4">
 						<div class="card" id="post">

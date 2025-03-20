@@ -44,23 +44,7 @@
 					<h4 class="white-text center"><b>日誌列表</b></h4>
 					<hr>
 					@if ($notes->currentPage() > 1)
-						<ul class="pagination center">
-							@if ($notes->currentPage() > 1)
-								<li class="waves-effect"><a href="{{ $notes->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a></li>
-							@endif
-							@for ($i = 1; $i <= $notes->lastPage(); $i++)
-								@if ($i == 1 || $i == $notes->lastPage() || abs($notes->currentPage() - $i) < 3 || $i == $notes->currentPage())
-									<li class="waves-effect {{ $i == $notes->currentPage() ? 'active brown' : '' }}"><a href="{{ $notes->url($i) }}">{{ $i }}</a></li>
-								@elseif (abs($notes->currentPage() - $i) === 3)
-									<li class="disabled">
-										<span>...</span>
-									</li>
-								@endif
-							@endfor
-							@if ($notes->hasMorePages())
-								<li class="waves-effect"><a href="{{ $notes->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
-							@endif
-						</ul>
+						{{ $notes->links('vendor.pagination.materialize') }}
 					@endif
 					@if ($notes->count() > 0)
 						@foreach ($notes as $note)

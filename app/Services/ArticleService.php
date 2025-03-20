@@ -24,7 +24,7 @@ class ArticleService
         $cacheKey = 'articles_page_'.$page;
 
         return Cache::tags(['articles'])->remember($cacheKey, 600, function () {
-            return Article::orderBy('id', 'desc')->paginate(6);
+            return Article::orderBy('id', 'desc')->paginate(1);
         });
     }
 

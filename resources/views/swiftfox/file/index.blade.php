@@ -24,27 +24,7 @@
             @if ($files->isEmpty())
             <h3 class="center-align">目前沒有檔案</h3>
             @else
-            <ul class="pagination center">
-                @if ($files->lastPage() > 1)
-                <li class="waves-effect {{ $files->currentPage() == 1 ? 'disabled' : '' }}">
-                    <a href="{{ $files->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a>
-                </li>
-                @for ($i = 1; $i <= $files->lastPage(); $i++)
-                    @if ($i == 1 || $i == $files->lastPage() || abs($files->currentPage() - $i) < 3 || $i==$files->currentPage())
-                        <li class="waves-effect {{ $i == $files->currentPage() ? 'active brown' : '' }}">
-                            <a href="{{ $files->url($i) }}">{{ $i }}</a>
-                        </li>
-                        @elseif (abs($files->currentPage() - $i) === 3)
-                        <li class="disabled">
-                            <span>...</span>
-                        </li>
-                        @endif
-                        @endfor
-                        <li class="waves-effect {{ $files->currentPage() == $files->lastPage() ? 'disabled' : '' }}">
-                            <a href="{{ $files->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a>
-                        </li>
-                    @endif
-            </ul>
+            {{ $files->links('vendor.pagination.materialize') }}
             <div class="row">
                 @foreach ($files as $file)
                 <div class="col s12 m4">

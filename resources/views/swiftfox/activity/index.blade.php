@@ -17,27 +17,7 @@
 			@if ($activities->isEmpty())
             	<h3 class="center-align">目前沒有活動</h3>
         	@else
-				<ul class="pagination center">
-					@if ($activities->lastPage() > 1)
-						<li class="waves-effect {{ $activities->currentPage() == 1 ? 'disabled' : '' }}">
-							<a href="{{ $activities->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a>
-						</li>
-						@for ($i = 1; $i <= $activities->lastPage(); $i++)
-							@if ($i == 1 || $i == $activities->lastPage() || abs($activities->currentPage() - $i) < 3 || $i == $activities->currentPage())
-								<li class="waves-effect {{ $i == $activities->currentPage() ? 'active brown' : '' }}">
-									<a href="{{ $activities->url($i) }}">{{ $i }}</a>
-								</li>
-							@elseif (abs($activities->currentPage() - $i) === 3)
-								<li class="disabled">
-									<span>...</span>
-								</li>
-							@endif
-						@endfor
-						<li class="waves-effect {{ $activities->currentPage() == $activities->lastPage() ? 'disabled' : '' }}">
-							<a href="{{ $activities->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a>
-						</li>
-					@endif
-				</ul>
+				{{ $activities->links('vendor.pagination.materialize') }}
 				@foreach ($activities as $activity)
 					<div class="col s12 m4">
 						<div class="card" id="post">

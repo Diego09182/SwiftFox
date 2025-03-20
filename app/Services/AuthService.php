@@ -36,7 +36,6 @@ class AuthService
 
             if ($user->status == 0) {
                 Auth::logout();
-
                 return ['success' => false, 'message' => '登入失敗，帳號被停用'];
             }
 

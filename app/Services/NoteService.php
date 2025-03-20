@@ -45,16 +45,6 @@ class NoteService
         $this->clearCache();
     }
 
-    public function checkNoteLimit()
-    {
-        $user = Auth::user();
-        $totalNotes = $user->notes->count();
-
-        if ($totalNotes >= 100) {
-            throw new \Exception('您已達到日記的最大限制。');
-        }
-    }
-
     private function clearCache()
     {
         Cache::tags(['notes'])->flush();

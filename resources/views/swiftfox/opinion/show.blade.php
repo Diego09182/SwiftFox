@@ -74,9 +74,9 @@
 					<div class="card">
 						<div class="card-image">
 							@if ($opinion->user->avatar_filename)
-                            <img class="materialboxed" src="{{ asset('storage/avatars/' . $opinion->user->avatar_filename) }}" alt="User Avatar">
+                            	<img class="materialboxed" src="{{ asset('storage/avatars/' . $opinion->user->avatar_filename) }}" alt="User Avatar">
                             @else
-                            <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            	<img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
                             @endif
 						</div>
 						<div class="card-content">
@@ -231,7 +231,7 @@
         $('#count').text('總票數: ' + data.totalVotes);
         $('#agree').text('贊成票數: ' + data.agreeVotes);
         $('#disagree').text('反對票數: ' + data.disagreeVotes); 
-
+		
         $('#agreeProgressBar').css('width', data.agreeRatio + '%');
         $('#agreeRatio').text('贊成比率: ' + data.agreeRatio + '%');
 
