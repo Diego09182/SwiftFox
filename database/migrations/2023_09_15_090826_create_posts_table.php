@@ -19,11 +19,15 @@ return new class extends Migration
             $table->integer('view')->default(0);
             $table->integer('like')->default(0);
             $table->integer('dislike')->default(0);
+            $table->text('keywords')->nullable();
+            $table->string('sentiment')->nullable();
+            $table->text('summary')->nullable();
+            $table->string('category')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-
+        
             $table->foreign('user_id')->references('id')->on('users');
-        });
+        });        
     }
 
     /**

@@ -69,7 +69,7 @@
             <div class="card">
                 <div class="card-content">
                     <div class="row">
-                        <h3 class="center">{{ $post->title }}</h3>
+                        <h3 class="center"><b>{{ $post->title }}</b></h3>
                     </div>
                     <div class="chip left brown">
                         <p class="white-text">#{{ $post->tag }}</p>
@@ -104,6 +104,20 @@
                             <a href="#modal3" class="btn-floating modal-trigger waves-effect waves-light brown left tooltipped" data-delay="50" data-tooltip="檢舉貼文"><i class="material-icons">report_problem</i></a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col s12 m9 right">
+            <div class="card">
+                <div class="card-content">
+                    <h5><b>貼文分析</b></h5>
+                    <h5><b>關鍵字:{{ $post->keywords }}</b></h5>
+                    <h5><b>詞性:{{ $post->sentiment }}</b></h5>
                 </div>
             </div>
         </div>
@@ -241,7 +255,7 @@
             }
             , error: function(xhr) {
                 if (xhr.status === 403) {
-                    alert('已經評價過了');
+                    M.toast({html: '已經評價過了'});
                 }
             }
         });
@@ -257,7 +271,7 @@
             }
             , error: function(xhr) {
                 if (xhr.status === 403) {
-                    alert('已經評價過了');
+                    M.toast({html: '已經評價過了'});
                 }
             }
         });

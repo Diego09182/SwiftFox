@@ -120,14 +120,14 @@
 								<form action="{{ route('opinion.disagree', $opinion->id) }}" method="POST" style="display: inline;">
 									@csrf
 									@method('POST')
-									<button type="submit" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="反對">
+									<button type="submit" onclick="launchConfetti()" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="反對">
 										<i class="material-icons">thumb_down</i>
 									</button>
 								</form>
 								<form action="{{ route('opinion.agree', $opinion->id) }}" method="POST" style="display: inline;">
 									@csrf
 									@method('POST')
-									<button type="submit" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="贊成">
+									<button type="submit" onclick="launchConfetti()" class="btn-floating waves-effect waves-light brown right tooltipped" data-tooltip="贊成">
 										<i class="material-icons">thumb_up</i>
 									</button>
 								</form>
@@ -198,7 +198,7 @@
 			error: function (xhr) {
 				if (xhr.status === 400) {
 					var response = JSON.parse(xhr.responseText);
-					alert(response.error);
+					M.toast({html: response.error});
 				} else {
 					alert('發生錯誤，請稍後再試。');
 				}
@@ -219,7 +219,7 @@
 			error: function (xhr) {
 				if (xhr.status === 400) {
 					var response = JSON.parse(xhr.responseText);
-					alert(response.error);
+					M.toast({html: response.error});
 				} else {
 					alert('發生錯誤，請稍後再試。');
 				}
@@ -237,6 +237,14 @@
 
         $('#disagreeProgressBar').css('width', data.disagreeRatio + '%');
         $('#disagreeRatio').text('反對比率: ' + data.disagreeRatio + '%');
+    }
+
+	function launchConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
     }
 
 </script>

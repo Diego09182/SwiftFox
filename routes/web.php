@@ -30,6 +30,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function () {
+    return response()->json([
+        'MISTRAL_API_KEY' => env('MISTRAL_API_KEY'),
+        'MISTRAL_API_BASE_URL' => env('MISTRAL_API_BASE_URL'),
+    ]);
+});
+
 // Laravel版本
 Route::get('/', function () {
     return view('welcome');
@@ -213,9 +220,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
         Route::get('/file', [FileController::class, 'create'])->name('file.create');
         // 刪除檔案
         Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('file.destroy');
-        // 認同檔案
+        // 喜歡檔案
         Route::post('/files/{file}/like', [FileController::class, 'like'])->name('file.like');
-        // 不認同檔案
+        // 不喜歡檔案
         Route::post('/files/{file}/dislike', [FileController::class, 'dislike'])->name('file.dislike');
 
     });

@@ -70,7 +70,7 @@ class FileController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|min:2|max:20',
             'content' => 'nullable|string',
-            'file' => 'required|file|max:20480',
+            'file' => 'required|file|max:20480|mimes:jpg,jpeg,png,pdf,docx,xlsx,pptx,txt,csv',
             'donation' => 'nullable|string|max:150',
         ], [
             'title.required' => '標題是必填的。',
@@ -81,7 +81,8 @@ class FileController extends Controller
             'file.required' => '檔案是必填的。',
             'file.file' => '檔案必須是一個有效的檔案。',
             'file.max' => '檔案大小不能超過 20480 KB。',
-            'donation.string' => '贊助必須是字串。',
+            'file.mimes' => '只允許上傳 JPG、JPEG、PNG、PDF、Word、Excel、PPT、TXT、CSV 檔案。',
+            'donation.string' => '贊助資訊必須是字串。',
         ]);
 
         if ($request->hasFile('file')) {
