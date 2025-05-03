@@ -44,7 +44,7 @@ class ArticleController extends Controller
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
             'title.max' => '標題不能超過20個字',
-            'content.required' => '內容為必填項目',
+            'content.required' => '內容為必填項目', 
             'content.min' => '內容至少需要50個字',
             'content.max' => '內容不能超過2000個字',
             'tag.required' => '標籤為必填項目',

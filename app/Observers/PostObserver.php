@@ -21,7 +21,6 @@ class PostObserver
 
     private function analyzePost(Post $post)
     {
-        // 使用 TextRazor 進行文本分析
         $analysis = $this->textRazorService->analyzeText($post->content);
         
         if ($analysis && isset($analysis['response'])) {

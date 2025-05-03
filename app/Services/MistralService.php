@@ -22,7 +22,7 @@ class MistralService
      * @param string $message 文章內容或要分析的文本
      * @param string $model 使用的模型名稱（預設為'mistral-small-latest'）
      * @return string|null 返回 AI 生成的回應，若失敗則返回 null
-     */
+    */
     public function chat(string $message, string $model = 'mistral-small-latest'): ?string
     {
         try {

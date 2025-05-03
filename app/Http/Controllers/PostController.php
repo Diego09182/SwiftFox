@@ -80,8 +80,11 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
+
         $top_posts_limit = 3;
+
         $posts = $this->postService->getPostsByPage($page);
+        
         $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
 
         return view('swiftfox.forum.index', compact('posts','top_posts'));
@@ -92,7 +95,7 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:1000',
-            'tag' => 'required|in:學科問題,社團問題,自主學習,大學面試,活動宣傳',
+            'tag' => 'required|in:學科問題,自主學習,大學面試,活動宣傳,其他資訊',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
