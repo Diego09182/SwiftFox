@@ -177,9 +177,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
         // 發布相片
         Route::post('/works/{work}/photo', [PhotoController::class, 'store'])->name('photo.store');
         // 顯示單個照片
-        Route::get('/works/{work}/photo/{photo}', [PhotoController::class, 'show'])->name('photo.show');
+        Route::get('/works/{work}/photos/{photo}', [PhotoController::class, 'show'])->name('photo.show');
         // 刪除相片
-        Route::delete('/works/{work}/photo/{photo}', [PhotoController::class, 'destroy'])->name('photo.destroy');
+        Route::delete('/works/{work}/photos/{photo}', [PhotoController::class, 'destroy'])->name('photo.destroy');
 
         // 顯示所有影片
         Route::get('/videos', [VideoController::class, 'index'])->name('video.index');

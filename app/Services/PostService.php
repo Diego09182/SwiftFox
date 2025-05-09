@@ -6,9 +6,17 @@ use App\Models\Evaluation;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Services\GeminiService;
 
 class PostService
 {
+    protected $gemini;
+
+    public function __construct(GeminiService $gemini)
+    {
+        $this->gemini = $gemini;
+    }
+
     public function getWeeklyTopPosts(int $limit = 10)
     {
         $cacheKey = 'weekly_top_posts_'.$limit;
@@ -69,6 +77,17 @@ class PostService
     {
         $data['content'] = nl2br($data['content']);
         $data['user_id'] = Auth::id();
+
+        $cleanContent = mb_substr(strip_tags($data['content']), 0, 1000);
+
+        try {
+            $summary = $this->gemini->generateSummary($cleanContent);
+        } catch (\Throwable $e) {
+            logger()->error('生成摘要失敗：' . $e->getMessage());
+            $summary = null;
+        }
+
+        $data['summary'] = $summary ?? '（自動摘要生成失敗）';
 
         $post = Post::create($data);
 

@@ -19,6 +19,7 @@ class Post extends Model
         'user_id',
         'keywords',
         'sentiment',
+        'summary',
     ];
 
     public function user()

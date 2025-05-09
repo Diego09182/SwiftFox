@@ -90,7 +90,7 @@
                 <td>{{ $video->filename }}</td>
                 <td>{{ $video->path }}</td>
                 <td>
-                    <form action="{{ route('videos.destroy', ['video' => $video->id]) }}" method="POST">
+                    <form action="{{ route('video.destroy', ['video' => $video->id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-floating waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="刪除">

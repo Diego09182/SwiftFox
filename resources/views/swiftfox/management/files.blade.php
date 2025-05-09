@@ -52,61 +52,78 @@
 
 <div class="container">
     <h4 class="center">檔案列表</h4>
+
     @if ($files->isEmpty())
-    <h3 class="center-align">目前沒有檔案</h3>
+        <h5 class="center-align">目前沒有檔案</h5>
     @else
-    <ul class="pagination center">
-        @if ($files->currentPage() > 1)
-        <li class="waves-effect"><a href="{{ $files->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a></li>
-        @endif
-        @for ($i = 1; $i <= $files->lastPage(); $i++)
-            @if ($i == 1 || $i == $files->lastPage() || abs($files->currentPage() - $i) < 3 || $i==$files->currentPage())
-                <li class="waves-effect {{ $i == $files->currentPage() ? 'active brown' : '' }}"><a href="{{ $files->url($i) }}">{{ $i }}</a></li>
-                @elseif (abs($files->currentPage() - $i) === 3)
-                <li class="disabled">
-                    <span>...</span>
-                </li>
-                @endif
-                @endfor
-                @if ($files->hasMorePages())
-                <li class="waves-effect"><a href="{{ $files->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a></li>
-                @endif
-    </ul>
-    <table class="striped">
-        <thead>
-            <tr>
-                <th>檔案標題</th>
-                <th>內容</th>
-                <th>檔案名稱</th>
-                <th>檔案路徑</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($files as $file)
-            <tr>
-                <td>{{ $file->title }}</td>
-                <td>{{ $file->content }}</td>
-                <td>{{ $file->filename }}</td>
-                <td>{{ $file->path }}</td>
-                <td>
-                    <form action="{{ route('file.destroy', ['file' => $file->id]) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-floating waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="刪除">
-                            <i class="material-icons">delete</i>
-                        </button>
-                    </form>
-                    <a href="{{ route('file.show', ['file' => $file->id]) }}" class="btn waves-effect waves-light brown tooltipped" data-delay="50" data-tooltip="查看檔案">
-                        查看
+        {{-- 分頁 --}}
+        <ul class="pagination center">
+            @if ($files->onFirstPage() === false)
+                <li class="waves-effect">
+                    <a href="{{ $files->previousPageUrl() }}">
+                        <i class="material-icons">chevron_left</i>
                     </a>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                </li>
+            @endif
+
+            @for ($i = 1; $i <= $files->lastPage(); $i++)
+                @if ($i === 1 || $i === $files->lastPage() || abs($files->currentPage() - $i) < 3)
+                    <li class="waves-effect {{ $i === $files->currentPage() ? 'active brown' : '' }}">
+                        <a href="{{ $files->url($i) }}">{{ $i }}</a>
+                    </li>
+                @elseif (abs($files->currentPage() - $i) === 3)
+                    <li class="disabled"><span>...</span></li>
+                @endif
+            @endfor
+
+            @if ($files->hasMorePages())
+                <li class="waves-effect">
+                    <a href="{{ $files->nextPageUrl() }}">
+                        <i class="material-icons">chevron_right</i>
+                    </a>
+                </li>
+            @endif
+        </ul>
+
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>檔案標題</th>
+                    <th>內容</th>
+                    <th>檔案名稱</th>
+                    <th>操作</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($files as $file)
+                    <tr>
+                        <td>{{ $file->title }}</td>
+                        <td>{{ $file->content }}</td>
+                        <td>{{ $file->filename }}</td>
+                        <td>
+                            <div class="flex" style="display: flex; gap: 8px; align-items: center;">
+                                <form action="{{ route('file.destroy', ['file' => $file->id]) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-floating waves-effect waves-light brown tooltipped" data-tooltip="刪除">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td>   
+                            <a href="{{ route('file.show', ['file' => $file->id]) }}" class="btn waves-effect waves-light brown tooltipped" data-tooltip="查看檔案">
+                                查看
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
 </div>
+
 
 @include('component.footer')
 

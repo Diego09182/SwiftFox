@@ -115,9 +115,22 @@
         <div class="col s12 m9 right">
             <div class="card">
                 <div class="card-content">
-                    <h5><b>貼文分析</b></h5>
+                    <h5><b>貼文詞彙分析</b></h5>
                     <h5><b>關鍵字:{{ $post->keywords }}</b></h5>
                     <h5><b>詞性:{{ $post->sentiment }}</b></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col s12 m9 right">
+            <div class="card">
+                <div class="card-content">
+                    <h5><b>AI 貼文分析</b></h5>
+                    <h5><b>{{ $post->summary }}</b></h5>
                 </div>
             </div>
         </div>
@@ -162,8 +175,6 @@
         </div>
     </div>
 </div>
-
-<br>
 
 <div class="container">
     <ul class="collection">

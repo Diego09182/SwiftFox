@@ -76,18 +76,8 @@
                                 <h4 id="reaction">讚: {{ $file->like }} 噓: {{ $file->dislike }}</h4>
                             </div>
                             <div class="col s6 right-align">
-                                <form action="{{ route('file.like', ['file' => $file->id]) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="btn-floating waves-effect waves-light brown tooltipped" data-tooltip="按讚">
-                                        <i class="material-icons">thumb_up</i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('file.dislike', ['file' => $file->id]) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="btn-floating waves-effect waves-light brown tooltipped" data-tooltip="噓他">
-                                        <i class="material-icons">thumb_down</i>
-                                    </button>
-                                </form>
+                                <button class="btn-floating waves-effect waves-light brown right tooltipped like-button" data-file-id="{{ $file->id }}" data-tooltip="按讚"><i class="material-icons">thumb_up</i></button>
+                                <button class="btn-floating waves-effect waves-light brown right tooltipped dislike-button" data-file-id="{{ $file->id }}" data-tooltip="噓他"><i class="material-icons">thumb_down</i></button>
                             </div>
                         </div>
     
