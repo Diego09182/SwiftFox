@@ -8,7 +8,9 @@ use App\Models\Note;
 use App\Models\Opinion;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Video;
 use App\Models\Work;
+use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -22,28 +24,65 @@ class MainController extends Controller
             return Bulletin::orderBy('id', 'desc')->first();
         });
 
-        $userCount = Cache::remember('user_count', 600, function () {
-            return User::count();
+        $userCount = Cache::remember('user_count', 600, fn() => User::count());
+        $postCount = Cache::remember('post_count', 600, fn() => Post::count());
+        $articleCount = Cache::remember('article_count', 600, fn() => Article::count());
+        $workCount = Cache::remember('work_count', 600, fn() => Work::count());
+        $opinionCount = Cache::remember('opinion_count', 600, fn() => Opinion::count());
+        $noteCount = Cache::remember('note_count', 600, fn() => Note::count());
+        $videoCount = Cache::remember('video_count', 600, fn() => Video::count());
+        $postTopUsers = Cache::remember('top_users_post', 600, function () {
+            return Post::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
-        $postCount = Cache::remember('post_count', 600, function () {
-            return Post::count();
+        $articleTopUsers = Cache::remember('top_users_article', 600, function () {
+            return Article::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
-        $articleCount = Cache::remember('article_count', 600, function () {
-            return Article::count();
+        $workTopUsers = Cache::remember('top_users_work', 600, function () {
+            return Work::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
-        $workCount = Cache::remember('work_count', 600, function () {
-            return Work::count();
+        $opinionTopUsers = Cache::remember('top_users_opinion', 600, function () {
+            return Opinion::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
-        $opinionCount = Cache::remember('opinion_count', 600, function () {
-            return Opinion::count();
+        $videoTopUsers = Cache::remember('top_users_video', 600, function () {
+            return Video::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
-        $noteCount = Cache::remember('note_count', 600, function () {
-            return Note::count();
+        $fileTopUsers = Cache::remember('top_users_file', 600, function () {
+            return File::selectRaw('user_id, COUNT(*) as total')
+                ->groupBy('user_id')
+                ->orderByDesc('total')
+                ->with('user:id,name')
+                ->take(5)
+                ->get();
         });
 
         return view('swiftfox.main', compact(
@@ -54,7 +93,15 @@ class MainController extends Controller
             'articleCount',
             'workCount',
             'opinionCount',
-            'noteCount'
+            'noteCount',
+            'videoCount',
+            'postTopUsers',
+            'articleTopUsers',
+            'workTopUsers',
+            'opinionTopUsers',
+            'videoTopUsers',
+            'fileTopUsers'
         ));
     }
+
 }

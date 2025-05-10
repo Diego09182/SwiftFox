@@ -13,7 +13,9 @@
     @include('component.function')
 
 	@include('component.statistics')
-	
+
+	@include('component.ranking')
+
 	<br>
 
 	@include('component.billboard')

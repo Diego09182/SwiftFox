@@ -41,8 +41,8 @@
         <div class="col s12 m4">
             <div class="icon-block">
                 <h2 class="center light-brown-text"><i class="material-icons large">note</i></h2>
-                <h4 class="center">日記數量</h4>
-                <h4 class="center">{{ $noteCount }}</h4>
+                <h4 class="center">影片數量</h4>
+                <h4 class="center">{{ $videoCount }}</h4>
             </div>
         </div>
     </div>
