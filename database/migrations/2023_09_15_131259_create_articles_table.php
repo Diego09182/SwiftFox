@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('tag');
             $table->text('content');
+            $table->text('summary')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 

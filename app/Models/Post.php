@@ -20,6 +20,8 @@ class Post extends Model
         'keywords',
         'sentiment',
         'summary',
+        'violated',
+        'violation_reasons',
     ];
 
     public function user()

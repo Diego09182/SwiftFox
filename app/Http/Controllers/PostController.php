@@ -65,7 +65,7 @@ class PostController extends Controller
                 'dislike' => $post->dislike,
             ], 403);
         }
-        
+
         return response()->json([
             'like' => $post->like,
             'dislike' => $post->dislike,
@@ -84,7 +84,7 @@ class PostController extends Controller
         $top_posts_limit = 3;
 
         $posts = $this->postService->getPostsByPage($page);
-        
+
         $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
 
         return view('swiftfox.forum.index', compact('posts','top_posts'));
@@ -120,7 +120,9 @@ class PostController extends Controller
 
         $comments = $post->comments()->paginate(6);
 
-        return view('swiftfox.forum.show', compact('post', 'comments'));
+        $relatedPosts = $this->postService->getRelatedPosts($post);
+
+        return view('swiftfox.forum.show', compact('post', 'comments', 'relatedPosts'));
     }
 
     public function destroy($id)

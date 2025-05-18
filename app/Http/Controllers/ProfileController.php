@@ -17,12 +17,14 @@ class ProfileController extends Controller
     public function index()
     {
         $user = $this->profileService->getUser();
+
         return view('swiftfox.profile.index', compact('user'));
     }
 
     public function update(Request $request)
     {
         $this->profileService->updateUser($request);
+
         return redirect()->route('profile.index')->with('success', '使用者資料已更新');
     }
 }

@@ -17,6 +17,17 @@ class PostService
         $this->gemini = $gemini;
     }
 
+    public function getRelatedPosts(Post $post, int $limit = 4)
+    {
+        return Post::where('id', '!=', $post->id)
+                    ->where(function ($query) use ($post) {
+                        $query->where('tag', $post->tag)->orWhere('title', 'LIKE', '%' . $post->title . '%');
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->limit($limit)
+                    ->get();
+    }
+
     public function getWeeklyTopPosts(int $limit = 10)
     {
         $cacheKey = 'weekly_top_posts_'.$limit;
@@ -75,19 +86,38 @@ class PostService
 
     public function createPost(array $data)
     {
+        $cleanContent = mb_substr(strip_tags($data['content']), 0, 1000);
+
         $data['content'] = nl2br($data['content']);
         $data['user_id'] = Auth::id();
 
-        $cleanContent = mb_substr(strip_tags($data['content']), 0, 1000);
-
         try {
-            $summary = $this->gemini->generateSummary($cleanContent);
+            $violation = $this->gemini->checkViolation($cleanContent);
+
+            $data['violated'] = $violation['violated'] ?? false;
+
+            $data['violation_reasons'] = !empty($violation['reasons']) && is_array($violation['reasons'])
+                                        ? implode('、', $violation['reasons'])
+                                        : null;
         } catch (\Throwable $e) {
-            logger()->error('生成摘要失敗：' . $e->getMessage());
-            $summary = null;
+            logger()->warning('貼文違規檢測失敗：' . $e->getMessage());
+
+            $data['violated'] = false;
+            $data['violation_reasons'] = null;
         }
 
-        $data['summary'] = $summary ?? '（自動摘要生成失敗）';
+        if (!$data['violated']) {
+            try {
+                $summary = $this->gemini->generateSummary($cleanContent);
+            } catch (\Throwable $e) {
+                logger()->error('生成摘要失敗：' . $e->getMessage());
+                $summary = null;
+            }
+
+            $data['summary'] = $summary ?? '（自動摘要生成失敗）';
+        } else {
+            $data['summary'] = '（貼文違規，不產生摘要）';
+        }
 
         $post = Post::create($data);
 

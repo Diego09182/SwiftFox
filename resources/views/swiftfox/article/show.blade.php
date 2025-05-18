@@ -11,9 +11,9 @@
 </head>
 <body>
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
@@ -35,7 +35,7 @@
 			</li>
 		</ul>
 	</div>
-	
+
 	<div class="container">
 		<div class="row">
 			<div class="col m12 s12">
@@ -63,6 +63,12 @@
 				</div>
 				<br><br><br>
 				<hr id="divider">
+                <div class="card brown lighten-5">
+					<div class="card-content">
+						<span class="card-title brown-text"><b>AI 摘要</b></span>
+						<h5 class="black-text">{{ $article->summary }}</h5>
+					</div>
+				</div>
 				<article>
 					<h5 :style="{ fontSize: fontSize + 'px', 'word-wrap': 'break-word' }">{!! $article->content !!}</h5>
 				</article>
@@ -71,13 +77,12 @@
 	</div>
 
 	<br>
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
-<!--  Scripts-->
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="https://unpkg.com/vue-router@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>

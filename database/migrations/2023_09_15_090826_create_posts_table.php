@@ -22,12 +22,14 @@ return new class extends Migration
             $table->text('keywords')->nullable();
             $table->string('sentiment')->nullable();
             $table->text('summary')->nullable();
+            $table->boolean('violated')->default(false);
+            $table->text('violation_reasons')->nullable();
             $table->string('category')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-        
+
             $table->foreign('user_id')->references('id')->on('users');
-        });        
+        });
     }
 
     /**

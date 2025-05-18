@@ -25,13 +25,13 @@
 		$('select').formSelect();
 	});
 
-	
+
 	const About = {
 	template:
 		`<div>
 
 			<developer></developer>
-				
+
 		</div>`
 	}
 
@@ -53,14 +53,14 @@
 	const Home = {
 	template:
 		`<div>
-					
+
 			<serve></serve>
-					
+
 			<slogan></slogan>
-					
+
 		</div>`
 	}
-	
+
 	const router = VueRouter.createRouter({
     	history: VueRouter.createWebHashHistory(),
     	routes : [
@@ -86,7 +86,7 @@
 	});
 
 	app.component('rule', {
-		template:  
+		template:
 		`<div class="container">
 			<div class="container">
 				<div class="center-align">
@@ -99,31 +99,55 @@
 								<h5>
 									<blockquote>
 										<table>
-											<thead>
-												<tr>
-													<th data-field="id">規則</th>
-													<th data-field="name">處罰內容</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>禁止侵犯他人著作權</td>
-													<td>封鎖帳號</td>
-												</tr>
-												<tr>
-													<td>禁止任何違法行為</td>
-													<td>封鎖帳號</td>
-												</tr>
-												<tr>
-													<td>禁止發送仇恨、垃圾內容</td>
-													<td>封鎖帳號</td>
-												</tr>
-												<tr>
-													<td>禁止宣傳未授權的任何產品及服務</td>
-													<td>封鎖帳號</td>
-												</tr>
-											</tbody>
-										</table>
+                                            <thead>
+                                                <tr>
+                                                    <th>規則內容</th>
+                                                    <th>處理方式</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                <td>禁止侵犯他人著作權<br><small>例如未經授權轉載文章、圖片、音樂、影片等</small></td>
+                                                <td>封鎖帳號，並視情況配合相關法律處理</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止任何違法行為<br><small>包括但不限於詐騙、販毒、恐嚇、駭客攻擊等</small></td>
+                                                <td>封鎖帳號，並視情節通報警方處理</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止發送仇恨言論、歧視、騷擾、暴力威脅<br><small>不限於種族、性別、宗教、國籍等</small></td>
+                                                <td>封鎖帳號，並刪除相關內容</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止發布垃圾訊息與惡意連結<br><small>例如重複貼文、釣魚網站、病毒連結等</small></td>
+                                                <td>封鎖帳號並清除相關訊息</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止宣傳未經授權的產品或服務<br><small>包括商業廣告、推銷活動、聯盟行銷連結等</small></td>
+                                                <td>封鎖帳號</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止散佈不實訊息或陰謀論<br><small>例如假新聞、誤導性資訊</small></td>
+                                                <td>警告一次，屢犯者封鎖帳號</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止冒充他人或假造身分資訊</td>
+                                                <td>封鎖帳號</td>
+                                                </tr>
+                                                <tr>
+                                                <td>尊重他人隱私<br><small>禁止公開或散布他人個資、對話紀錄、照片等</small></td>
+                                                <td>封鎖帳號，嚴重者報警處理</td>
+                                                </tr>
+                                                <tr>
+                                                <td>禁止濫用平台功能<br><small>例如利用漏洞、作弊、自動化機器人發送訊息等</small></td>
+                                                <td>封鎖帳號，並修復系統問題</td>
+                                                </tr>
+                                                <tr>
+                                                <td>違規累犯者或情節重大者<br><small>將永久停權，且不接受申訴</small></td>
+                                                <td>永久封鎖帳號</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 									</blockquote>
 								</h5>
 							</div>
@@ -169,7 +193,7 @@
 	})
 
 	app.component('terms', {
-		template:  
+		template:
 		`<div class="container">
 			<div class="container">
 				<div class="center-align">
@@ -193,7 +217,7 @@
 	})
 
 	app.component('serveterms', {
-		template:  
+		template:
 		`<div class="container">
 			<div class="container">
 				<div class="center-align">
@@ -204,7 +228,7 @@
 						<div class="card-stacked">
 							<div class="card-content">
 								<h4>
-									<blockquote>				                
+									<blockquote>
 										1.使用限制
 										<br>
 										1.1 您使用SwiftFox(以下稱本網站)必須遵守中華民國法律及網站的相關規定。
@@ -271,7 +295,7 @@
 			</h3>
 		</div>`
 	})
-	
+
 	app.component('serve', {
 	 	template:
 		`<div class="container">
@@ -291,7 +315,7 @@
 						<h5 class="center"><b>用戶經驗分享</b></h5>
 						<p class="center">可以進行成果發表與討論分享</p>
 					</div>
-				</div>	
+				</div>
 				<div class="col s12 m4">
 					<div class="icon-block">
 						<h2 class="center light-brown-text"><i class="material-icons large">assessment</i></h2>
@@ -302,7 +326,7 @@
 			</div>
 		</div>`
 	})
-	
+
 	app.component('developer', {
 		template:
 		`<div class="container">

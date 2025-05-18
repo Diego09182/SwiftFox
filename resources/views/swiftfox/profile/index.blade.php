@@ -3,15 +3,15 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
-	
+
 	<br>
-	
+
 	<div class="container">
 		<h4 class="center-align">使用者資料</h4>
 		<div class="card">
@@ -51,7 +51,7 @@
 							<div class="input-field col m6">
 								<h4>*E-mail</h4>
 								<input name="email" type="text" value="{{ $user->email }}">
-							</div>  
+							</div>
 							<div class="input-field col m6">
 								<h4>個人網站：</h4>
 								<input name="url" type="text"  value="{{ $user->url }}">
@@ -99,12 +99,12 @@
 				</div>
 			</form>
 		</div>
-	</div>	
-	
+	</div>
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

@@ -5,9 +5,18 @@ namespace App\Services;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Services\GeminiService;
 
 class ArticleService
 {
+
+    protected $gemini;
+
+    public function __construct(GeminiService $gemini)
+    {
+        $this->gemini = $gemini;
+    }
+
     public function searchArticles(?string $search = null)
     {
         $cacheKey = 'search_articles_'.md5($search);
@@ -41,6 +50,17 @@ class ArticleService
     {
         $data['content'] = nl2br($data['content']);
         $data['user_id'] = Auth::id();
+
+        $cleanContent = mb_substr(strip_tags($data['content']), 0, 1000);
+
+        try {
+            $summary = $this->gemini->generateSummary($cleanContent);
+        } catch (\Throwable $e) {
+            logger()->error('生成文章摘要失敗：' . $e->getMessage());
+            $summary = null;
+        }
+
+        $data['summary'] = $summary ?? '（自動摘要生成失敗）';
 
         $article = Article::create($data);
 
