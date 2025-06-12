@@ -3,9 +3,9 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
@@ -34,10 +34,10 @@
 	</div>
 
 	<div class="container">
-		<div class="card blue-grey darken-1">
+		<div class="card">
 			<form name="ArticleForm" method="post" action="{{ route('article.store') }}">
 				@csrf
-				<div class="card-content white-text">
+				<div class="card-content black-text">
 					<span class="card-title">發表文章</span>
 					<div class="row">
 						<div class="input-field col m8">
@@ -60,7 +60,7 @@
 						<div class="input-field col m12">
 							<div class="input-field">
 								<i class="material-icons prefix">mode_edit</i>
-								<textarea class="materialize-textarea" name="content" size="300" length="300"></textarea>
+								<textarea class="materialize-textarea" name="content"></textarea>
 								<label for="icon_prefix2">內容</label>
 							</div>
 						</div>
@@ -71,15 +71,15 @@
 			</form>
 		</div>
 	</div>
-		
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
@@ -37,17 +37,17 @@
 					<div class="col s12 m12">
 						<div class="card hoverable center" id="article">
 							<div class="card-content">
-								<h5 class="truncate">主題: {{ $article->title }}</h5>
+								<h5 class="truncate"><b>主題: {{ $article->title }}</b></h5>
 								<br>
 								<div class="chip left brown">
 									<p class="white-text">#{{ $article->tag }}</p>
 								</div>
-								<p class="right">作者：{{ $article->user->account }}</p>
+								<p class="right"><b>作者：{{ $article->user->account }}</b></p>
 								<br>
-								<div class="right">{{ $article->created_at }}</div>
-								<br>
+								<p class="right"><b>{{ $article->created_at }}</b></p>
+								<br><br>
 								<a class="waves-effect waves-light btn right brown" href="{{ route('article.show', ['article' => $article->id]) }}">查看</a>
-								<br>
+								<br><br>
 							</div>
 						</div>
 					</div>
@@ -55,15 +55,15 @@
 			@endif
 		</div>
 	</div>
-		
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

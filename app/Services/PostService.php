@@ -17,7 +17,7 @@ class PostService
         $this->gemini = $gemini;
     }
 
-    public function getRelatedPosts(Post $post, int $limit = 4)
+    public function getRelatedPosts(Post $post, int $limit = 3)
     {
         return Post::where('id', '!=', $post->id)
                     ->where(function ($query) use ($post) {

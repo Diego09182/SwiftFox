@@ -43,9 +43,9 @@
             <div class="card">
                 <div class="card-image">
                     @if ($post->user->avatar_filename)
-                    <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
+                        <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
                     @else
-                    <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                        <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
                     @endif
                 </div>
                 <div class="card-content">
@@ -136,22 +136,22 @@
             <div class="card">
                 <div class="card-content">
                     <h5><b>違規檢測結果</b></h5>
-                    <p>
+                    <h5>
                         是否違規：
                         @if($post->violated)
                             <h5 style="color: red; font-weight: bold;">是</h5>
                         @else
                             <h5 style="color: green; font-weight: bold;">否</h5>
                         @endif
-                    </p>
-                    <p>
+                    </h5>
+                    <h5>
                         違規理由：
                         @if(!empty($post->violation_reasons))
                             <h5><b>{{ $post->violation_reasons }}</b></h5>
                         @else
                             無
                         @endif
-                    </p>
+                    </h5>
                 </div>
             </div>
         </div>

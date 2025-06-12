@@ -93,9 +93,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|min:2|max:50',
-            'content' => 'required|min:2|max:2000',
-            'tag' => 'required|in:學科問題,自主學習,大學面試,活動宣傳,其他資訊',
+            'title' => 'required|min:2|max:20',
+            'content' => 'required|min:2|max:1000',
+            'tag' => 'required|in:學習問題,學習資源,活動宣傳,其他內容',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',

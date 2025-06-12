@@ -41,10 +41,10 @@ class ActivityController extends Controller
             'title.min' => '標題至少需要2個字',
             'title.max' => '標題不能超過20個字',
             'content.required' => '內容為必填項目',
-            'date.required' => '日期為必填項目',
-            'location.required' => '地點為必填項目',
             'content.min' => '內容至少需要2個字',
             'content.max' => '內容不能超過50個字',
+            'date.required' => '日期為必填項目',
+            'location.required' => '地點為必填項目',
         ]);
 
         $this->activityService->createActivity($validatedData);

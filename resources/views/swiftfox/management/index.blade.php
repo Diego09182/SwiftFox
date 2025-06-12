@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-	
+
 	@include('component.navigation')
-	
+
 	@include('component.serve.message')
 
 	@include('component.logoutbanner')
-	
+
 	<div class="fixed-action-btn click-to-toggle">
 		<a class="btn-floating btn-large red">
 			<i class="large material-icons brown">menu</i>
@@ -38,27 +38,35 @@
 		</div>
 	</div>
 
-	<div id="clubForm" class="col s12">
+	<div id="clubForm" class="col m12">
 		@include('component.form.club')
 	</div>
-	<div id="activityForm" class="col s12">
+	<div id="activityForm" class="col m12">
 		@include('component.form.activity')
 	</div>
-	<div id="bulletinForm" class="col s12">
+	<div id="bulletinForm" class="col m12">
 		@include('component.form.bulletin')
 	</div>
-	
+
 	@include('component.managementlist')
 
 	<br>
-	
+
 	@include('component.footer')
-	
+
 @endsection
 
 @section('scripts')
 
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoClose: true
+        });
+    });
+
 
     $('#bulletinForm').on('submit', function(event) {
         event.preventDefault();
@@ -119,35 +127,44 @@
 	});
 
 	$('#activityForm').on('submit', function(event) {
-		event.preventDefault();
+    event.preventDefault();
 
-		var title = $('#activity-title').val();
-		var content = $('#activity-content').val();
-		var location = $('#activity-location').val();
-		var date = $('#activity-date').val();
-		var url = $('#activity-url').val();
-		var _token = $('input[name="_token"]').val();
+    var title = $('#activity-title').val();
+    var content = $('#activity-content').val();
+    var location = $('#activity-location').val();
+    var date = $('#activity-date').val();
+    var url = $('#activity-url').val();
+    var _token = $('input[name="_token"]').val();
 
-    	$.ajax({
-			url: "{{ route('activity.store') }}",
-			method: "POST",
-			data: {
-				title: title,
-				content: content,
-				location: location,
-				date: date,
-				url: url,
-				_token: _token
-			},
-			success: function(response) {
-				if (response.success) {
-					M.toast({html: response.message});
-				} else {
-					M.toast({html: response.message});
-				}
-			}
-		});
-	});
+    $.ajax({
+        url: "{{ route('activity.store') }}",
+        method: "POST",
+        data: {
+            title: title,
+            content: content,
+            location: location,
+            date: date,
+            url: url,
+            _token: _token
+        },
+        success: function(response) {
+            M.toast({ html: response.message });
+        },
+        error: function(xhr) {
+            if (xhr.status === 422) {
+                const errors = xhr.responseJSON.errors;
+                let messages = '';
+                for (let field in errors) {
+                    messages += errors[field].join(', ') + '\n';
+                }
+                alert('表單驗證錯誤：\n' + messages);
+            } else {
+                alert('其他錯誤：\n' + xhr.responseText);
+            }
+        }
+    });
+});
+
 
 </script>
 

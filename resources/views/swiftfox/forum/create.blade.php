@@ -3,9 +3,9 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
@@ -25,10 +25,10 @@
 						<div class="input-field col m4">
 							<select name="tag">
 								<option value="" disabled selected>貼文標籤</option>
-								<option value="學科問題">學科問題</option>
-								<option value="社團問題">社團問題</option>
+								<option value="學習問題">學習問題</option>
+								<option value="學習資源">學習資源</option>
 								<option value="活動宣傳">活動宣傳</option>
-								<option value="其他事項">其他事項</option>
+								<option value="其他內容">其他內容</option>
 							</select>
 							<label>貼文標籤</label>
 						</div>
@@ -48,13 +48,13 @@
 	</div>
 
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection
