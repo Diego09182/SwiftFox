@@ -3,9 +3,9 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
@@ -30,14 +30,14 @@
 
 	<div class="container">
 		<div class="row">
-			<h3 class="center-align">社團介紹</h3>
+			<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">社團介紹</h3>
 			<br>
 			@if ($clubs->isEmpty())
-            	<h3 class="center-align">目前沒有社團</h3>
+            	<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有社團</h3>
         	@else
 				{{ $clubs->links('vendor.pagination.materialize') }}
 				@foreach ($clubs as $club)
-					<div class="col s12 m4">
+					<div class="col s12 m4  wow animate__animated animate__fadeInUp animate__delay-2s">
 						<div class="card" id="post">
 							<div class="card-content">
 								<h5 class="truncate">社團名稱:{{ $club->title }}</h5>
@@ -71,15 +71,15 @@
 			@endif
 		</div>
 	</div>
-		
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

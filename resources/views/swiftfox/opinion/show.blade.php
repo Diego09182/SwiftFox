@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
-	
+
 	<br>
 
 	<div class="fixed-action-btn click-to-toggle">
@@ -86,12 +86,30 @@
 							<h5>{{ $opinion->user->account }}</h5>
 						</div>
 					</div>
-					<ul class="collapsible" data-collapsible="accordion">
-						<li>
-							<div class="collapsible-header"><i class="material-icons">info</i>自我介紹</div>
-							<div class="collapsible-body"><p>{{ $opinion->user->info }}</p></div>
-						</li>
-					</ul>
+                    <ul class="collapsible animate__animated animate__fadeInLeft animate__delay-1s" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">info</i>等級徽章</div>
+                            <div class="collapsible-body center">
+                                <div style="text-align: center; font-size: 1.8rem; display: inline-flex; align-items: center; gap: 0.6rem; justify-content: center; flex-wrap: wrap;">
+                                    @php
+                                        $times = $opinion->user->times;
+                                    @endphp
+                                    @if ($times >= 100)
+                                        <span class="badge gold" title="鑽石會員" style="font-size: 2.2rem;">💎</span> <span style="font-size: 1.6rem;">鑽石會員</span>
+                                    @elseif ($times >= 50)
+                                        <span class="badge silver" title="白金會員" style="font-size: 2.2rem;">🥈</span> <span style="font-size: 1.6rem;">白金會員</span>
+                                    @elseif ($times >= 20)
+                                        <span class="badge bronze" title="金牌會員" style="font-size: 2.2rem;">🥉</span> <span style="font-size: 1.6rem;">金牌會員</span>
+                                    @elseif ($times >= 10)
+                                        <span class="badge blue" title="青銅會員" style="font-size: 2.2rem;">🔵</span> <span style="font-size: 1.6rem;">青銅會員</span>
+                                    @else
+                                        <span class="badge gray" title="新手會員" style="font-size: 2.2rem;">⚪</span> <span style="font-size: 1.6rem;">新手會員</span>
+                                    @endif
+                                </div>
+                                <br><br>
+                            </div>
+                        </li>
+                    </ul>
 				</div>
 			</div>
 			<div class="col s12 m9 right">
@@ -166,11 +184,11 @@
 			<h3 id="disagreeRatio" class="right">反對比率: {{ $disagreeRatio }}%</h3>
 		</div>
 	</div>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
 
 @endsection
@@ -188,7 +206,7 @@
 	$('form[action*="agree"]').on('submit', function(event) {
 		event.preventDefault();
 		const url = $(this).attr('action');
-		
+
 		$.ajax({
 			type: 'POST',
 			url: url,
@@ -209,7 +227,7 @@
 	$('form[action*="disagree"]').on('submit', function(event) {
 		event.preventDefault();
 		const url = $(this).attr('action');
-		
+
 		$.ajax({
 			type: 'POST',
 			url: url,
@@ -230,8 +248,8 @@
     function updateOpinionData(data) {
         $('#count').text('總票數: ' + data.totalVotes);
         $('#agree').text('贊成票數: ' + data.agreeVotes);
-        $('#disagree').text('反對票數: ' + data.disagreeVotes); 
-		
+        $('#disagree').text('反對票數: ' + data.disagreeVotes);
+
         $('#agreeProgressBar').css('width', data.agreeRatio + '%');
         $('#agreeRatio').text('贊成比率: ' + data.agreeRatio + '%');
 

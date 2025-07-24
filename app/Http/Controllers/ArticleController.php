@@ -53,6 +53,10 @@ class ArticleController extends Controller
 
         $this->articleService->createArticle($validatedData);
 
+        $user = Auth::user();
+
+        $user->increment('points', 10);
+
         return redirect()->route('article.index')->with('success', '文章已創建成功！');
     }
 

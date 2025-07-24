@@ -16,18 +16,18 @@
 
     <div class="container">
         <div class="row">
-            <h3 class="center-align">所有檔案</h3>
+            <h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">所有檔案</h3>
             <br>
             <div class="row center">
                 <a href="{{ route('file.create') }}" class="waves-effect waves-light btn brown"><i class="material-icons left">add</i>新增檔案</a>
             </div>
             @if ($files->isEmpty())
-            <h3 class="center-align">目前沒有檔案</h3>
+            <h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有檔案</h3>
             @else
             {{ $files->links('vendor.pagination.materialize') }}
             <div class="row">
                 @foreach ($files as $file)
-                <div class="col s12 m4">
+                <div class="col s12 m4  wow animate__animated animate__fadeInUp animate__delay-2s">
                     <div class="card hoverable center" id="file">
                         <div class="card-content">
                             <h5 class="truncate">標題: {{ $file->title }}</h5>

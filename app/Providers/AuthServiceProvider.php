@@ -6,13 +6,13 @@ use App\Models\Activity;
 use App\Models\Article;
 use App\Models\Club;
 use App\Models\Comment;
+use App\Models\File;
 use App\Models\Note;
 use App\Models\Opinion;
 use App\Models\Photo;
 use App\Models\Post;
 use App\Models\Video;
 use App\Models\Work;
-use App\Models\File;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('delete-post', function ($user, Post $post) {
             return $user->id === $post->user_id || $user->administration == 5;
         });
-        
+
         Gate::define('delete-activity', function ($user, Activity $activity) {
             return $activity->user_id == $user->id || $user->administration == 5;
         });

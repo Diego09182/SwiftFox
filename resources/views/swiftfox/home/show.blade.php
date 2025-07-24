@@ -93,11 +93,27 @@
                             <h5>{{ $note->user->account }}</h5>
                         </div>
                     </div>
-                    <ul class="collapsible" data-collapsible="accordion">
+                    <ul class="collapsible animate__animated animate__fadeInLeft animate__delay-1s" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header"><i class="material-icons">info</i>自我介紹</div>
-                            <div class="collapsible-body">
-                                <p>{{ $note->user->info }}</p>
+                            <div class="collapsible-header"><i class="material-icons">info</i>等級徽章</div>
+                            <div class="collapsible-body center">
+                                <div style="text-align: center; font-size: 1.8rem; display: inline-flex; align-items: center; gap: 0.6rem; justify-content: center; flex-wrap: wrap;">
+                                    @php
+                                        $times = $opinion->user->times;
+                                    @endphp
+                                    @if ($times >= 100)
+                                        <span class="badge gold" title="鑽石會員" style="font-size: 2.2rem;">💎</span> <span style="font-size: 1.6rem;">鑽石會員</span>
+                                    @elseif ($times >= 50)
+                                        <span class="badge silver" title="白金會員" style="font-size: 2.2rem;">🥈</span> <span style="font-size: 1.6rem;">白金會員</span>
+                                    @elseif ($times >= 20)
+                                        <span class="badge bronze" title="金牌會員" style="font-size: 2.2rem;">🥉</span> <span style="font-size: 1.6rem;">金牌會員</span>
+                                    @elseif ($times >= 10)
+                                        <span class="badge blue" title="青銅會員" style="font-size: 2.2rem;">🔵</span> <span style="font-size: 1.6rem;">青銅會員</span>
+                                    @else
+                                        <span class="badge gray" title="新手會員" style="font-size: 2.2rem;">⚪</span> <span style="font-size: 1.6rem;">新手會員</span>
+                                    @endif
+                                </div>
+                                <br><br>
                             </div>
                         </li>
                     </ul>
@@ -108,16 +124,16 @@
                     <br><br>
                     <div class="card-content center">
                         <h3>{{ $note->title }}</h4>
-                            <h5>{!! $note->content !!}</h5>
-                            <br>
-                            <div class="chip left brown">
-                                <p class="white-text">#{{ $note->tag }}</p>
-                            </div>
-                            <p class="right">發文時間: {{ $note->created_at }}</p>
-                            <br><br>
-                            <div class="card-action">
-                                <div class="row">
-                                    @if(Auth::user()->administration == 5 || $note->user->id == Auth::user()->id)
+                        <h5>{!! $note->content !!}</h5>
+                        <br>
+                        <div class="chip left brown">
+                            <p class="white-text">#{{ $note->tag }}</p>
+                        </div>
+                        <p class="right">發文時間: {{ $note->created_at }}</p>
+                        <br><br>
+                        <div class="card-action">
+                            <div class="row">
+                                @if(Auth::user()->administration == 5 || $note->user->id == Auth::user()->id)
                                     <form action="{{ route('note.destroy', $note->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -125,9 +141,9 @@
                                             刪除
                                         </button>
                                     </form>
-                                    @endif
-                                </div>
+                                @endif
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>

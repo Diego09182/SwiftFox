@@ -1,25 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
-	
+
 	@include('component.toolbar')
 
 	<div class="container">
 		<div class="row">
-			<h3 class="center-align">所有活動</h3>
+			<h3 class="center-align wow animate__animated animate__fadeInUp animate__delay-2s">所有活動</h3>
 			<br>
 			@if ($activities->isEmpty())
-            	<h3 class="center-align">目前沒有活動</h3>
+            	<h3 class="center-align wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有活動</h3>
         	@else
 				{{ $activities->links('vendor.pagination.materialize') }}
 				@foreach ($activities as $activity)
-					<div class="col s12 m4">
+					<div class="col s12 m4 wow animate__animated animate__fadeInUp animate__delay-2s">
 						<div class="card" id="post">
 							<div class="card-content">
 								<h4 class="truncate">活動名稱:{{ $activity->title }}</h4>
@@ -54,15 +54,15 @@
 			@endif
 		</div>
 	</div>
-		
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

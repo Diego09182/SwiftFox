@@ -12,7 +12,7 @@
                             <label for="icon_prefix2">檢舉標題</label>
                         </div>
                         <div class="input-field col m4">
-                            <select name="tag">
+                            <select name="report">
                                 <option value="" disabled selected>違規事項</option>
                                 <option value="違法行為">違法行為</option>
                                 <option value="仇恨內容">仇恨內容</option>

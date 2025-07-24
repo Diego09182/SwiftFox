@@ -1,27 +1,25 @@
+<div class="container">
 @if ($errors->any())
-    <div class="card red center">
-        <div class="card-content white-text">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li><h4>{{ $error }}</h4></li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="card-panel red lighten-1 white-text animate__animated animate__fadeInDown">
+        <ul class="browser-default">
+            @foreach ($errors->all() as $error)
+                <li><i class="material-icons left">error_outline</i> {{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
 @endif
 
-@if(session('error'))
-    <div class="card red center">
-        <div class="card-content white-text">
-            <h4>{{ session('error') }}</h4>
-        </div>
+@if (session('error'))
+    <div class="card-panel red lighten-1 white-text animate__animated animate__fadeInDown">
+        <i class="material-icons left">error</i>
+        {{ session('error') }}
     </div>
 @endif
 
 @if (session('success'))
-    <div class="card green center">
-        <div class="card-content white-text">
-            <h4>{{ session('success') }}</h4>
-        </div>
+    <div class="card-panel green lighten-1 white-text animate__animated animate__fadeInDown">
+        <i class="material-icons left">check_circle</i>
+        {{ session('success') }}
     </div>
 @endif
+</div>

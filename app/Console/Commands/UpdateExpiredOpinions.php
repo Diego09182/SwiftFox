@@ -29,8 +29,8 @@ class UpdateExpiredOpinions extends Command
         $currentTime = now();
 
         Opinion::where('finished_time', '<=', $currentTime)
-                ->where('status', '=', 1)
-                ->update(['status' => 0]);
+            ->where('status', '=', 1)
+            ->update(['status' => 0]);
 
         $this->info('Expired opinions updated successfully.');
     }

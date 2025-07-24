@@ -30,5 +30,4 @@ class File extends Model
     {
         return $this->hasMany(FileEvaluation::class);
     }
-
 }

@@ -13,7 +13,7 @@ class FileService
     {
         $this->evaluateFile($file, 1);
         $file->increment('like');
-        
+
         return $file;
     }
 
@@ -21,7 +21,7 @@ class FileService
     {
         $this->evaluateFile($file, -1);
         $file->increment('dislike');
-        
+
         return $file;
     }
 
@@ -30,8 +30,8 @@ class FileService
         $user = Auth::user();
 
         $evaluation = FileEvaluation::where('file_id', $file->id)
-                                    ->where('user_id', $user->id)
-                                    ->first();
+            ->where('user_id', $user->id)
+            ->first();
 
         if ($evaluation) {
             throw new \Exception('已經評價過了');

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Video;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 

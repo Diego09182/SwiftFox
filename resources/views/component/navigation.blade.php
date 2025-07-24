@@ -25,8 +25,8 @@
         @auth
             <ul class="left hide-on-med-and-down">
                 <b>
-                    <li><a>{{ Auth::user()->name }}</a></li>
-                    <li><a>{{ Auth::user()->account }}</a></li>
+                    <li><a href="{{ route('logout') }}">登出</a></li>
+                    <li><a href="{{route('profile.redemptions')}}">兌換紀錄</a></li>
                 </b>
             </ul>
             <ul class="right hide-on-med-and-down">
@@ -34,7 +34,7 @@
                     <li><a href="{{route('profile.index')}}">個人資訊</a></li>
                     <li><a href="{{route('home.index')}}">個人檔案</a></li>
                     @if(Auth::user()->administration == 5)
-                        <li><a href="{{route('management.index')}}">後台</a></li>
+                        <li><a href="{{route('management.index')}}">系統管理</a></li>
                     @endif
                 </b>
             </ul>
@@ -66,8 +66,6 @@
         </li>
     @endguest
     <li><a class="waves-effect"><i class="material-icons">info_outline</i><b>開發者資訊</b></a></li>
-    <li><a class="waves-effect"><b>開發者名稱:</b></a></li>
-    <li><a class="waves-effect"><b>SSSS</b></a></li>
-    <li><a class="waves-effect"><b>個人信箱:</b></a></li>
+    <li><a class="waves-effect"><b>開發者信箱:</b></a></li>
     <li><a class="waves-effect"><b>ssss.gladmasy@gmail.com</b></a></li>
 </ul>

@@ -20,16 +20,22 @@
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix">title</i>
-                            <input class="validate" name="title" type="text">
+                            <input class="validate white-text" name="title" type="text" value="{{ old('title') }}">
                             <label for="title">標題</label>
+                            @error('title')
+                                <span class="red-text">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix">description</i>
-                            <textarea class="materialize-textarea" name="content"></textarea>
+                            <textarea class="materialize-textarea white-text" name="content">{{ old('content') }}</textarea>
                             <label for="content">內容</label>
+                            @error('content')
+                                <span class="red-text">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
@@ -40,15 +46,21 @@
                                 <input type="file" name="file">
                             </div>
                             <div class="file-path-wrapper">
-                                <input class="file-path validate" type="text">
+                                <input class="file-path validate white-text" type="text">
                             </div>
+                            @error('file')
+                                <span class="red-text">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="s12 m6 input-field">
-                            <input id="donation" type="text" name="donation">
+                            <input id="donation" type="text" name="donation" class="white-text" value="{{ old('donation') }}">
                             <label for="donation">贊助連結</label>
+                            @error('donation')
+                                <span class="red-text">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

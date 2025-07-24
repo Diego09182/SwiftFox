@@ -11,14 +11,14 @@
     @include('component.logoutbanner')
 
     <div class="container">
-        <div class="card blue-grey darken-1">
+        <div class="card white">
             <form name="PhotoForm" method="post" action="{{ route('photo.store', ['work' => $work->id]) }}" enctype="multipart/form-data">
                 @csrf
-                <div class="card-content white-text">
-                    <span class="card-title">發布作品</span>
+                <div class="card-content">
+                    <span class="card-title black-text">發布作品</span>
                     <div class="row">
                         <div class="col m5 right">
-                            <h5>帳號:{{ Auth::user()->account }}</h5>
+                            <h5 class="black-text">帳號: {{ Auth::user()->account }}</h5>
                         </div>
                     </div>
                     <div class="row">
@@ -28,24 +28,22 @@
                                 <input type="file" name="file">
                             </div>
                             <div class="file-path-wrapper">
-                                <input name="file" class="file-path validate" type="text">
+                                <input name="file" class="file-path validate black-text" type="text">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col m12">
-                            <i class="material-icons prefix">mode_edit</i>
-                            <textarea class="materialize-textarea" name="name"></textarea>
-                            <label for="icon_prefix2">名稱</label>
+                            <i class="material-icons prefix black-text">mode_edit</i>
+                            <textarea class="materialize-textarea black-text" name="name"></textarea>
+                            <label for="icon_prefix2" class="black-text">名稱</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col m12">
-                            <div class="input-field">
-                                <i class="material-icons prefix">mode_edit</i>
-                                <textarea class="materialize-textarea" name="content"></textarea>
-                                <label for="icon_prefix2">內容</label>
-                            </div>
+                            <i class="material-icons prefix black-text">mode_edit</i>
+                            <textarea class="materialize-textarea black-text" name="content"></textarea>
+                            <label for="icon_prefix2" class="black-text">內容</label>
                         </div>
                     </div>
                     <button class="waves-effect waves-light btn brown right" type="submit">發布作品</button>

@@ -20,7 +20,7 @@ class ReportController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:10',
             'content' => 'required|min:2|max:50',
-            'tag' => 'required|in:違法行為,仇恨內容,垃圾內容,未授權的產品及服務',
+            'report' => 'required|in:違法行為,仇恨內容,垃圾內容,未授權的產品及服務',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
@@ -28,8 +28,8 @@ class ReportController extends Controller
             'content.required' => '內容為必填項目',
             'content.min' => '內容至少需要2個字',
             'content.max' => '內容不能超過50個字',
-            'tag.required' => '標籤為必填項目',
-            'tag.in' => '標籤必須符合選項',
+            'report.required' => '標籤為必填項目',
+            'report.in' => '標籤必須符合選項',
         ]);
 
         $this->reportService->createReport($validatedData, $post->id);

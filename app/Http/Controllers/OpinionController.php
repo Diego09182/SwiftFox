@@ -45,7 +45,7 @@ class OpinionController extends Controller
 
         try {
             $opinion = $this->opinionService->vote($userId, $opinion, 'disagree');
-            
+
             return response()->json([
                 'totalVotes' => $opinion->count,
                 'agreeVotes' => $opinion->agree,
@@ -92,6 +92,10 @@ class OpinionController extends Controller
         ]);
 
         $this->opinionService->createOpinion($validatedData);
+
+        $user = Auth::user();
+
+        $user->increment('points', 10);
 
         return redirect()->route('opinion.index')->with('success', '投票已創建成功！');
     }

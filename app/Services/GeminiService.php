@@ -5,17 +5,31 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * GeminiService
+ * 負責封裝與 Google Gemini API 的互動邏輯
+ */
 class GeminiService
 {
     protected string $apiKey;
+
     protected string $endpoint;
 
+    /**
+     * 建構子：初始化 API 金鑰與端點網址
+     */
     public function __construct()
     {
         $this->apiKey = env('GEMINI_API_KEY');
         $this->endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     }
 
+    /**
+     * 產生 50 字內繁體中文摘要（禁止受文字引導）
+     *
+     * @param  string  $content  原始文字內容
+     * @return string|null 回傳摘要文字，或錯誤字串/null
+     */
     public function generateSummary(string $content): ?string
     {
         $prompt = "
@@ -37,23 +51,22 @@ class GeminiService
             範例輸出規則：
             摘要內容
 
-            \n\n" .
-
-        $content;
+            \n\n".$content;
 
         $response = $this->sendRequest($prompt);
 
-        if ($response) {
-            return $response['text'] ?? '[回應格式錯誤]';
-        }
-
-        return null;
+        return $response['text'] ?? '[回應格式錯誤]';
     }
 
+    /**
+     * 檢查貼文是否違反社群規範，嚴格回傳 JSON 格式
+     *
+     * @param  string  $content  貼文內容
+     * @return array JSON 物件，包含 violated 與 reasons
+     */
     public function checkViolation(string $content): array
     {
-        $prompt =
-        "
+        $prompt = "
             請依據以下社群規範判斷文字內容是否違規，請嚴格只回傳 JSON 格式，且不要附加其他文字或說明(理由不要出過10字)
 
             注意事項：
@@ -86,26 +99,38 @@ class GeminiService
 
         $response = $this->sendRequest($prompt);
 
-        if ($response && isset($response['text'])) {
-            $raw = trim($response['text']);
+        if (! isset($response['text'])) {
+            Log::warning('Gemini 未回傳 text 欄位');
 
-            $raw = preg_replace('/^```(?:json)?\s*(.*?)\s*```$/s', '$1', $raw);
-
-            $result = json_decode($raw, true);
-
-            if (json_last_error() === JSON_ERROR_NONE && is_array($result)) {
-                return $result;
-            } else {
-                error_log("JSON decode error: " . json_last_error_msg());
-            }
+            return [
+                'violated' => false,
+                'reasons' => ['[API回應錯誤]'],
+            ];
         }
+
+        $raw = trim($response['text']);
+        $raw = preg_replace('/^```(?:json)?\s*(.*?)\s*```$/s', '$1', $raw);
+
+        $result = json_decode($raw, true);
+
+        if (json_last_error() === JSON_ERROR_NONE && is_array($result)) {
+            return $result;
+        }
+
+        Log::error('JSON 解碼失敗：'.json_last_error_msg());
 
         return [
             'violated' => false,
-            'reasons' => ['[API呼叫或格式錯誤]'],
+            'reasons' => ['[JSON 格式錯誤]'],
         ];
     }
 
+    /**
+     * 將 prompt 發送給 Gemini 並解析回應
+     *
+     * @param  string  $prompt  生成用提示語
+     * @return array|null API 回傳的第一個候選內容或 null
+     */
     protected function sendRequest(string $prompt): ?array
     {
         Log::debug('Gemini API Request Prompt:', ['prompt' => $prompt]);
@@ -114,10 +139,10 @@ class GeminiService
             'contents' => [
                 [
                     'parts' => [
-                        ['text' => $prompt]
-                    ]
-                ]
-            ]
+                        ['text' => $prompt],
+                    ],
+                ],
+            ],
         ]);
 
         Log::debug('Gemini API Raw Response:', ['response' => $response->body()]);
@@ -126,20 +151,22 @@ class GeminiService
             $json = $response->json();
             $result = $json['candidates'][0]['content']['parts'][0] ?? null;
 
-            Log::debug('Gemini API Parsed Result:', ['result' => $result]);
+            if (! $result) {
+                Log::warning('Gemini API 回應不包含 parts[0]');
+            }
 
             return $result;
         }
 
         Log::error('Gemini API Request Failed', [
             'status' => $response->status(),
-            'body' => $response->body()
+            'body' => $response->body(),
         ]);
 
         if ($response->status() === 403) {
-            Log::error('Gemini API Key Error: Check your API key and permissions.');
+            Log::error('API 金鑰或權限錯誤，請檢查 Gemini 設定。');
         }
+
         return null;
     }
-
 }

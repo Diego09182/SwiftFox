@@ -3,37 +3,14 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
-	
-	<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red">
-			<i class="large material-icons brown">menu</i>
-		</a>
-		<ul>
-			<li>
-				<a href="#modal1" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布貼文">
-					<i class="material-icons">mode_edit</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('home.index')}}"class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-					<i class="material-icons">view_quilt</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-					<i class="material-icons">perm_identity</i>
-				</a>
-			</li>
-		</ul>
-	</div>
 
-	@include('component.form.post')
+	@include('component.toolbar')
 
 	<div class="container">
 		<div class="row">
@@ -66,27 +43,7 @@
 		<div class="row">
 			<h3 class="center-align">搜尋結果</h3>
 			<br>
-			<ul class="pagination center">
-				@if ($posts->lastPage() > 1)
-					<li class="waves-effect {{ $posts->currentPage() == 1 ? 'disabled' : '' }}">
-						<a href="{{ $posts->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a>
-					</li>
-					@for ($i = 1; $i <= $posts->lastPage(); $i++)
-						@if ($i == 1 || $i == $posts->lastPage() || abs($posts->currentPage() - $i) < 3 || $i == $posts->currentPage())
-							<li class="waves-effect {{ $i == $posts->currentPage() ? 'active brown' : '' }}">
-								<a href="{{ $posts->appends(request()->except('page'))->appends(['page' => $i])->appends(['search' => request()->query('search')])->url($i) }}">{{ $i }}</a>
-							</li>
-						@elseif (abs($posts->currentPage() - $i) === 3)
-							<li class="disabled">
-								<span>...</span>
-							</li>
-						@endif
-					@endfor
-					<li class="waves-effect {{ $posts->currentPage() == $posts->lastPage() ? 'disabled' : '' }}">
-						<a href="{{ $posts->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a>
-					</li>
-				@endif
-			</ul>
+			{{ $posts->links('vendor.pagination.materialize') }}
 			@if(count($posts) > 0)
 				@foreach ($posts as $post)
 					<div class="col s12 m4">
@@ -119,15 +76,15 @@
 			@endif
 		</div>
 	</div>
-	
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

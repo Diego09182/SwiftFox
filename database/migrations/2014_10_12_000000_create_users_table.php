@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('club')->nullable();
             $table->date('birthday');
             $table->integer('times')->default(0);
+            $table->integer('points')->default(0);
             $table->tinyInteger('administration')->default(0);
             $table->string('ip_address')->nullable();
             $table->timestamps();

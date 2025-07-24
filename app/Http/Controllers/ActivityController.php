@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
@@ -23,9 +22,7 @@ class ActivityController extends Controller
 
         $activities = $this->activityService->getActivitiesByPage($page);
 
-        $user = Auth::user();
-
-        return view('swiftfox.activity.index', compact('activities', 'user'));
+        return view('swiftfox.activity.index', compact('activities'));
     }
 
     public function store(Request $request)

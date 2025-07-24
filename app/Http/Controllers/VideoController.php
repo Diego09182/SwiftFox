@@ -56,7 +56,7 @@ class VideoController extends Controller
             'video.required' => '請選擇一個影片檔案。',
             'video.mimes' => '影片格式必須為 mp4、mov、ogg 或 qt。',
             'video.max' => '影片大小不能超過 30MB。',
-        ]);        
+        ]);
 
         $videoData = $this->videoService->createVideo($request);
 
@@ -71,6 +71,10 @@ class VideoController extends Controller
         ProcessVideo::dispatch($video);
 
         $this->videoService->clearCache();
+
+        $user = Auth::user();
+
+        $user->increment('points', 10);
 
         return redirect()->route('video.index')->with('success', '影片發布成功！');
     }

@@ -26,13 +26,16 @@
 		</ul>
 	</div>
 
-	<div class="container">
+    @include('component.managementlist')
+
+    <div class="container">
 		<div class="row">
-			<div class="col s12">
+			<div class="col m12">
 				<ul class="tabs">
-					<li class="tab col s3"><a href="#clubForm">創建社團</a></li>
-					<li class="tab col s3"><a href="#activityForm">創建活動</a></li>
-					<li class="tab col s3"><a href="#bulletinForm">發布公告</a></li>
+					<li class="tab col m3"><a href="#clubForm"><h5>創建社團</h5></a></li>
+					<li class="tab col m3"><a href="#activityForm"><h5>創建活動</h5></a></li>
+					<li class="tab col m3"><a href="#bulletinForm"><h5>創建公告</h5></a></li>
+                    <li class="tab col m3"><a href="#prizeForm"><h5>創建獎品</h5></a></li>
 				</ul>
 			</div>
 		</div>
@@ -44,13 +47,14 @@
 	<div id="activityForm" class="col m12">
 		@include('component.form.activity')
 	</div>
+    <div id="prizeForm" class="col m12">
+		@include('component.form.prize')
+	</div>
 	<div id="bulletinForm" class="col m12">
 		@include('component.form.bulletin')
 	</div>
 
-	@include('component.managementlist')
-
-	<br>
+	<br><br><br>
 
 	@include('component.footer')
 
@@ -66,7 +70,6 @@
             autoClose: true
         });
     });
-
 
     $('#bulletinForm').on('submit', function(event) {
         event.preventDefault();
@@ -164,7 +167,6 @@
         }
     });
 });
-
 
 </script>
 

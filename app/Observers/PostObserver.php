@@ -22,13 +22,13 @@ class PostObserver
     private function analyzePost(Post $post)
     {
         $analysis = $this->textRazorService->analyzeText($post->content);
-        
+
         if ($analysis && isset($analysis['response'])) {
             $keywords = collect($analysis['response']['entities'] ?? [])
-                        ->pluck('entityId')
-                        ->unique()
-                        ->take(5)
-                        ->implode(',');
+                ->pluck('entityId')
+                ->unique()
+                ->take(5)
+                ->implode(',');
 
             $sentiment = 'neutral';
             if (isset($analysis['response']['sentences'][0]['sentiment'])) {

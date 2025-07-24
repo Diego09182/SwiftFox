@@ -1,79 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
-	
+
 	<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red">
-			<i class="large material-icons brown">menu</i>
-		</a>
-		<ul>
-			<li>
-				<a href="{{route('home.index')}}"class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-					<i class="material-icons">view_quilt</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-					<i class="material-icons">perm_identity</i>
-				</a>
-			</li>
-		</ul>
-	</div>
-
-	<div class="container">
-		<div class="row">
-			<div class="col s12">
-				<ul class="tabs">
-					<li class="tab col s3"><a href="#clubForm">創建社團</a></li>
-					<li class="tab col s3"><a href="#activityForm">創建活動</a></li>
-					<li class="tab col s3"><a href="#bulletinForm">發布公告</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-
-	<div id="clubForm" class="col s12">
-		@include('component.form.club')
-	</div>
-	<div id="activityForm" class="col s12">
-		@include('component.form.activity')
-	</div>
-	<div id="bulletinForm" class="col s12">
-		@include('component.form.bulletin')
-	</div>
+        <a class="btn-floating btn-large red">
+            <i class="large material-icons brown">menu</i>
+        </a>
+        <ul>
+            <li>
+                <a href="{{ route('home.index') }}" class="btn-floating yellow tooltipped" data-tooltip="我的小屋">
+                    <i class="material-icons">view_quilt</i>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('profile.index') }}" class="btn-floating green tooltipped" data-tooltip="個人資料">
+                    <i class="material-icons">perm_identity</i>
+                </a>
+            </li>
+        </ul>
+    </div>
 
 	@include('component.managementlist')
 
-    <div class="container"> 
-        <h4 class="center">使用者列表</h4>
+    <div class="container">
+        <h3 class="center">使用者列表</h3>
         <ul class="pagination center">
-            @if ($users->currentPage() > 1)
-                <li class="waves-effect {{ $users->currentPage() == 1 ? 'disabled' : '' }}">
-                    <a href="{{ $users->previousPageUrl() }}"><i class="material-icons">chevron_left</i></a>
-                </li>
-            @endif
-            @for ($i = 1; $i <= $users->lastPage(); $i++)
-                @if ($i == 1 || $i == $users->lastPage() || abs($users->currentPage() - $i) < 3 || $i == $users->currentPage())
-                    <li class="waves-effect {{ $i == $users->currentPage() ? 'active brown' : '' }}">
-                        <a href="{{ $users->url($i) }}">{{ $i }}</a>
-                    </li>
-                @elseif (abs($users->currentPage() - $i) === 3)
-                    <li class="disabled">
-                        <span>...</span>
-                    </li>
-                @endif
-            @endfor
-            @if ($users->hasMorePages())
-                <li class="waves-effect {{ $users->currentPage() == $users->lastPage() ? 'disabled' : '' }}">
-                    <a href="{{ $users->nextPageUrl() }}"><i class="material-icons">chevron_right</i></a>
-                </li>
-            @endif
+            {{ $users->links('vendor.pagination.materialize') }}
         </ul>
         @if ($users->isEmpty())
             <h3 class="center-align">目前沒有使用者</h3>
@@ -133,9 +91,9 @@
             </table>
         @endif
     </div>
-    
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 @endsection

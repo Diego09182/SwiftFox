@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Models\Bulletin;
 use App\Models\Club;
+use App\Models\File;
 use App\Models\Opinion;
 use App\Models\Post;
+use App\Models\Prize;
+use App\Models\PrizeRedemption;
 use App\Models\Report;
 use App\Models\User;
-use App\Models\Work;
 use App\Models\Video;
-use App\Models\File;
+use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,18 +35,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $users = User::paginate(8);
-        $posts = Post::orderBy('id', 'desc')->paginate(9);
-        $articles = Article::orderBy('id', 'desc')->paginate(6);
-        $opinions = Opinion::orderBy('id', 'desc')->paginate(3);
-        $reports = Report::orderBy('id', 'desc')->paginate(4);
-        $clubs = Club::orderBy('id', 'desc')->paginate(9);
-        $works = Work::orderBy('id', 'desc')->paginate(6);
-        $bulletin = Bulletin::orderBy('id', 'desc')->first();
-
-        return view('swiftfox.management.index', compact(
-            'users', 'posts', 'articles', 'opinions', 'reports', 'clubs', 'works', 'bulletin'
-        ));
+        return view('swiftfox.management.index');
     }
 
     public function user()
@@ -76,7 +66,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $posts = Post::orderBy('id', 'desc')->paginate(9);
+        $posts = Post::orderBy('id', 'desc')->paginate(8);
 
         return view('swiftfox.management.posts', compact('posts'));
     }
@@ -87,7 +77,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $articles = Article::orderBy('id', 'desc')->paginate(6);
+        $articles = Article::orderBy('id', 'desc')->paginate(8);
 
         return view('swiftfox.management.articles', compact('articles'));
     }
@@ -98,7 +88,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $opinions = Opinion::orderBy('id', 'desc')->paginate(3);
+        $opinions = Opinion::orderBy('id', 'desc')->paginate(8);
 
         return view('swiftfox.management.opinions', compact('opinions'));
     }
@@ -109,7 +99,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $works = Work::orderBy('id', 'desc')->paginate(6);
+        $works = Work::orderBy('id', 'desc')->paginate(8);
 
         return view('swiftfox.management.works', compact('works'));
     }
@@ -120,7 +110,7 @@ class ManagementController extends Controller
             return $this->checkAdmin();
         }
 
-        $clubs = Club::orderBy('id', 'desc')->paginate(6);
+        $clubs = Club::orderBy('id', 'desc')->paginate(8);
 
         return view('swiftfox.management.clubs', compact('clubs'));
     }
@@ -147,12 +137,34 @@ class ManagementController extends Controller
         return view('swiftfox.management.files', compact('files'));
     }
 
+    public function prizeRedemptions()
+    {
+        if ($this->checkAdmin()) {
+            return $this->checkAdmin();
+        }
+
+        $redemptions = PrizeRedemption::orderBy('id', 'desc')->paginate(8);
+
+        return view('swiftfox.management.prizeRedemptions', compact('redemptions'));
+    }
+
+    public function prizes()
+    {
+        if ($this->checkAdmin()) {
+            return $this->checkAdmin();
+        }
+
+        $prizes = Prize::orderBy('id', 'desc')->paginate(8);
+
+        return view('swiftfox.management.prizes', compact('prizes'));
+    }
+
     public function update(Request $request, User $user)
     {
         if ($this->checkAdmin()) {
             return $this->checkAdmin();
         }
-        
+
         $validatedData = $request->validate([
             'administration' => 'required|integer|min:1|max:5',
             'status' => 'required|integer|in:0,1',

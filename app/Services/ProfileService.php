@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 
 class ProfileService
 {
@@ -41,7 +41,7 @@ class ProfileService
             'url' => $request->input('url'),
         ]);
 
-        if (!empty($validatedData['new_password'])) {
+        if (! empty($validatedData['new_password'])) {
             $user->password = Hash::make($validatedData['new_password']);
         }
 

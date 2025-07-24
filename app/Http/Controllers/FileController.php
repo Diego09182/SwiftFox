@@ -46,7 +46,7 @@ class FileController extends Controller
                 'dislike' => $file->dislike,
             ], 403);
         }
-        
+
         return response()->json([
             'like' => $file->like,
             'dislike' => $file->dislike,
@@ -87,7 +87,7 @@ class FileController extends Controller
 
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');
-            $filename = uniqid() . '_' . $uploadedFile->getClientOriginalName();
+            $filename = uniqid().'_'.$uploadedFile->getClientOriginalName();
             $filename = str_replace(' ', '_', $filename);
             $path = $uploadedFile->storeAs('files', $filename, 'public');
 
@@ -98,6 +98,10 @@ class FileController extends Controller
         $validatedData['user_id'] = Auth::id();
 
         $this->fileService->createFile($validatedData);
+
+        $user = Auth::user();
+
+        $user->increment('points', 10);
 
         return redirect()->route('file.index')->with('success', '檔案已成功新增！');
     }

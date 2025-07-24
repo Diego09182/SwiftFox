@@ -41,6 +41,10 @@ class WorkController extends Controller
 
         $this->workService->createWork($validatedData);
 
+        $user = Auth::user();
+
+        $user->increment('points', 10);
+
         return redirect()->route('work.index')->with('success', '作品已創建成功！');
     }
 

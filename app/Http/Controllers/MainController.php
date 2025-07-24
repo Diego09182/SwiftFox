@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Bulletin;
+use App\Models\File;
 use App\Models\Note;
 use App\Models\Opinion;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\Work;
-use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,13 +24,13 @@ class MainController extends Controller
             return Bulletin::orderBy('id', 'desc')->first();
         });
 
-        $userCount = Cache::remember('user_count', 600, fn() => User::count());
-        $postCount = Cache::remember('post_count', 600, fn() => Post::count());
-        $articleCount = Cache::remember('article_count', 600, fn() => Article::count());
-        $workCount = Cache::remember('work_count', 600, fn() => Work::count());
-        $opinionCount = Cache::remember('opinion_count', 600, fn() => Opinion::count());
-        $noteCount = Cache::remember('note_count', 600, fn() => Note::count());
-        $videoCount = Cache::remember('video_count', 600, fn() => Video::count());
+        $userCount = Cache::remember('user_count', 600, fn () => User::count());
+        $postCount = Cache::remember('post_count', 600, fn () => Post::count());
+        $articleCount = Cache::remember('article_count', 600, fn () => Article::count());
+        $workCount = Cache::remember('work_count', 600, fn () => Work::count());
+        $opinionCount = Cache::remember('opinion_count', 600, fn () => Opinion::count());
+        $noteCount = Cache::remember('note_count', 600, fn () => Note::count());
+        $videoCount = Cache::remember('video_count', 600, fn () => Video::count());
         $postTopUsers = Cache::remember('top_users_post', 600, function () {
             return Post::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
@@ -103,5 +103,4 @@ class MainController extends Controller
             'fileTopUsers'
         ));
     }
-
 }

@@ -1,10 +1,7 @@
-/* Custom Stylesheet */
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
+.tabs .tab a {
+    font-size: 50px;
+    font-weight: bold;
+}
 
 .icon-block {
   padding: 0 15px;
@@ -20,7 +17,7 @@
 
 #banner {
   background-color: #F8F4EF;
-  height: 725px; 
+  height: 725px;
 }
 
 #LOGO {
@@ -48,31 +45,8 @@
   background-color: #F8F4EF;
 }
 
-#contact {
-  position: relative;
-  border-radius: 20px;
-  padding: 20px;
-}
-
-#contact::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 50px 50px 0 0;
-  border-color: rgb(130, 66, 50) transparent transparent transparent;
-}
-
 #slogan {
   background-color: #F1ECCE;
-}
-
-#post {
-  border-radius: 20px;
-  background-color: white;
 }
 
 #article {

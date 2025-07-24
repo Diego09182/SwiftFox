@@ -49,7 +49,7 @@ class ClubController extends Controller
 
         $this->clubService->createClub($validatedData);
 
-        return response()->json(['success' => true,'message' => '社團創建成功',]);
+        return response()->json(['success' => true, 'message' => '社團創建成功']);
     }
 
     public function destroy($id)

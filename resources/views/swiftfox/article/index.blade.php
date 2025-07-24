@@ -24,33 +24,33 @@
 
 	<div class="container">
 		<div class="row">
-			<h3 class="center-align">所有文章</h3>
+			<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">所有文章</h3>
 			<br>
 			<div class="row center">
 				<a href="{{ route('article.create') }}" class="waves-effect waves-light btn brown"><i class="material-icons left">mode_edit</i>發表</a>
 			</div>
 			@if ($articles->isEmpty())
-            	<h3 class="center-align">目前沒有文章</h3>
+            	<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有文章</h3>
         	@else
 				{{ $articles->links('vendor.pagination.materialize') }}
 				@foreach ($articles as $article)
-					<div class="col s12 m12">
-						<div class="card hoverable center" id="article">
-							<div class="card-content">
-								<h5 class="truncate"><b>主題: {{ $article->title }}</b></h5>
-								<br>
-								<div class="chip left brown">
-									<p class="white-text">#{{ $article->tag }}</p>
-								</div>
-								<p class="right"><b>作者：{{ $article->user->account }}</b></p>
-								<br>
-								<p class="right"><b>{{ $article->created_at }}</b></p>
-								<br><br>
-								<a class="waves-effect waves-light btn right brown" href="{{ route('article.show', ['article' => $article->id]) }}">查看</a>
-								<br><br>
-							</div>
-						</div>
-					</div>
+					<div class="col s12 m12 wow animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="card hoverable center" id="article">
+                            <div class="card-content">
+                                <h5 class="truncate"><b>主題: {{ $article->title }}</b></h5>
+                                <br>
+                                <div class="chip left brown">
+                                    <p class="white-text">#{{ $article->tag }}</p>
+                                </div>
+                                <p class="right"><b>作者：{{ $article->user->account }}</b></p>
+                                <br>
+                                <p class="right"><b>{{ $article->created_at }}</b></p>
+                                <br><br>
+                                <a class="waves-effect waves-light btn right brown" href="{{ route('article.show', ['article' => $article->id]) }}">查看</a>
+                                <br><br>
+                            </div>
+                        </div>
+                    </div>
 				@endforeach
 			@endif
 		</div>

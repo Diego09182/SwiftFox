@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -87,7 +88,7 @@ class PostController extends Controller
 
         $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
 
-        return view('swiftfox.forum.index', compact('posts','top_posts'));
+        return view('swiftfox.forum.index', compact('posts', 'top_posts'));
     }
 
     public function store(Request $request)
@@ -108,6 +109,10 @@ class PostController extends Controller
         ]);
 
         $this->postService->createPost($validatedData);
+
+        $user = Auth::user();
+
+        $user->increment('points', 10);
 
         return redirect()->route('forum.index')->with('success', '貼文已創建成功！');
     }

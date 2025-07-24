@@ -5,11 +5,9 @@ namespace App\Services;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use App\Services\GeminiService;
 
 class ArticleService
 {
-
     protected $gemini;
 
     public function __construct(GeminiService $gemini)
@@ -56,7 +54,7 @@ class ArticleService
         try {
             $summary = $this->gemini->generateSummary($cleanContent);
         } catch (\Throwable $e) {
-            logger()->error('生成文章摘要失敗：' . $e->getMessage());
+            logger()->error('生成文章摘要失敗：'.$e->getMessage());
             $summary = null;
         }
 
