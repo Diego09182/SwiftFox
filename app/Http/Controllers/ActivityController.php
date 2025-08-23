@@ -33,6 +33,7 @@ class ActivityController extends Controller
             'location' => 'required',
             'date' => 'required',
             'url' => 'nullable|url',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
@@ -42,7 +43,18 @@ class ActivityController extends Controller
             'content.max' => '內容不能超過50個字',
             'date.required' => '日期為必填項目',
             'location.required' => '地點為必填項目',
+            'file.image' => '上傳的檔案必須是圖片格式',
+            'file.mimes' => '圖片格式僅限 jpeg, png, jpg, svg',
+            'file.max' => '圖片大小不可超過 2MB',
         ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/activity_images', $filename);
+            $validatedData['filename'] = $filename;
+            $validatedData['path'] = str_replace('public/', '', $path);
+        }
 
         $this->activityService->createActivity($validatedData);
 

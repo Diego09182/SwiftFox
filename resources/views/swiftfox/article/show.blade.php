@@ -1,46 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.0"/>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Swift Fox:開源的學生社群軟體" />
-    <meta name="keywords" content="學生社群" />
-    <meta name="author" content="Diego" />
+    <meta name="keywords" content="學生社群軟體" />
+    <meta name="author" content="ssss.glad" />
     <title>Swift Fox</title>
-	@vite(['resources/css/style.css','resources/css/materialize.css','resources/js/app.js','resources/js/materialize.js'])
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	@vite(['resources/css/style.css','resources/css/materialize.css','resources/js/app.js','resources/js/materialize.js','resources/js/init.js'])
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
 	<link rel="shortcut icon" href="{{ asset('images/SWIFT FOX ICON.ico') }}" type="image/x-icon" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
 <body>
 
-<div id="app" class="animate__animated animate__fadeIn">
+<div id="app">
 
 	@include('component.navigation')
 
 	@include('component.serve.message')
 
-	@include('component.logoutbanner')
-
-	<div class="fixed-action-btn click-to-toggle animate__animated animate__fadeInRight animate__delay-2s">
-		<a class="btn-floating btn-large red">
-			<i class="large material-icons brown">menu</i>
-		</a>
-		<ul>
-			<li>
-				<a href="{{route('home.index')}}" class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-					<i class="material-icons">view_quilt</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-					<i class="material-icons">perm_identity</i>
-				</a>
-			</li>
-		</ul>
-	</div>
+	@include('component.toolbar')
 
 	<div class="container animate__animated animate__fadeInUp animate__delay-1s">
 		<div class="row">
@@ -75,16 +59,10 @@
 
 				<br><br><br>
 				<hr id="divider">
-                <div class="card brown lighten-5 animate__animated animate__zoomIn animate__delay-1s">
-					<div class="card-content">
-						<span class="card-title brown-text"><b>AI 摘要</b></span>
-						<h5 class="black-text">{{ $article->summary }}</h5>
-					</div>
-				</div>
 
 				<article class="animate__animated animate__fadeIn animate__delay-2s">
 					<h5 :style="{ fontSize: fontSize + 'px', 'word-wrap': 'break-word' }">
-						{!! $article->content !!}
+						{!! \Illuminate\Support\Str::markdown($article->content) !!}
 					</h5>
 				</article>
 			</div>
@@ -101,7 +79,6 @@
 </html>
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-<script src="https://unpkg.com/vue-router@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript">

@@ -25,7 +25,6 @@
 
         @if ($photos->isEmpty())
             <div class="center-align">
-                <img src="{{ asset('images/empty_state.svg') }}" alt="No photos" class="responsive-img animate__animated animate__zoomIn" style="max-width: 250px;">
                 <h4 class="grey-text text-darken-1 animate__animated animate__fadeInUp animate__delay-1s">此作品集目前沒有任何作品。</h4>
             </div>
         @else

@@ -1,9 +1,9 @@
 <div id="modal3" class="modal">
     <div class="modal-content">
-        <div class="card blue-grey darken-1">
+        <div class="card">
             <form name="ReportForm" method="post" action="{{ route('report.store', ['post' => $post->id]) }}">
                 @csrf
-                <div class="card-content white-text">
+                <div class="card-content black-text">
                     <span class="card-title">檢舉貼文</span>
                     <div class="row">
                         <div class="input-field col m8">

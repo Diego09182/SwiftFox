@@ -16,7 +16,6 @@
                 @csrf
                 <div class="card-content">
                     <span class="card-title black-text">新增影片</span>
-
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix black-text">title</i>
@@ -27,7 +26,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix black-text">description</i>
@@ -38,7 +36,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="file-field input-field col m12">
                             <div class="btn brown">
@@ -53,7 +50,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <button class="waves-effect waves-light btn brown right" type="submit">上傳影片</button>
                     <br>
                 </div>

@@ -7,9 +7,11 @@ use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpinionController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\PostController;
@@ -32,7 +34,6 @@ Route::get('/', function () {
 });
 
 Route::middleware('check.login')->group(function () {
-
     // 註冊與登入頁面
     Route::get('/registration', function () {
         return view('swiftfox.registration');
@@ -42,7 +43,6 @@ Route::middleware('check.login')->group(function () {
     Route::get('/welcome', function () {
         return view('swiftfox.welcome');
     })->name('introduction');
-
 });
 
 // 登入
@@ -58,16 +58,22 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     // 首頁
     Route::get('/main', [MainController::class, 'index'])->name('main');
 
+    // 通知系統
+    // 顯示所有通知
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    // 標記所有通知為已讀
+    Route::post('/notifications/read', [NotificationController::class, 'readAll'])->name('notifications.readAll');
+
     // 管理後臺
     Route::get('/management', [ManagementController::class, 'index'])->name('management.index');
     // 公布更新
     Route::post('/management/bulletin', [BulletinController::class, 'store'])->name('bulletin.store');
     // 刪除檢舉
     Route::delete('/management/reports/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
-    // 使用者權限更新
+    // 使用者權限
     Route::put('/management/users/{user}', [ManagementController::class, 'update'])->name('management.update');
     // 使用者管理
-    Route::get('/management/users', [ManagementController::class, 'user'])->name('management.users');
+    Route::get('/management/users', [ManagementController::class, 'users'])->name('management.users');
     // 貼文管理
     Route::get('/management/posts', [ManagementController::class, 'posts'])->name('management.posts');
     // 文章管理
@@ -118,7 +124,7 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     // 個人系統
     // 個人資訊
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    //
+    // 兌換紀錄
     Route::get('/profile/redemptions', [ProfileController::class, 'redemptions'])->name('profile.redemptions');
     // 個人資訊更新
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -127,10 +133,24 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     Route::get('/home', [NoteController::class, 'index'])->name('home.index');
     // 顯示單個日記
     Route::get('/home/notes/{note}', [NoteController::class, 'show'])->name('note.show');
+    // 創建日記頁面
+    Route::get('/home/notes', [NoteController::class, 'create'])->name('note.create');
     // 發布日記
     Route::post('/home/note', [NoteController::class, 'store'])->name('note.store');
     // 刪除日記
     Route::delete('/home/notes/{note}', [NoteController::class, 'destroy'])->name('note.destroy');
+    // 貼文管理
+    Route::get('/home/posts', [HomeController::class, 'posts'])->name('home.posts');
+    // 文章管理
+    Route::get('/home/articles', [HomeController::class, 'articles'])->name('home.articles');
+    // 作品管理
+    Route::get('/home/works', [HomeController::class, 'works'])->name('home.works');
+    // 投票管理
+    Route::get('/home/opinions', [HomeController::class, 'opinions'])->name('home.opinions');
+    // 影片管理
+    Route::get('/home/videos', [HomeController::class, 'videos'])->name('home.videos');
+    // 檔案管理
+    Route::get('/home/files', [HomeController::class, 'files'])->name('home.files');
 
     // 投票系統
     // 認同投票
@@ -251,5 +271,4 @@ Route::middleware(['auth', 'user.data'])->group(function () {
     Route::delete('/prizes/{prize}', [PrizeController::class, 'destroy'])->name('prize.destroy');
     // 兌換功能
     Route::post('/prizes/{prize}/redeem', [PrizeRedemptionController::class, 'redeem'])->name('prize.redeem');
-
 });

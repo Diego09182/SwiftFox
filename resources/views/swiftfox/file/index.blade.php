@@ -16,41 +16,59 @@
 
     <div class="container">
         <div class="row">
-            <h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">所有檔案</h3>
-            <br>
-            <div class="row center">
-                <a href="{{ route('file.create') }}" class="waves-effect waves-light btn brown"><i class="material-icons left">add</i>新增檔案</a>
+            <h3 class="center-align brown-text text-darken-2 wow animate__animated animate__fadeInUp animate__delay-1s">
+                <b>所有檔案</b>
+            </h3>
+            <div class="col s12 center-align" style="margin-bottom: 20px;">
+                <a href="{{ route('file.create') }}" class="waves-effect waves-light btn-large brown">
+                    <i class="material-icons left">add</i> 新增檔案
+                </a>
             </div>
             @if ($files->isEmpty())
-            <h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有檔案</h3>
+                <h5 class="center-align grey-text text-darken-1 wow animate__animated animate__fadeInUp animate__delay-1s">
+                    目前沒有檔案
+                </h5>
             @else
-            {{ $files->links('vendor.pagination.materialize') }}
-            <div class="row">
+                <div class="col s12 center-align">
+                    {{ $files->links('vendor.pagination.materialize') }}
+                </div>
                 @foreach ($files as $file)
-                <div class="col s12 m4  wow animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="card hoverable center" id="file">
-                        <div class="card-content">
-                            <h5 class="truncate">標題: {{ $file->title }}</h5>
-                            <p>上傳者: {{ $file->user->account }}</p>
-                            <p>上傳時間: {{ $file->created_at }}</p>
-                            <br>
-                            <a class="waves-effect waves-light btn right brown" href="{{ route('file.show', ['file' => $file->id]) }}">查看</a>
-                            @if(Auth::user()->administration == 5 || $file->user->id == Auth::user()->id)
-                            <form action="{{ route('file.destroy', $file->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="waves-effect waves-light btn brown left">刪除</button>
-                            </form>
-                            @endif
-                            <br>
+                    <div class="col s12 m6 l4 wow animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="card hoverable" style="height: 100%;">
+                            <div class="card-content">
+                                <span class="card-title brown-text text-darken-2 truncate" style="font-weight: bold;">
+                                    <i class="material-icons left">insert_drive_file</i>{{ $file->title }}
+                                </span>
+
+                                <h5 class="grey-text text-darken-2">
+                                    <i class="material-icons tiny">person</i> 上傳者：{{ $file->user->account }}
+                                </h5>
+                                <h5 class="grey-text text-darken-2">
+                                    <i class="material-icons tiny">access_time</i> 時間：{{ $file->created_at->format('Y-m-d H:i') }}
+                                </h5>
+                            </div>
+                            <div class="card-action">
+                                <a href="{{ route('file.show', ['file' => $file->id]) }}"
+                                class="waves-effect waves-light btn brown right">
+                                    <i class="material-icons left">visibility</i> 查看
+                                </a>
+                                @if(Auth::user()->administration == 5 || $file->user->id == Auth::user()->id)
+                                    <form action="{{ route('file.destroy', $file->id) }}" method="POST" style="display: inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn red lighten-1 waves-effect waves-light">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
-            </div>
             @endif
         </div>
     </div>
+
 
     <br>
 

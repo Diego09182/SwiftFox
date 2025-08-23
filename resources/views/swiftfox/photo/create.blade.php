@@ -10,6 +10,8 @@
 
     @include('component.logoutbanner')
 
+    @include('component.toolbar')
+
     <div class="container">
         <div class="card white">
             <form name="PhotoForm" method="post" action="{{ route('photo.store', ['work' => $work->id]) }}" enctype="multipart/form-data">

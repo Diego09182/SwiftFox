@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Notifications\ResourceNotification;
 use App\Services\ArticleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,8 @@ class ArticleController extends Controller
     {
         $page = $request->input('page', 1);
         $articles = $this->articleService->getArticlesByPage($page);
-        $user = Auth::user();
 
-        return view('swiftfox.article.index', compact('articles', 'user'));
+        return view('swiftfox.article.index', compact('articles'));
     }
 
     public function store(Request $request)
@@ -63,9 +63,8 @@ class ArticleController extends Controller
     public function show($id)
     {
         $article = $this->articleService->getArticleById($id);
-        $user = Auth::user();
 
-        return view('swiftfox.article.show', compact('article', 'user'));
+        return view('swiftfox.article.show', compact('article'));
     }
 
     public function create()
@@ -79,6 +78,19 @@ class ArticleController extends Controller
 
         if (Gate::denies('delete-article', $article)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        }
+
+        $user = $article->user;
+
+        $currentUser = Auth::user();
+
+        if ($currentUser->administration == 5) {
+            $user->notify(new ResourceNotification(
+                resourceType: 'article',
+                resourceId: $article->id,
+                title: '文章已刪除',
+                reason: '違反社群規範'
+            ));
         }
 
         $this->articleService->deleteArticle($article);

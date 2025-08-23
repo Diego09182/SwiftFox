@@ -20,8 +20,8 @@ class ProfileService
         $validatedData = $request->validate([
             'new_password' => 'nullable|string|min:8|max:15|confirmed|different:password',
             'name' => 'required|string|min:1|max:8',
-            'email' => 'required|email|unique:users,email,'.$user->id,
-            'cellphone' => 'required|digits:10|unique:users,cellphone,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'cellphone' => 'required|digits:10|unique:users,cellphone,' . $user->id,
             'birthday' => 'required|date_format:Y-m-d',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'info' => 'nullable|string',
@@ -47,7 +47,7 @@ class ProfileService
 
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
-            $avatar_filename = time().'_'.mt_rand().'.'.$avatar->getClientOriginalExtension();
+            $avatar_filename = time() . '_' . mt_rand() . '.' . $avatar->getClientOriginalExtension();
             $avatar_path = $avatar->storeAs('avatars', $avatar_filename, 'public');
             $user->avatar_filename = $avatar_filename;
             $user->avatar_path = $avatar_path;

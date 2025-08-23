@@ -11,12 +11,14 @@
     @include('component.logoutbanner')
 
     <br>
-    
+
     @include('component.toolbar')
 
     <div class="container">
         <div class="row">
-            <h3 class="center-align animate__animated animate__fadeInDown">🎨 所有作品</h3>
+            <h3 class="center-align wow animate__animated animate__fadeInUp animate__delay-1s brown-text text-darken-3">
+                <b>所有作品</b>
+            </h3>
 
             <div class="row center">
                 <a href="{{ route('work.create') }}" class="waves-effect waves-light btn-large amber darken-3">
@@ -26,7 +28,6 @@
 
             @if ($works->isEmpty())
                 <div class="center-align">
-                    <img src="{{ asset('images/empty_state.svg') }}" alt="No works" style="width: 200px;" class="animate__animated animate__fadeInDown" />
                     <h4 class="grey-text text-darken-1 animate__animated animate__fadeInUp animate__delay-1s">目前沒有作品集</h4>
                 </div>
             @else

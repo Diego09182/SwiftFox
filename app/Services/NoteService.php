@@ -10,7 +10,7 @@ class NoteService
 {
     public function getNotesByPage(int $page)
     {
-        $cacheKey = 'notes_index_page_'.$page;
+        $cacheKey = 'notes_index_page_' . $page;
 
         return Cache::tags(['notes'])->remember($cacheKey, 600, function () {
             return Note::orderBy('id', 'desc')->paginate(4);
@@ -20,6 +20,7 @@ class NoteService
     public function createNote(array $data)
     {
         $data['content'] = nl2br($data['content']);
+
         $data['user_id'] = Auth::id();
 
         $note = Note::create($data);
@@ -31,7 +32,7 @@ class NoteService
 
     public function getNoteById($id)
     {
-        $cacheKey = 'note_show_'.$id;
+        $cacheKey = 'note_show_' . $id;
 
         return Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
             return Note::findOrFail($id);

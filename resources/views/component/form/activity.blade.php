@@ -1,6 +1,6 @@
 <div class="container">
     <div class="card" style="background-color: white; color: black;">
-        <form id="activityForm" name="ActivityForm" method="post" action="{{ route('activity.store') }}">
+        <form id="activityForm" name="ActivityForm" method="post" action="{{ route('activity.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="card-content">
                 <span class="card-title" style="color: black;">創建活動</span>
@@ -33,6 +33,15 @@
                         <i class="material-icons prefix" style="color: black;">mode_edit</i>
                         <input class="validate" value="{{ old('url') }}" name="url" type="text" id="activity-url" style="color: black;">
                         <label for="activity-url" style="color: black;">相關連結</label>
+                    </div>
+                </div>
+                <div class="file-field input-field col m12">
+                    <div class="btn brown">
+                        <span>上傳圖片</span>
+                        <input type="file" name="file" accept="image/*">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="請選擇一張圖片">
                     </div>
                 </div>
                 <button class="waves-effect waves-light btn brown right" type="submit">創建活動</button>

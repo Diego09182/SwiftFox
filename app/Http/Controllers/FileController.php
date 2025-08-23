@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessFile;
 use App\Models\File;
+use App\Notifications\ResourceNotification;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,38 +74,23 @@ class FileController extends Controller
             'content' => 'nullable|string',
             'file' => 'required|file|max:20480|mimes:jpg,jpeg,png,pdf,docx,xlsx,pptx,txt,csv',
             'donation' => 'nullable|string|max:150',
-        ], [
-            'title.required' => '標題是必填的。',
-            'title.string' => '標題必須是字串。',
-            'title.min' => '標題的長度不能少於2個字。',
-            'title.max' => '標題的長度不能超過20個字。',
-            'content.string' => '內容必須是字串。',
-            'file.required' => '檔案是必填的。',
-            'file.file' => '檔案必須是一個有效的檔案。',
-            'file.max' => '檔案大小不能超過 20480 KB。',
-            'file.mimes' => '只允許上傳 JPG、JPEG、PNG、PDF、Word、Excel、PPT、TXT、CSV 檔案。',
-            'donation.string' => '贊助資訊必須是字串。',
         ]);
 
-        if ($request->hasFile('file')) {
-            $uploadedFile = $request->file('file');
-            $filename = uniqid().'_'.$uploadedFile->getClientOriginalName();
-            $filename = str_replace(' ', '_', $filename);
-            $path = $uploadedFile->storeAs('files', $filename, 'public');
+        $uploadedFile = $request->file('file');
+        $filename = uniqid() . '_' . $uploadedFile->getClientOriginalName();
+        $filename = str_replace(' ', '_', $filename);
+        $path = $uploadedFile->storeAs('files', $filename, 'public');
 
-            $validatedData['filename'] = $filename;
-            $validatedData['path'] = $path;
-        }
+        $validatedData['filename'] = $filename;
+        $validatedData['path'] = $path;
 
-        $validatedData['user_id'] = Auth::id();
+        unset($validatedData['file']);
 
-        $this->fileService->createFile($validatedData);
+        $userId = Auth::id();
 
-        $user = Auth::user();
+        ProcessFile::dispatch($validatedData, $userId);
 
-        $user->increment('points', 10);
-
-        return redirect()->route('file.index')->with('success', '檔案已成功新增！');
+        return redirect()->route('file.index')->with('success', '檔案已提交，系統正在處理中。');
     }
 
     public function show($id)
@@ -119,6 +106,18 @@ class FileController extends Controller
     {
         if (Gate::denies('delete-file', $file)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        }
+
+        $owner = $file->user; // 檔案擁有者
+        $admin = Auth::user(); // 當前操作人
+
+        if ($admin->administration == 5) {
+            $owner->notify(new ResourceNotification(
+                resourceType: 'file',
+                resourceId: $file->id,
+                title: '檔案已刪除',
+                reason: '違反社群規範'
+            ));
         }
 
         $this->fileService->deleteFile($file);

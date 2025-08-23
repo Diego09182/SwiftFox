@@ -27,6 +27,17 @@
                 <b>
                     <li><a href="{{ route('logout') }}">登出</a></li>
                     <li><a href="{{route('profile.redemptions')}}">兌換紀錄</a></li>
+                    <li>
+                        <a href="{{ route('notifications.index') }}">
+                            通知中心
+                            @php
+                                $unreadCount = Auth::user()->unreadNotifications->count();
+                            @endphp
+                            @if ($unreadCount > 0)
+                                <span class="new badge red" data-badge-caption="">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </b>
             </ul>
             <ul class="right hide-on-med-and-down">

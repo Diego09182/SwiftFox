@@ -16,8 +16,11 @@ class CommentService
             'title' => $data['title'],
             'content' => nl2br($data['content']),
         ]);
+
         $comment->post_id = $post->id;
+
         $comment->user_id = Auth::id();
+
         $comment->save();
 
         return $comment;

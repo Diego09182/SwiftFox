@@ -6,7 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Club extends Model
 {
-    protected $fillable = [
-        'title', 'tag', 'content', 'teacher', 'director', 'vice_director',
-    ];
+    protected $fillable = ['title', 'tag', 'content', 'teacher', 'director', 'vice_director', 'filename', 'path'];
 }

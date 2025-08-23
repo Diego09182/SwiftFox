@@ -16,7 +16,6 @@
                 ['route' => 'management.index', 'label' => '系統管理', 'icon' => 'settings'],
             ];
         @endphp
-
         @foreach ($buttons as $button)
             <div class="col s12 m6 l4">
                 <a href="{{ route($button['route']) }}" class="btn-large waves-effect waves-light brown z-depth-2"

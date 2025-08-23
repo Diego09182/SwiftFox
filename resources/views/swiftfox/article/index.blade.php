@@ -27,7 +27,7 @@
 			<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">所有文章</h3>
 			<br>
 			<div class="row center">
-				<a href="{{ route('article.create') }}" class="waves-effect waves-light btn brown"><i class="material-icons left">mode_edit</i>發表</a>
+				<a href="{{ route('article.create') }}" class="btn-large brown waves-effect waves-light z-depth-2"><i class="material-icons left">mode_edit</i>發表</a>
 			</div>
 			@if ($articles->isEmpty())
             	<h3 class="center-align  wow animate__animated animate__fadeInUp animate__delay-2s">目前沒有文章</h3>

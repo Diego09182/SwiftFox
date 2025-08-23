@@ -10,6 +10,8 @@
 
     @include('component.logoutbanner')
 
+    @include('component.toolbar')
+
     <h4 class="center">🎁 兌換紀錄</h4>
 
     <div class="container">

@@ -22,10 +22,9 @@ class VideoService
         });
     }
 
-    public function createVideo($request)
+    public function createVideo($uploadedFile): array
     {
-        $uploadedFile = $request->file('video');
-        $filename = time().'_'.mt_rand().'.'.$uploadedFile->getClientOriginalExtension();
+        $filename = time() . '_' . mt_rand() . '.' . $uploadedFile->getClientOriginalExtension();
         $path = $uploadedFile->storeAs('videos', $filename, 'public');
 
         return [
@@ -34,9 +33,17 @@ class VideoService
         ];
     }
 
-    public function deleteVideo($video)
+    public function storeVideoData(array $data): Video
     {
-        Storage::delete('public/videos/'.$video->filename);
+        return Video::create($data);
+    }
+
+    public function deleteVideo(Video $video)
+    {
+        if ($video->filename && Storage::disk('public')->exists('videos/' . $video->filename)) {
+            Storage::disk('public')->delete('videos/' . $video->filename);
+        }
+
         $video->delete();
     }
 

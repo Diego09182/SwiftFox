@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Notifications\ResourceNotification;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,7 @@ class PostController extends Controller
 
         $posts = $this->postService->getPostsByFilter($filter, $page);
 
-        return view('swiftfox.forum.filter', compact('posts', 'filter'));
+        return view('swiftfox.post.filter', compact('posts', 'filter'));
     }
 
     public function search(Request $request)
@@ -34,7 +35,7 @@ class PostController extends Controller
 
         $posts = $this->postService->searchPosts($search, $page);
 
-        return view('swiftfox.forum.search', compact('posts', 'search'));
+        return view('swiftfox.post.search', compact('posts', 'search'));
     }
 
     public function like(Post $post)
@@ -75,7 +76,7 @@ class PostController extends Controller
 
     public function create()
     {
-        return view('swiftfox.forum.create');
+        return view('swiftfox.post.create');
     }
 
     public function index(Request $request)
@@ -88,7 +89,7 @@ class PostController extends Controller
 
         $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
 
-        return view('swiftfox.forum.index', compact('posts', 'top_posts'));
+        return view('swiftfox.post.index', compact('posts', 'top_posts'));
     }
 
     public function store(Request $request)
@@ -127,7 +128,7 @@ class PostController extends Controller
 
         $relatedPosts = $this->postService->getRelatedPosts($post);
 
-        return view('swiftfox.forum.show', compact('post', 'comments', 'relatedPosts'));
+        return view('swiftfox.post.show', compact('post', 'comments', 'relatedPosts'));
     }
 
     public function destroy($id)
@@ -136,6 +137,19 @@ class PostController extends Controller
 
         if (Gate::denies('delete-post', $post)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        }
+
+        $user = $post->user;
+
+        $currentUser = Auth::user();
+
+        if ($currentUser->administration == 5) {
+            $user->notify(new ResourceNotification(
+                resourceType: 'post',
+                resourceId: $post->id,
+                title: '貼文已刪除',
+                reason: '違反社群規範'
+            ));
         }
 
         $this->postService->deletePost($post);

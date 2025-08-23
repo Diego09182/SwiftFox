@@ -1,15 +1,33 @@
-.tabs .tab a {
-    font-size: 50px;
-    font-weight: bold;
+/* ================================
+   Modal
+================================ */
+.modal {
+  width: 75% !important;
+  max-height: 75% !important;
 }
 
+/* ================================
+   Tabs
+================================ */
+.tabs .tab a {
+  font-size: 50px;
+  font-weight: bold;
+}
+
+/* ================================
+   Icons
+================================ */
 .icon-block {
   padding: 0 15px;
 }
+
 .icon-block .material-icons {
-	font-size: inherit;
+  font-size: inherit;
 }
 
+/* ================================
+   Navigation & Banner
+================================ */
 #navigation {
   background-color: #F8F4EF;
   height: 65px;
@@ -24,7 +42,11 @@
   border-radius: 15%;
 }
 
-#signbutton, #registerbutton {
+/* ================================
+   Buttons
+================================ */
+#signbutton,
+#registerbutton {
   border-radius: 50px;
   padding: 10px 20px;
   background-color: rgb(130, 66, 50);
@@ -39,14 +61,13 @@
   cursor: pointer;
 }
 
+/* ================================
+   Content Blocks
+================================ */
 #evaluation {
   border: 1px solid #000000;
   border-radius: 20px;
   background-color: #F8F4EF;
-}
-
-#slogan {
-  background-color: #F1ECCE;
 }
 
 #article {
@@ -77,6 +98,10 @@
   color: #000000;
 }
 
+/* ================================
+   Note Panel
+================================ */
 #note-panel {
   height: 1120px;
 }
+

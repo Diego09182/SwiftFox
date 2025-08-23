@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Club;
 use App\Services\ClubService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ClubController extends Controller
@@ -22,9 +21,8 @@ class ClubController extends Controller
         $page = $request->input('page', 1);
 
         $clubs = $this->clubService->getClubsByPage($page);
-        $user = Auth::user();
 
-        return view('swiftfox.club.index', compact('clubs', 'user'));
+        return view('swiftfox.club.index', compact('clubs'));
     }
 
     public function store(Request $request)
@@ -36,6 +34,7 @@ class ClubController extends Controller
             'teacher' => 'nullable',
             'director' => 'required',
             'vice_director' => 'nullable',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
@@ -45,7 +44,16 @@ class ClubController extends Controller
             'director.required' => '社長為必填項目',
             'content.min' => '內容至少需要2個字',
             'content.max' => '內容不能超過50個字',
+            'file.image' => '檔案必須是圖片格式',
+            'file.mimes' => '只接受 jpeg, png, jpg, 格式圖片',
+            'file.max' => '圖片大小不能超過2MB',
         ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $validatedData['filename'] = $file->getClientOriginalName();
+            $validatedData['path'] = $file->store('club', 'public');
+        }
 
         $this->clubService->createClub($validatedData);
 

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('teacher')->nullable();
             $table->string('director');
             $table->string('vice_director')->nullable();
+            $table->string('filename');
+            $table->string('path');
             $table->timestamps();
         });
     }

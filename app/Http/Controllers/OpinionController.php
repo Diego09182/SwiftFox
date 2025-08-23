@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Opinion;
+use App\Notifications\ResourceNotification;
 use App\Services\OpinionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -116,6 +117,19 @@ class OpinionController extends Controller
 
         if (Gate::denies('delete-opinion', $opinion)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        }
+
+        $user = $opinion->user;
+
+        $currentUser = Auth::user();
+
+        if ($currentUser->administration == 5) {
+            $user->notify(new ResourceNotification(
+                resourceType: 'opinion',
+                resourceId: $opinion->id,
+                title: '議題已刪除',
+                reason: '違反社群規範'
+            ));
         }
 
         $this->opinionService->deleteOpinion($opinion);

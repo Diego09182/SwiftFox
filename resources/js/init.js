@@ -256,55 +256,56 @@
 	    template: `
         <div class="row" id="slogan">
             <div class="col s12">
-                <div class="card-panel z-depth-3 center-align animate__animated animate__fadeInDown animate__delay-3s">
-                    <h1 class="brown-text text-darken-3" style="font-weight: 700; font-size: 3.5rem; margin-bottom: 10px;">
-                        Swift Fox
-                    </h1>
-                    <h4 class="grey-text text-darken-2" style="font-weight: 500;">
-                        一個多功能的開源社群軟體
-                    </h4>
+                <h1 class="center-align brown-text text-darken-3" style="font-weight: 700; font-size: 3.5rem; margin-bottom: 10px;">
+                    Swift Fox
+                </h1>
+                <h4 class="center-align brown-text text-darken-3" style="font-weight: 500;">
+                    一個多功能的開源社群軟體
+                </h4>
+            </div>
+        </div>
+        `
+    });
+
+    app.component('serve', {
+        template: `
+        <div class="container">
+            <h3 class="center-align brown-text text-darken-3 animate__animated animate__fadeInDown" style="font-weight: bold; margin-bottom: 3rem;">
+                特色功能
+            </h3>
+            <div class="row">
+                <div class="col s12 m4">
+                    <div class="card z-depth-3 hoverable animate__animated animate__fadeInUp animate__delay-1s" style="border-radius: 20px;">
+                        <div class="card-content center-align">
+                            <i class="material-icons large brown-text text-darken-2" style="font-size: 4rem;">perm_media</i>
+                            <h5 class="brown-text text-darken-4" style="margin-top: 1rem; font-weight: bold;">檔案上傳</h5>
+                            <p class="grey-text text-darken-1" style="font-size: 1.1rem;">輕鬆上傳優質學習資料。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="card z-depth-3 hoverable animate__animated animate__fadeInUp animate__delay-2s" style="border-radius: 20px;">
+                        <div class="card-content center-align">
+                            <i class="material-icons large brown-text text-darken-2" style="font-size: 4rem;">comment</i>
+                            <h5 class="brown-text text-darken-4" style="margin-top: 1rem; font-weight: bold;">經驗分享</h5>
+                            <p class="grey-text text-darken-1" style="font-size: 1.1rem;">用戶可發表成果、互相交流與學習。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m4">
+                    <div class="card z-depth-3 hoverable animate__animated animate__fadeInUp animate__delay-3s" style="border-radius: 20px;">
+                        <div class="card-content center-align">
+                            <i class="material-icons large brown-text text-darken-2" style="font-size: 4rem;">assessment</i>
+                            <h5 class="brown-text text-darken-4" style="margin-top: 1rem; font-weight: bold;">數據統計</h5>
+                            <p class="grey-text text-darken-1" style="font-size: 1.1rem;">公開統計數據，推動透明與共創。</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         `
     });
 
-	app.component('serve', {
-        template: `
-        <div class="container">
-            <h3 class="center-align brown-text text-darken-3 animate__animated animate__fadeInDown"><b>特色功能</b></h3>
-            <div class="row">
-                <div class="col s12 m4">
-                    <div class="card hoverable animate__animated animate__fadeInUp animate__delay-1s">
-                        <div class="card-content center-align">
-                            <h2 class="brown-text text-darken-2"><i class="material-icons large">perm_media</i></h2>
-                            <h4 class="brown-text text-darken-4"><b>提供學習資料</b></h4>
-                            <h5>提供優良的學習歷程檔案範例</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m4">
-                    <div class="card hoverable animate__animated animate__fadeInUp animate__delay-2s">
-                        <div class="card-content center-align">
-                            <h2 class="brown-text text-darken-2"><i class="material-icons large">comment</i></h2>
-                            <h4 class="brown-text text-darken-4"><b>用戶經驗分享</b></h4>
-                            <h5>可以進行成果發表與討論分享</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m4">
-                    <div class="card hoverable animate__animated animate__fadeInUp animate__delay-3s">
-                        <div class="card-content center-align">
-                            <h2 class="brown-text text-darken-2"><i class="material-icons large">assessment</i></h2>
-                            <h4 class="brown-text text-darken-4"><b>相關統計資料</b></h4>
-                            <h5>秉持透明、開放的態度，公開部分統計資料</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        `
-    });
 
 	app.component('developer', {
         template: `

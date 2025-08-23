@@ -6,7 +6,6 @@ use App\Models\Photo;
 use App\Models\Work;
 use App\Services\PhotoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,20 +21,18 @@ class PhotoController extends Controller
     public function create($workId)
     {
         $work = Work::with('photos')->findOrFail($workId);
-        $user = Auth::user();
 
-        return view('swiftfox.photo.create', compact('work', 'user'));
+        return view('swiftfox.photo.create', compact('work'));
     }
 
     public function show($workId, $photoId)
     {
         $work = Work::with('photos')->findOrFail($workId);
-        $user = Auth::user();
         $photo = Photo::findOrFail($photoId);
         $photoUrl = Storage::url($photo->path);
         $photos = $work->photos;
 
-        return view('swiftfox.photo.show', compact('work', 'user', 'photo', 'photoUrl', 'photos'));
+        return view('swiftfox.photo.show', compact('work', 'photo', 'photoUrl', 'photos'));
     }
 
     public function store(Request $request, $workId)

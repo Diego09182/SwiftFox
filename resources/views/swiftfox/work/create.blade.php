@@ -10,6 +10,8 @@
 
     @include('component.logoutbanner')
 
+    @include('component.toolbar')
+
     <div class="container">
         <div class="card white">
             <form name="WorkForm" method="post" action="{{ route('work.store') }}">

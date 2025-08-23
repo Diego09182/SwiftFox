@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('date');
             $table->string('location');
             $table->string('url')->nullable();
+            $table->string('filename');
+            $table->string('path');
             $table->timestamps();
         });
     }

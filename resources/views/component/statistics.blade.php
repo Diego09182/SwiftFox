@@ -9,7 +9,11 @@
     ];
 @endphp
 
-<h3 class="center-align">統計數據</h3>
+<div class="center-align">
+    <h3 class="brown-text text-darken-3 tm-section-title mb-4 animate__animated animate__fadeInDown animate__delay-4s">
+        <b>統計數據</b>
+    </h3>
+</div>
 <div class="container">
     @foreach(array_chunk($stats, 3) as $rowIndex => $row)
         <div class="row">

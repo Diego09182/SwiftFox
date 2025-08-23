@@ -10,35 +10,36 @@
 
     @include('component.logoutbanner')
 
-    <div class="container">
-        <div class="card blue-grey darken-1">
-            <form name="FileForm" method="post" action="{{ route('file.store') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="card-content white-text">
-                    <span class="card-title">新增檔案</span>
+    @include('component.toolbar')
 
+    <div class="container">
+        <div class="card white z-depth-2">
+            <form name="FileForm" method="POST" action="{{ route('file.store') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="card-content black-text">
+                    <span class="card-title">
+                        <i class="material-icons left">upload_file</i><b>新增檔案</b>
+                    </span>
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix">title</i>
-                            <input class="validate white-text" name="title" type="text" value="{{ old('title') }}">
+                            <input class="validate" name="title" type="text" id="title" value="{{ old('title') }}">
                             <label for="title">標題</label>
                             @error('title')
                                 <span class="red-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix">description</i>
-                            <textarea class="materialize-textarea white-text" name="content">{{ old('content') }}</textarea>
+                            <textarea class="materialize-textarea" name="content" id="content">{{ old('content') }}</textarea>
                             <label for="content">內容</label>
                             @error('content')
                                 <span class="red-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="file-field input-field col m12">
                             <div class="btn brown">
@@ -46,26 +47,30 @@
                                 <input type="file" name="file">
                             </div>
                             <div class="file-path-wrapper">
-                                <input class="file-path validate white-text" type="text">
+                                <input class="file-path validate" type="text" placeholder="未選擇檔案">
                             </div>
                             @error('file')
                                 <span class="red-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
-                        <div class="s12 m6 input-field">
-                            <input id="donation" type="text" name="donation" class="white-text" value="{{ old('donation') }}">
-                            <label for="donation">贊助連結</label>
+                        <div class="input-field col m12">
+                            <i class="material-icons prefix">link</i>
+                            <input id="donation" type="text" name="donation" value="{{ old('donation') }}">
+                            <label for="donation">贊助連結（可選）</label>
                             @error('donation')
                                 <span class="red-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
-
-                    <button class="waves-effect waves-light btn brown right" type="submit">上傳檔案</button>
-                    <br>
+                    <div class="row">
+                        <div class="col s12 right-align">
+                            <button class="waves-effect waves-light btn brown" type="submit">
+                                <i class="material-icons left">cloud_upload</i> 上傳檔案
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

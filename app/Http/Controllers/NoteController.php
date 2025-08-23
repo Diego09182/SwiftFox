@@ -29,12 +29,17 @@ class NoteController extends Controller
         return view('swiftfox.home.index', compact('user', 'totalPosts', 'totalNotes', 'notes'));
     }
 
+    public function create()
+    {
+        return view('swiftfox.home.create');
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:50',
-            'tag' => 'max:4',
+            'tag' => 'required|max:4',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
@@ -42,6 +47,7 @@ class NoteController extends Controller
             'content.required' => '內容為必填項目',
             'content.min' => '內容至少需要2個字',
             'content.max' => '內容不能超過50個字',
+            'tag.required' => '標籤為必填項目',
             'tag.max' => '標籤不能超過4個字',
         ]);
 

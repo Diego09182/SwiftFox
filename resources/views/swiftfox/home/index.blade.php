@@ -37,6 +37,20 @@
 
     <br>
 
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m6 offset-m3 l4 offset-l4">
+                <a  href="{{ route('note.create') }}"
+                    class="btn-large waves-effect waves-light brown z-depth-2"
+                    style="width: 100%; margin-bottom: 20px; font-size: 18px;">
+                        發布日記
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @include('component.userlist')
+
     <div class="container animate__animated animate__fadeIn">
         <div class="row">
             <div class="col s12 m9">
@@ -97,7 +111,6 @@
                         <p>會顯示於發文者區塊</p>
                     </div>
                 </div>
-
                 <div class="col s12 card-panel right animate__animated animate__fadeInRight">
                     <h5 class="card-title grey-text text-darken-4">自我介紹:</h5>
                     <h5>{{ $user->info }}</h5>
@@ -107,6 +120,9 @@
                     <br>
                     <h5 class="card-title grey-text text-darken-4">社團:</h5>
                     <h5>{{ $user->club }}</h5>
+                    <br>
+                    <h5 class="card-title grey-text text-darken-4">點數:</h5>
+                    <h5>{{ $user->points }}</h5>
                     <br>
                     <h5>登入次數: {{ $user->times }}</h5>
                     <br>

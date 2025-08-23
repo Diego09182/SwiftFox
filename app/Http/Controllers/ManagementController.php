@@ -38,7 +38,7 @@ class ManagementController extends Controller
         return view('swiftfox.management.index');
     }
 
-    public function user()
+    public function users()
     {
         if ($this->checkAdmin()) {
             return $this->checkAdmin();

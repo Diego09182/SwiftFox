@@ -1,10 +1,9 @@
 <div class="container">
-    <div class="center-align animate__animated animate__fadeInDown animate__delay-4s">
-        <h3 class="tm-text-primary tm-section-title mb-4">
-            公佈欄
+    <div class="center-align">
+        <h3 class="brown-text text-darken-3 tm-section-title mb-4 animate__animated animate__fadeInDown animate__delay-4s">
+            <b>公佈欄</b>
         </h3>
     </div>
-
     <div class="row">
         <div class="col s12 m8 offset-m2">
             <div class="card z-depth-3 animate__animated animate__fadeInDown animate__delay-4s">

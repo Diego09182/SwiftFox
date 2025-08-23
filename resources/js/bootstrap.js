@@ -32,3 +32,8 @@ window.Echo.channel('public.bulletins')
     .listen('BulletinPublished', (event) => {
         M.toast({ html: '新公告發布: ' + event.title });
     });
+
+window.Echo.private(`user.${userId}`)
+    .listen('.resource.notification', (data) => {
+         M.toast({ html: '收到專屬通知：', data });
+    });

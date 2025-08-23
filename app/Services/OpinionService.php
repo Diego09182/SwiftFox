@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class OpinionService
 {
-    public function hasUserVoted($userId, $opinionId)
+    public function userVoted($userId, $opinionId)
     {
         return Record::where('user_id', $userId)
             ->where('opinion_id', $opinionId)
@@ -18,7 +18,7 @@ class OpinionService
 
     public function vote($userId, $opinion, $voteType)
     {
-        if ($this->hasUserVoted($userId, $opinion->id)) {
+        if ($this->userVoted($userId, $opinion->id)) {
             throw new \Exception('您已經對這個投票進行過投票！');
         }
 
@@ -65,7 +65,7 @@ class OpinionService
 
     public function getOpinionsByPage(int $page)
     {
-        $cacheKey = 'opinions_index_page_'.$page;
+        $cacheKey = 'opinions_index_page_' . $page;
 
         return Cache::tags(['opinions'])->remember($cacheKey, 600, function () {
             return Opinion::orderBy('id', 'desc')->paginate(3);
@@ -86,7 +86,7 @@ class OpinionService
 
     public function getOpinionById(int $id)
     {
-        $cacheKey = 'opinion_'.$id;
+        $cacheKey = 'opinion_' . $id;
 
         return Cache::tags(['opinions'])->remember($cacheKey, 600, function () use ($id) {
             return Opinion::findOrFail($id);
@@ -105,7 +105,7 @@ class OpinionService
         Cache::tags(['opinions'])->flush();
 
         if ($opinion) {
-            Cache::forget('opinion_'.$opinion->id);
+            Cache::forget('opinion_' . $opinion->id);
         }
     }
 }

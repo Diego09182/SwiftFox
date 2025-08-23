@@ -8,13 +8,14 @@
 
     @include('component.logoutbanner')
 
+    @include('component.toolbar')
+
     <div class="container">
         <div class="card white">
             <form name="OpinionForm" method="post" action="{{ route('opinion.store') }}">
                 @csrf
                 <div class="card-content black-text">
                     <span class="card-title">發表投票</span>
-
                     <div class="row">
                         <div class="input-field col m8">
                             <i class="material-icons prefix black-text">mode_edit</i>
@@ -24,7 +25,6 @@
                                 <span class="red-text">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="input-field col m4">
                             <i class="material-icons prefix black-text">date_range</i>
                             <input name="finished_time" type="text" id="icon_prefix" class="datepicker black-text" value="{{ old('finished_time') }}">
@@ -34,7 +34,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="input-field col m12">
                             <i class="material-icons prefix black-text">mode_edit</i>
@@ -45,7 +44,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <button class="waves-effect waves-light btn brown right" type="submit">發表投票</button>
                     <br>
                 </div>

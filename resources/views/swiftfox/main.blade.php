@@ -30,6 +30,4 @@
 
     @include('component.footer')
 
-</div>
-
 @endsection

@@ -93,11 +93,12 @@
 
     <div class="container">
         <div class="row">
+            <h4 class="center animate__animated animate__fadeInDown animate__delay-2s">其他作品:</h4>
             @foreach ($photos as $photo)
                 <div class="col s12 m6 l4 animate__animated animate__fadeInUp animate__delay-2s">
                     <div class="card hoverable z-depth-2" style="border-radius: 12px;">
                         <div class="card-image">
-                            <img class="responsive-img materialboxed" src="{{ asset('storage/'.$photo->path) }}" alt="photo">
+                            <img class="responsive-img" src="{{ asset('storage/'.$photo->path) }}" alt="photo">
                             <a class="btn-floating halfway-fab waves-effect waves-light brown" href="{{ route('photo.show', ['work' => $photo->work_id, 'photo' => $photo->id]) }}">
                                 <i class="material-icons">search</i>
                             </a>
@@ -131,30 +132,47 @@
                     <div class="card">
                         <div class="card-image">
                             @if ($photo->user->avatar_filename)
-                                <img class="materialboxed" src="{{ asset('storage/avatars/' . $photo->user->avatar_filename) }}">
+                                <img class="materialboxed" src="{{ asset('storage/avatars/' . $photo->user->avatar_filename) }}" alt="User Avatar">
                             @else
-                                <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}">
+                                <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
                             @endif
                         </div>
                         <div class="card-content">
-                            <h5>使用者：{{ $work->user->account }}</h5>
+                            <h5 class="center">{{ $photo->user->account }}</h5>
                         </div>
                     </div>
                 </div>
                 <div class="col s12 m8">
                     <div class="card">
                         <div class="card-content">
-                            <h5>個人簡介：</h5>
-                            <p>{{ $work->user->info }}</p>
-                            <p>興趣：{{ $work->user->interest }}</p>
-                            <p>社團：{{ $work->user->club }}</p>
-                            <p>上站次數：{{ $work->user->times }}</p>
-                            <p>個人網站：
-                                @if ($work->user->url)
-                                    <br>{{ $work->user->url }}
-                                    <a href="{{ $work->user->url }}" target="_blank" class="btn-small brown right">前往</a>
+                            <h5>個人簡介:</h5>
+                            <h5>{{ $photo->user->info }}</h5>
+                            <h5>興趣: {{ $photo->user->interest }}</h5>
+                            <h5>社團: {{ $photo->user->club }}</h5>
+                            <h5>上站次數: {{ $photo->user->times }}</h5>
+                            <h5 class="left">等級標章:
+                                @php
+                                    $times = $photo->user->times;
+                                @endphp
+                                @if ($times >= 100)
+                                    <span class="badge gold" title="鑽石會員">💎 鑽石會員</span>
+                                @elseif ($times >= 50)
+                                    <span class="badge silver" title="白金會員">🥈 白金會員</span>
+                                @elseif ($times >= 20)
+                                    <span class="badge bronze" title="金牌會員">🥉 金牌會員</span>
+                                @elseif ($times >= 10)
+                                    <span class="badge blue" title="青銅會員">🔵 青銅會員</span>
+                                @else
+                                    <span class="badge gray" title="新手會員">⚪ 新手會員</span>
                                 @endif
-                            </p>
+                            </h5>
+                            <br><br><br>
+                            <h5 class="left">個人網站:</h5>
+                                @if ($photo->user->url)
+                                    <h5>{{ $photo->user->url }}</h5>
+                                    <a href="{{ $photo->user->url }}" class="modal-action modal-close waves-effect waves-green brown btn right">前往</a>
+                                @endif
+                            <br><br><br>
                         </div>
                     </div>
                 </div>

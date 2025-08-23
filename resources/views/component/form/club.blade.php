@@ -47,6 +47,17 @@
                         <label for="club-content" style="color: black;">社團介紹</label>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="file-field input-field col m12">
+                        <div class="btn brown">
+                            <span>上傳圖片</span>
+                            <input type="file" name="file" accept="image/*">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="請選擇一張圖片">
+                        </div>
+                    </div>
+                </div>
                 <button class="waves-effect waves-light btn brown right" type="submit">創建社團</button>
                 <br>
             </div>

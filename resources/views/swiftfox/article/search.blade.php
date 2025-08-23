@@ -3,35 +3,14 @@
 @section('content')
 
 <div id="app">
-	
+
 	@include('component.navigation')
-	
+
     @include('component.serve.message')
 
     @include('component.logoutbanner')
 
-	<div class="fixed-action-btn click-to-toggle">
-		<a class="btn-floating btn-large red">
-			<i class="large material-icons brown">menu</i>
-		</a>
-		<ul>
-			<li>
-				<a href="{{ route('article.create') }}" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布文章">
-					<i class="material-icons">mode_edit</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('home.index')}}"class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-					<i class="material-icons">view_quilt</i>
-				</a>
-			</li>
-			<li>
-				<a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-					<i class="material-icons">perm_identity</i>
-				</a>
-			</li>
-		</ul>
-	</div>
+    @include('component.toolbar')
 
 	<div class="container">
 		<div class="row">
@@ -94,15 +73,15 @@
 			@endif
 		</div>
 	</div>
-		
+
 	<br>
-	
+
 	@include('component.contact')
-	
+
 	<br>
-	
+
     @include('component.footer')
-	
+
 </div>
 
 @endsection

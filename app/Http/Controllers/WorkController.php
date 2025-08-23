@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Work;
+use App\Notifications\ResourceNotification;
 use App\Services\WorkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,13 +21,11 @@ class WorkController extends Controller
 
     public function index(Request $request)
     {
-        $user = Auth::user();
-
         $page = $request->input('page', 1);
 
         $works = $this->workService->getWorksByPage($page);
 
-        return view('swiftfox.work.index', compact('works', 'user'));
+        return view('swiftfox.work.index', compact('works'));
     }
 
     public function store(Request $request)
@@ -34,9 +33,9 @@ class WorkController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|min:2|max:10',
         ], [
-            'name.required' => '作品名稱為必填項目',
-            'name.min' => '作品名稱至少需要2個字',
-            'name.max' => '作品名稱不能超過20個字',
+            'name.required' => '作品集名稱為必填項目',
+            'name.min' => '作品集名稱至少需要2個字',
+            'name.max' => '作品集名稱不能超過20個字',
         ]);
 
         $this->workService->createWork($validatedData);
@@ -45,7 +44,7 @@ class WorkController extends Controller
 
         $user->increment('points', 10);
 
-        return redirect()->route('work.index')->with('success', '作品已創建成功！');
+        return redirect()->route('work.index')->with('success', '作品集已創建成功！');
     }
 
     public function create()
@@ -55,17 +54,15 @@ class WorkController extends Controller
 
     public function show($id)
     {
-        $user = Auth::user();
-
         $work = $this->workService->getWorkById($id);
 
         $photos = $work->photos;
 
         foreach ($photos as $photo) {
-            $photo->url = Storage::url('public/photos/'.$photo->filename);
+            $photo->url = Storage::url('public/photos/' . $photo->filename);
         }
 
-        return view('swiftfox.work.show', compact('work', 'user', 'photos'));
+        return view('swiftfox.work.show', compact('work', 'photos'));
     }
 
     public function destroy($id)
@@ -74,6 +71,19 @@ class WorkController extends Controller
 
         if (Gate::denies('delete-work', $work)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        }
+
+        $user = $work->user;
+
+        $currentUser = Auth::user();
+
+        if ($currentUser->administration == 5) {
+            $user->notify(new ResourceNotification(
+                resourceType: 'work',
+                resourceId: $work->id,
+                title: '作品已刪除',
+                reason: '違反社群規範'
+            ));
         }
 
         $this->workService->deleteWork($id);

@@ -9,7 +9,7 @@ class ClubService
 {
     public function getClubsByPage(int $page)
     {
-        $cacheKey = 'club_index_page_'.$page;
+        $cacheKey = 'club_index_page_' . $page;
 
         return Cache::tags(['clubs'])->remember($cacheKey, 600, function () {
             return Club::orderBy('id', 'desc')->paginate(9);
@@ -19,6 +19,7 @@ class ClubService
     public function createClub(array $data)
     {
         $data['content'] = nl2br($data['content']);
+
         $club = Club::create($data);
 
         $this->clearCache();

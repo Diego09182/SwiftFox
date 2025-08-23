@@ -10,28 +10,7 @@
 
     @include('component.logoutbanner')
 
-    <div class="fixed-action-btn click-to-toggle">
-        <a class="btn-floating btn-large red">
-            <i class="large material-icons brown">menu</i>
-        </a>
-        <ul>
-            <li>
-                <a href="#modal1" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布日記">
-                    <i class="material-icons">mode_edit</i>
-                </a>
-            </li>
-            <li>
-                <a href="{{route('home.index')}}" class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-                    <i class="material-icons">view_quilt</i>
-                </a>
-            </li>
-            <li>
-                <a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-                    <i class="material-icons">perm_identity</i>
-                </a>
-            </li>
-        </ul>
-    </div>
+    @include('component.toolbar')
 
     @include('component.form.note')
 
@@ -41,13 +20,15 @@
             <div class="row">
                 <div class="col s12 m4">
                     <div class="card">
-                        @if ($note->user->avatar_filename)
-                        <img class="materialboxed" src="{{ asset('storage/avatars/' . $note->user->avatar_filename) }}" alt="User Avatar">
-                        @else
-                        <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
-                        @endif
+                        <div class="card-image">
+                            @if ($note->user->avatar_filename)
+                                <img class="materialboxed" src="{{ asset('storage/avatars/' . $note->user->avatar_filename) }}" alt="User Avatar">
+                            @else
+                                <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                            @endif
+                        </div>
                         <div class="card-content">
-                            <h5>使用者: {{ $note->user->account }}</h5>
+                            <h5 class="center">{{ $note->user->account }}</h5>
                         </div>
                     </div>
                 </div>
@@ -59,12 +40,29 @@
                             <h5>興趣: {{ $note->user->interest }}</h5>
                             <h5>社團: {{ $note->user->club }}</h5>
                             <h5>上站次數: {{ $note->user->times }}</h5>
-                            <h5>個人網站:</h5>
-                            @if ($note->user->url)
-                            <h5>{{ $note->user->url }}</h5>
-                            <a href="{{ $note->user->url }}" class="modal-action modal-close waves-effect waves-green brown btn right">前往</a>
-                            @endif
-                            <br>
+                            <h5 class="left">等級標章:
+                                @php
+                                    $times = $note->user->times;
+                                @endphp
+                                @if ($times >= 100)
+                                    <span class="badge gold" title="鑽石會員">💎 鑽石會員</span>
+                                @elseif ($times >= 50)
+                                    <span class="badge silver" title="白金會員">🥈 白金會員</span>
+                                @elseif ($times >= 20)
+                                    <span class="badge bronze" title="金牌會員">🥉 金牌會員</span>
+                                @elseif ($times >= 10)
+                                    <span class="badge blue" title="青銅會員">🔵 青銅會員</span>
+                                @else
+                                    <span class="badge gray" title="新手會員">⚪ 新手會員</span>
+                                @endif
+                            </h5>
+                            <br><br><br>
+                            <h5 class="left">個人網站:</h5>
+                                @if ($note->user->url)
+                                    <h5>{{ $note->user->url }}</h5>
+                                    <a href="{{ $note->user->url }}" class="modal-action modal-close waves-effect waves-green brown btn right">前往</a>
+                                @endif
+                            <br><br><br>
                         </div>
                     </div>
                 </div>
@@ -99,7 +97,7 @@
                             <div class="collapsible-body center">
                                 <div style="text-align: center; font-size: 1.8rem; display: inline-flex; align-items: center; gap: 0.6rem; justify-content: center; flex-wrap: wrap;">
                                     @php
-                                        $times = $opinion->user->times;
+                                        $times = $note->user->times;
                                     @endphp
                                     @if ($times >= 100)
                                         <span class="badge gold" title="鑽石會員" style="font-size: 2.2rem;">💎</span> <span style="font-size: 1.6rem;">鑽石會員</span>

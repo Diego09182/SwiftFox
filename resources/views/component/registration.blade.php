@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col m12 animate__animated animate__fadeInDown animate__delay-0.5s">
             <ul class="tabs">
-                <li class="tab col m6"><a href="#test1"><h5>登入帳號</h5></a></li>
-                <li class="tab col m6"><a href="#test2"><h5>註冊帳號</h5></a></li>
+                <li class="tab col m6"><a href="#login"><h5>登入帳號</h5></a></li>
+                <li class="tab col m6"><a href="#register"><h5>註冊帳號</h5></a></li>
             </ul>
         </div>
-        <div id="test1" class="col m12 animate__animated animate__fadeInUp animate__delay-1s">
+        <div id="login" class="col m12 animate__animated animate__fadeInUp animate__delay-1s">
             <div class="card">
                 <div class="card-content">
                     <div class="row">
@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div id="test2" class="col m12 animate__animated animate__fadeInUp animate__delay-1s">
+        <div id="register" class="col m12 animate__animated animate__fadeInUp animate__delay-1s">
             <div class="card">
                 <div class="card-content">
                     <form action="{{ route('register') }}" method="post" name="RegisterForm">

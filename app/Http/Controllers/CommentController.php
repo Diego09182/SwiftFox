@@ -39,7 +39,7 @@ class CommentController extends Controller
         return redirect()->route('forum.show', compact('post'))->with('success', '評論成功');
     }
 
-    public function destroy($postId, $commentId)
+    public function destroy($postId)
     {
         return redirect()->route('forum.show', ['post' => $postId])->with('success', '評論已刪除');
     }

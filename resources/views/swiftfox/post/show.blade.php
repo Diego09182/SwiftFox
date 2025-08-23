@@ -99,9 +99,9 @@
             <div class="card">
                 <div class="card-image">
                     @if ($post->user->avatar_filename)
-                        <img class="materialboxed" src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
+                        <img src="{{ asset('storage/avatars/' . $post->user->avatar_filename) }}" alt="User Avatar">
                     @else
-                        <img class="materialboxed" src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
+                        <img src="{{ asset('images/SWIFT FOX LOGO.png') }}" alt="Default Avatar">
                     @endif
                 </div>
                 <div class="card-content">
@@ -153,7 +153,7 @@
                     <hr>
                     <h5 id="post-content"
                         class="post-content animate__animated animate__fadeIn animate__delay-2s"
-                        style="line-height: 1.8;">
+                        style="line-height: 1.8; word-break: break-word; overflow-wrap: break-word;">
                         {!! $post->content !!}
                     </h5>
                     <br>
@@ -202,7 +202,6 @@
                                 </button>
                             </form>
                             @endif
-
                             <a href="#modal3"
                             class="btn-floating modal-trigger waves-effect waves-light brown left tooltipped animate__animated animate__zoomIn animate__delay-3s"
                             data-tooltip="檢舉貼文"
@@ -211,54 +210,6 @@
                             </a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col s12 m9 right animate__animated animate__fadeInUp animate__delay-2s">
-            <div class="card">
-                <div class="card-content">
-                    <h5><b>貼文詞彙分析</b></h5>
-                    <h5><b>關鍵字: {{ $post->keywords }}</b></h5>
-                    <h5><b>詞性: {{ $post->sentiment }}</b></h5>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col s12 m9 right animate__animated animate__fadeInUp animate__delay-2s">
-            <div class="card">
-                <div class="card-content">
-                    <h5><b>AI 貼文分析:</b></h5>
-                    <h5><b>{{ $post->summary }}</b></h5>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <h5><b>違規檢測結果</b></h5>
-                    <h5>
-                        是否違規：
-                        @if($post->violated)
-                            <span style="color: red; font-weight: bold;">是</span>
-                        @else
-                            <span style="color: green; font-weight: bold;">否</span>
-                        @endif
-                    </h5>
-                    <h5>
-                        違規理由：
-                        @if(!empty($post->violation_reasons))
-                            <b>{{ $post->violation_reasons }}</b>
-                        @else
-                            無
-                        @endif
-                    </h5>
                 </div>
             </div>
         </div>
