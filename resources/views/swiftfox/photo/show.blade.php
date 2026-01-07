@@ -15,8 +15,8 @@
     @include('component.toolbar')
 
     <div class="container">
-        <h4 class="center animate__animated animate__fadeInDown">作品名稱:</h4>
-        <h4 class="center animate__animated animate__fadeInDown animate__delay-1s">{{ $photo->name }}</h4>
+        <h3 class="center animate__animated animate__fadeInDown">作品名稱:</h3>
+        <h3 class="center animate__animated animate__fadeInDown animate__delay-1s">{{ $photo->name }}</h3>
         <div class="row">
             <div class="col s12 m3">
                 <div class="center">
@@ -71,8 +71,8 @@
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">
-                            <h5>作品描述:</h5>
-                            <p>{{ $photo->content }}</p>
+                            <h4>作品描述:</h4>
+                            <h5>{{ $photo->content }}</h5>
                         </div>
                         <div class="card-action">
                             @if(Auth::user()->administration == 5 || $photo->user->id == Auth::user()->id)
@@ -93,9 +93,9 @@
 
     <div class="container">
         <div class="row">
-            <h4 class="center animate__animated animate__fadeInDown animate__delay-2s">其他作品:</h4>
+            <h3 class="center">其他作品:</h3>
             @foreach ($photos as $photo)
-                <div class="col s12 m6 l4 animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="col s12 m6 l4">
                     <div class="card hoverable z-depth-2" style="border-radius: 12px;">
                         <div class="card-image">
                             <img class="responsive-img" src="{{ asset('storage/'.$photo->path) }}" alt="photo">

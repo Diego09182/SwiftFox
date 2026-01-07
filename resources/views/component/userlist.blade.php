@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container animate__animated animate__fadeIn">
     <div class="row">
         @php
             $buttons = [
@@ -10,10 +10,13 @@
                 ['route' => 'home.files', 'label' => '檔案列表', 'icon' => 'attach_file'],
             ];
         @endphp
-        @foreach ($buttons as $button)
+
+        @foreach ($buttons as $index => $button)
             <div class="col s12 m6 l4">
-                <a href="{{ route($button['route']) }}" class="btn-large waves-effect waves-light brown z-depth-2"
-                style="width: 100%; margin-bottom: 20px; font-size: 18px;">
+                <a href="{{ route($button['route']) }}"
+                   class="btn-large waves-effect waves-light brown z-depth-2"
+                   style="width: 100%; margin-bottom: 20px; font-size: 18px;"
+                   data-anime-delay="{{ $index * 100 }}ms">
                     <i class="material-icons left">{{ $button['icon'] }}</i>{{ $button['label'] }}
                 </a>
             </div>

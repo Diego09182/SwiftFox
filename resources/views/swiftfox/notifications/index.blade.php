@@ -12,7 +12,7 @@
 
     @include('component.toolbar')
 
-    <div class="container">
+    <div class="container animate__animated animate__fadeInUp animate__delay-1s">
         <div class="section">
             <h4 class="center-align">通知中心</h4>
             <h4 class="center-align">顯示官方的通知資訊</h4>

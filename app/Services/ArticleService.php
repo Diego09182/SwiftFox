@@ -13,9 +13,11 @@ class ArticleService
         $cacheKey = 'search_articles_' . md5($search);
 
         return Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($search) {
-            return empty($search)
-                ? Article::latest()->paginate(6)
-                : Article::where('title', 'LIKE', "%$search%")->paginate(6);
+            if (empty($search)) {
+                return Article::latest()->paginate(6);
+            }
+
+            return Article::where('title', 'LIKE', "%$search%")->paginate(6);
         });
     }
 
@@ -33,31 +35,29 @@ class ArticleService
         $cacheKey = 'article_' . $id;
 
         return Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($id) {
-            return Article::findOrFail($id);
+            return Article::find($id); // 不使用 findOrFail，避免 Exception
         });
     }
 
     public function createArticle(array $data)
     {
         $data['user_id'] = Auth::id();
-
         $data['summary'] = mb_substr(strip_tags($data['content']), 0, 30) . '...';
 
         $article = Article::create($data);
 
         $this->clearCache();
 
-        return $article;
+        return $article->fresh();
     }
 
     public function deleteArticle(Article $article)
     {
         $article->delete();
-
         $this->clearCache();
     }
 
-    public function clearCache()
+    private function clearCache()
     {
         Cache::tags(['articles'])->flush();
     }

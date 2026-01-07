@@ -14,22 +14,24 @@
     <div class="container">
         <div class="row">
 
-            <h3 class="center-align wow animate__animated animate__fadeInUp animate__delay-1s teal-text text-darken-3">
+            <h3 class="center-align wow animate__animated animate__fadeInUp animate__delay-1s black-text text-darken-3">
                 🎁 <strong>可兌換獎品列表</strong>
             </h3>
 
-
             <div class="col s12">
-                <div class="card-panel teal lighten-5 z-depth-1 center-align">
-                    <h5 class="black-text">
-                        🎯 您目前擁有 <span class="teal-text text-darken-3"><strong>{{ Auth::user()->points }}</strong></span> 點
-                    </h5>
+                <div class="card-panel gradient-bg z-depth-3 center-align">
+                    <h4 class="black-text" style="margin-bottom: 15px;">
+                        🎯 我的點數
+                    </h4>
+                    <h3 class="black-text text-lighten-5" style="font-weight: bold; margin: 0;">
+                        {{ Auth::user()->points }}
+                    </h3>
                 </div>
             </div>
 
                 @if ($prizes->isEmpty())
                     <div class="col s12 center-align">
-                        <h5 class="grey-text text-darken-1">目前沒有可兌換的獎品，敬請期待！</h5>
+                        <h5 class="black-text text-darken-1">目前沒有可兌換的獎品，敬請期待！</h5>
                     </div>
                 @else
 
@@ -46,7 +48,7 @@
                                      style="height: 200px; object-fit: cover;">
                             </div>
                             <div class="card-content">
-                                <span class="card-title teal-text text-darken-2 truncate">
+                                <span class="card-title black-text text-darken-2 truncate">
                                     <strong>🏷 {{ $prize->prize }}</strong>
                                 </span>
                                 <p>💰 所需點數：<span class="blue-text text-darken-2"><strong>{{ $prize->price }}</strong></span></p>
@@ -76,7 +78,7 @@
                                         @if(auth()->user()->points < $prize->price)
                                             <button class="btn disabled grey" disabled>點數不足</button>
                                         @else
-                                            <button class="btn green waves-effect waves-light pulse" type="submit">
+                                            <button class="btn green waves-effect waves-light pulse right" type="submit">
                                                 立即兌換
                                             </button>
                                         @endif
@@ -85,7 +87,7 @@
                                     <p class="red-text text-darken-2"><strong>⚠️ 此獎品已兌換完畢</strong></p>
                                 @endif
                                 @if(Auth::user()->administration == 5)
-                                    <form action="{{ route('prize.destroy', $prize->id) }}" method="POST" class="right-align" style="margin-top: 10px;">
+                                    <form action="{{ route('prize.destroy', $prize->id) }}" method="POST" class="left-align" style="margin-top: 10px;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-flat waves-effect waves-red red-text text-darken-2">

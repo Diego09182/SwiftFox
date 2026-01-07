@@ -48,7 +48,6 @@
                                 <a class="waves-effect waves-light btn-small right brown lighten-1" href="{{ route('work.show', ['work' => $work->id]) }}">
                                     <i class="material-icons left">visibility</i>查看
                                 </a>
-
                                 @if(Auth::user()->administration == 5 || $work->user->id == Auth::user()->id)
                                     <form action="{{ route('work.destroy', $work->id) }}" method="POST" style="display:inline;">
                                         @csrf

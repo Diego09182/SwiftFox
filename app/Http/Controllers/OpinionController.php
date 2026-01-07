@@ -67,11 +67,10 @@ class OpinionController extends Controller
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
+
         $opinions = $this->opinionService->getOpinionsByPage($page);
 
-        $user = Auth::user();
-
-        return view('swiftfox.opinion.index', compact('opinions', 'user'));
+        return view('swiftfox.opinion.index', compact('opinions'));
     }
 
     public function create()
@@ -111,10 +110,8 @@ class OpinionController extends Controller
         return view('swiftfox.opinion.show', compact('opinion', 'agreeRatio', 'disagreeRatio'));
     }
 
-    public function destroy($id)
+    public function destroy(Opinion $opinion)
     {
-        $opinion = Opinion::findOrFail($id);
-
         if (Gate::denies('delete-opinion', $opinion)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }

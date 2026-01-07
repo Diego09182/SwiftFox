@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessVideo;
+use App\Models\Video;
 use App\Notifications\ResourceNotification;
 use App\Services\VideoService;
 use Illuminate\Http\Request;
@@ -43,24 +43,28 @@ class VideoController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|min:2|max:20',
             'content' => 'required|min:2|max:50',
-            'video' => 'required|mimes:mp4,mov,ogg,qt|max:30720',
+            'video' => 'required|mimes:mp4,mov,ogg,qt|max:51200',
         ], [
             'title.required' => '影片標題為必填',
             'content.required' => '影片內容為必填',
             'video.required' => '影片檔案必須上傳',
         ]);
 
-        $uploadedFile = $request->file('video');
+        $video = $request->file('video');
 
-        $fileInfo = $this->videoService->createVideo($uploadedFile);
+        $filename = time().'_'.uniqid().'.'.$video->getClientOriginalExtension();
 
-        $videoData = array_merge($validatedData, $fileInfo);
+        $path = $video->storeAs('videos', $filename, 'public');
 
-        $userId = Auth::id();
+        Video::create([
+            'title' => $validatedData['title'],
+            'content' => $validatedData['content'],
+            'filename' => $filename,
+            'path' => $path,
+            'user_id' => Auth::id(),
+        ]);
 
-        ProcessVideo::dispatch($videoData, $userId);
-
-        return redirect()->route('video.index')->with('success', '影片已提交，系統正在處理中。');
+        return redirect()->route('video.index')->with('success', '影片上傳成功');
     }
 
     public function destroy($id)

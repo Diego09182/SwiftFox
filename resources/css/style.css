@@ -64,12 +64,6 @@
 /* ================================
    Content Blocks
 ================================ */
-#evaluation {
-  border: 1px solid #000000;
-  border-radius: 20px;
-  background-color: #F8F4EF;
-}
-
 #article {
   border-radius: 20px;
   border-left: 7px solid rgb(130, 66, 50);

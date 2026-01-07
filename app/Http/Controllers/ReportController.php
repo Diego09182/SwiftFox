@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Report;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 
@@ -37,10 +38,8 @@ class ReportController extends Controller
         return redirect()->back()->with('success', '檢舉已創建成功！');
     }
 
-    public function destroy($id)
+    public function destroy(Report $report)
     {
-        $report = Report::findOrFail($id);
-
         $this->reportService->deleteReport($report);
 
         return redirect()->route('management.index')->with('success', '檢舉已成功刪除！');

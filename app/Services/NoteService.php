@@ -20,22 +20,21 @@ class NoteService
     public function createNote(array $data)
     {
         $data['content'] = nl2br($data['content']);
-
         $data['user_id'] = Auth::id();
 
         $note = Note::create($data);
 
         $this->clearCache();
 
-        return $note;
+        return $note->fresh();
     }
 
-    public function getNoteById($id)
+    public function getNoteById(int $id)
     {
         $cacheKey = 'note_show_' . $id;
 
         return Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
-            return Note::findOrFail($id);
+            return Note::find($id);
         });
     }
 

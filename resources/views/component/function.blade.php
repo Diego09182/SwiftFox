@@ -2,13 +2,13 @@
 $features = [
     [
         'title' => '投票區',
-        'desc' => '關於學生自治與校務投票。',
+        'desc' => '社群自治投票。',
         'route' => 'opinion.index',
         'icon' => 'fa-solid fa-square-poll-vertical'
     ],
     [
         'title' => '綜合討論區',
-        'desc' => '討論關於校園的任何事項。',
+        'desc' => '討論任何學習相關主題。',
         'route' => 'forum.index',
         'icon' => 'fa-solid fa-comments'
     ],

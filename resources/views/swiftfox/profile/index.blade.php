@@ -10,11 +10,9 @@
 
     @include('component.toolbar')
 
-	<br>
-
 	<div class="container">
-        <h4 class="center-align black-text">使用者資料</h4>
-        <div class="card white z-depth-3">
+        <h4 class="center-align black-text animate__animated animate__bounceIn">使用者資料</h4>
+        <div class="card white z-depth-3 animate__animated animate__bounceIn">
             <form name="ProfileForm" method="post" action="{{ route('profile.update', $user->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -111,6 +109,7 @@
     </div>
 
     <script>
+
         function previewImage(event) {
             const input = event.target;
             const reader = new FileReader();

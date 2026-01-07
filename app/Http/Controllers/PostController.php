@@ -3,157 +3,126 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Notifications\ResourceNotification;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
-    protected $postService;
-
-    public function __construct(PostService $postService)
-    {
-        $this->postService = $postService;
-    }
-
-    public function filter(Request $request)
-    {
-        $filter = $request->input('filter');
-        $page = $request->input('page', 1);
-
-        $posts = $this->postService->getPostsByFilter($filter, $page);
-
-        return view('swiftfox.post.filter', compact('posts', 'filter'));
-    }
-
-    public function search(Request $request)
-    {
-        $search = $request->input('search');
-        $page = $request->input('page', 1);
-
-        $posts = $this->postService->searchPosts($search, $page);
-
-        return view('swiftfox.post.search', compact('posts', 'search'));
-    }
-
-    public function like(Post $post)
-    {
-        try {
-            $post = $this->postService->likePost($post);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'like' => $post->like,
-                'dislike' => $post->dislike,
-            ], 403);
-        }
-
-        return response()->json([
-            'like' => $post->like,
-            'dislike' => $post->dislike,
-        ]);
-    }
-
-    public function dislike(Post $post)
-    {
-        try {
-            $post = $this->postService->dislikePost($post);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'like' => $post->like,
-                'dislike' => $post->dislike,
-            ], 403);
-        }
-
-        return response()->json([
-            'like' => $post->like,
-            'dislike' => $post->dislike,
-        ]);
-    }
-
-    public function create()
-    {
-        return view('swiftfox.post.create');
-    }
+    public function __construct(
+        protected PostService $postService
+    ) {}
 
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
 
-        $top_posts_limit = 3;
-
         $posts = $this->postService->getPostsByPage($page);
+        $top_posts = $this->postService->getWeeklyTopPosts(3);
 
-        $top_posts = $this->postService->getWeeklyTopPosts($top_posts_limit);
+        return view('swiftfox.post.index', [
+            'posts'     => $posts,
+            'top_posts' => $top_posts,
+        ]);
+    }
 
-        return view('swiftfox.post.index', compact('posts', 'top_posts'));
+    public function filter(Request $request)
+    {
+        $filter = $request->input('filter');
+        $page   = $request->input('page', 1);
+
+        $posts = $this->postService->getPostsByFilter($filter, $page);
+
+        return view('swiftfox.post.filter', [
+            'posts'  => $posts,
+            'filter' => $filter,
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $page   = $request->input('page', 1);
+
+        $posts = $this->postService->searchPosts($search, $page);
+
+        return view('swiftfox.post.search', [
+            'posts'  => $posts,
+            'search' => $search,
+        ]);
+    }
+
+    public function show(int $id)
+    {
+        $post = $this->postService->viewPost($id);
+
+        if (!$post) {
+            abort(404);
+        }
+
+        $comments = $post->comments()->paginate(6);
+        $relatedPosts = $this->postService->getRelatedPosts($post);
+
+        return view('swiftfox.post.show', [
+            'post'         => $post,
+            'comments'     => $comments,
+            'relatedPosts' => $relatedPosts,
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|min:2|max:20',
+        $data = $request->validate([
+            'title'   => 'required|min:2|max:20',
             'content' => 'required|min:2|max:1000',
-            'tag' => 'required|in:學習問題,學習資源,活動宣傳,其他內容',
-        ], [
-            'title.required' => '標題為必填項目',
-            'title.min' => '標題至少需要2個字',
-            'title.max' => '標題不能超過20個字',
-            'content.required' => '內容為必填項目',
-            'content.min' => '內容至少需要2個字',
-            'content.max' => '內容不能超過1000個字',
-            'tag.required' => '標籤為必填項目',
-            'tag.in' => '標籤必須符合選項',
+            'tag'     => 'required|in:學習問題,學習資源,活動宣傳,其他內容',
         ]);
 
-        $this->postService->createPost($validatedData);
+        $this->postService->createPost($data, Auth::user());
 
-        $user = Auth::user();
-
-        $user->increment('points', 10);
-
-        return redirect()->route('forum.index')->with('success', '貼文已創建成功！');
+        return redirect()
+            ->route('forum.index')
+            ->with('success', '貼文已創建成功！');
     }
 
-    public function show($id)
+    public function like(Post $post)
     {
-        $post = $this->postService->getPostById($id);
+        $result = $this->postService->like($post, Auth::user());
 
-        $this->postService->incrementPostView($post);
+        if (!$result['success']) {
+            return response()->json(['message' => $result['message']], 403);
+        }
 
-        $comments = $post->comments()->paginate(6);
-
-        $relatedPosts = $this->postService->getRelatedPosts($post);
-
-        return view('swiftfox.post.show', compact('post', 'comments', 'relatedPosts'));
+        return response()->json([
+            'like'    => $result['data']->like,
+            'dislike' => $result['data']->dislike,
+        ]);
     }
 
-    public function destroy($id)
+    public function dislike(Post $post)
     {
-        $post = Post::findOrFail($id);
+        $result = $this->postService->dislike($post, Auth::user());
 
-        if (Gate::denies('delete-post', $post)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
+        if (!$result['success']) {
+            return response()->json(['message' => $result['message']], 403);
         }
 
-        $user = $post->user;
+        return response()->json([
+            'like'    => $result['data']->like,
+            'dislike' => $result['data']->dislike,
+        ]);
+    }
 
-        $currentUser = Auth::user();
+    public function destroy(Post $post)
+    {
+        $result = $this->postService->deletePost($post, Auth::user());
 
-        if ($currentUser->administration == 5) {
-            $user->notify(new ResourceNotification(
-                resourceType: 'post',
-                resourceId: $post->id,
-                title: '貼文已刪除',
-                reason: '違反社群規範'
-            ));
+        if (!$result['success']) {
+            return back()->with('error', $result['message']);
         }
 
-        $this->postService->deletePost($post);
-
-        return redirect()->route('forum.index')->with('success', '貼文已成功刪除！');
+        return redirect()
+            ->route('forum.index')
+            ->with('success', '貼文已成功刪除！');
     }
 }

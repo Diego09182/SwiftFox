@@ -12,52 +12,49 @@ use Illuminate\Support\Facades\Gate;
 
 class FileController extends Controller
 {
-    protected $fileService;
-
-    public function __construct(FileService $fileService)
-    {
-        $this->fileService = $fileService;
-    }
+    public function __construct(
+        protected FileService $fileService
+    ) {}
 
     public function like(File $file)
     {
-        try {
-            $file = $this->fileService->likeFile($file);
-        } catch (\Exception $e) {
+        $result = $this->fileService->likeFile($file);
+
+        if (!$result['success']) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'like' => $file->like,
+                'message' => $result['message'],
+                'like'    => $file->like,
                 'dislike' => $file->dislike,
             ], 403);
         }
 
         return response()->json([
-            'like' => $file->like,
-            'dislike' => $file->dislike,
+            'like'    => $result['data']->like,
+            'dislike' => $result['data']->dislike,
         ]);
     }
 
     public function dislike(File $file)
     {
-        try {
-            $file = $this->fileService->dislikeFile($file);
-        } catch (\Exception $e) {
+        $result = $this->fileService->dislikeFile($file);
+
+        if (!$result['success']) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'like' => $file->like,
+                'message' => $result['message'],
+                'like'    => $file->like,
                 'dislike' => $file->dislike,
             ], 403);
         }
 
         return response()->json([
-            'like' => $file->like,
-            'dislike' => $file->dislike,
+            'like'    => $result['data']->like,
+            'dislike' => $result['data']->dislike,
         ]);
     }
 
     public function index()
     {
-        $files = $this->fileService->getFilesByPage(6);
+        $files = $this->fileService->getFilesByPage(8);
 
         return view('swiftfox.file.index', compact('files'));
     }
@@ -70,14 +67,14 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|min:2|max:20',
-            'content' => 'nullable|string',
-            'file' => 'required|file|max:20480|mimes:jpg,jpeg,png,pdf,docx,xlsx,pptx,txt,csv',
+            'title'    => 'required|string|min:2|max:20',
+            'content'  => 'nullable|string',
+            'file'     => 'required|file|max:20480|mimes:jpg,jpeg,png,pdf,docx,xlsx,pptx,txt,csv',
             'donation' => 'nullable|string|max:150',
         ]);
 
         $uploadedFile = $request->file('file');
-        $filename = uniqid() . '_' . $uploadedFile->getClientOriginalName();
+        $filename = uniqid().'_'.$uploadedFile->getClientOriginalName();
         $filename = str_replace(' ', '_', $filename);
         $path = $uploadedFile->storeAs('files', $filename, 'public');
 
@@ -90,12 +87,17 @@ class FileController extends Controller
 
         ProcessFile::dispatch($validatedData, $userId);
 
-        return redirect()->route('file.index')->with('success', '檔案已提交，系統正在處理中。');
+        return redirect()->route('file.index')
+            ->with('success', '檔案已提交，系統正在處理中。');
     }
 
     public function show($id)
     {
         $file = $this->fileService->getFileById($id);
+
+        if (!$file) {
+            abort(404);
+        }
 
         $file->increment('view');
 
@@ -108,8 +110,8 @@ class FileController extends Controller
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }
 
-        $owner = $file->user; // 檔案擁有者
-        $admin = Auth::user(); // 當前操作人
+        $owner = $file->user;
+        $admin = Auth::user();
 
         if ($admin->administration == 5) {
             $owner->notify(new ResourceNotification(

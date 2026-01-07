@@ -12,16 +12,16 @@
 
     @include('component.toolbar')
 
-    <h4 class="center">🎁 兌換紀錄</h4>
+    <h4 class="center animate__animated animate__bounceIn">兌換紀錄</h4>
 
     <div class="container">
         @if ($redemptions->isEmpty())
-            <div class="card-panel center-align grey lighten-3">
+            <div class="card-panel center-align grey lighten-3 animate__animated animate__fadeIn">
                 尚無兌換紀錄
             </div>
         @else
             {{ $redemptions->links('vendor.pagination.materialize') }}
-            <div class="card z-depth-2">
+            <div class="card z-depth-2 animate__animated animate__fadeIn">
                 <div class="card-content">
                     <table class="striped highlight responsive-table">
                         <thead>
@@ -40,7 +40,7 @@
                                     <td>{{ $item->prize->prize ?? '（已刪除）' }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>
-                                        <span class="new badge
+                                        <span class="new badge animate__animated animate__bounceIn
                                             {{
                                                 $item->status === 'pending' ? 'orange' :
                                                 ($item->status === 'approved' ? 'green' :

@@ -24,17 +24,16 @@ class ClubService
 
         $this->clearCache();
 
-        return $club;
+        return $club->fresh();
     }
 
     public function deleteClub(Club $club)
     {
         $club->delete();
-
         $this->clearCache();
     }
 
-    public function clearCache()
+    private function clearCache()
     {
         Cache::tags(['clubs'])->flush();
     }

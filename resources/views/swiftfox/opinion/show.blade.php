@@ -173,21 +173,32 @@
 		</div>
 		<div class="row">
             <div class="card-panel z-depth-2">
-                <h4 class="center"><b>投票統計</b></h4>
-                <h4><b>總票數: {{ $opinion->count }}</b></h4>
+                <h4><b id="count">總票數: {{ $opinion->count }}</b></h4>
                 <div class="section">
-                    <h4><b>贊成票數: {{ $opinion->agree }}</b></h4>
+                    <h4><b id="agree">贊成票數: {{ $opinion->agree }}</b></h4>
                     <div class="progress">
-                        <div class="determinate green" style="width: {{ $agreeRatio }}%"></div>
+                        <div
+                            id="agreeProgressBar"
+                            class="determinate green"
+                            style="width: {{ $agreeRatio }}%">
+                        </div>
                     </div>
-                    <h4 class="right green-text"><b>贊成比率: {{ $agreeRatio }}%</b></h4>
+                    <h4 id="agreeRatio" class="right green-text">
+                        <b>贊成比率: {{ $agreeRatio }}%</b>
+                    </h4>
                 </div>
                 <div class="section">
-                    <h4><b>反對票數: {{ $opinion->disagree }}</b></h4>
+                    <h4><b id="disagree">反對票數: {{ $opinion->disagree }}</b></h4>
                     <div class="progress">
-                        <div class="determinate red" style="width: {{ $disagreeRatio }}%"></div>
+                        <div
+                            id="disagreeProgressBar"
+                            class="determinate red"
+                            style="width: {{ $disagreeRatio }}%">
+                        </div>
                     </div>
-                    <h4 class="right red-text"><b>反對比率: {{ $disagreeRatio }}%</b></h4>
+                    <h4 id="disagreeRatio" class="right red-text">
+                        <b>反對比率: {{ $disagreeRatio }}%</b>
+                    </h4>
                 </div>
                 <br><br>
             </div>

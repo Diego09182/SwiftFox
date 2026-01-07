@@ -32,7 +32,7 @@
                 <div class="col s12 m6 l4 animate__animated animate__fadeInUp" style="margin-bottom: 30px;">
                     <div class="card z-depth-2 hoverable" style="border-radius: 12px;">
                         <div class="card-image">
-                            <img alt="photo" class="responsive-img materialboxed" style="height: 250px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;" src="{{ asset('storage/'.$photo->path) }}">
+                            <img alt="photo" class="responsive-img" style="height: 250px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;" src="{{ asset('storage/'.$photo->path) }}">
                             <a class="btn-floating halfway-fab waves-effect waves-light brown" href="{{ route('photo.show', ['work' => $photo->work_id, 'photo' => $photo->id]) }}">
                                 <i class="material-icons">search</i>
                             </a>
@@ -63,8 +63,11 @@
 </div>
 
 <br>
+
 @include('component.contact')
+
 <br>
+
 @include('component.footer')
 
 @endsection

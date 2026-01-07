@@ -12,8 +12,6 @@
 
     @include('component.toolbar')
 
-    @include('component.form.note')
-
     <div id="modal2" class="modal">
         <div class="modal-content">
             <h4 class="center-align">個人資料</h4>

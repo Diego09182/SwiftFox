@@ -64,10 +64,8 @@ class PrizeRedemptionController extends Controller
         return redirect()->route('prize.index')->with('success', '兌換成功，我們將儘速處理您的訂單！');
     }
 
-    public function approve($id)
+    public function approve(PrizeRedemption $redemption)
     {
-        $redemption = PrizeRedemption::findOrFail($id);
-
         if ($redemption->status !== 'pending') {
             return back()->with('error', '只能審核待處理的兌換紀錄。');
         }
@@ -102,7 +100,7 @@ class PrizeRedemptionController extends Controller
         return back()->with('success', "兌換狀態已更新為「{$statusText}」。");
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, PrizeRedemption $redemption)
     {
         $validated = $request->validate([
             'status' => 'required|string|max:50',
@@ -116,15 +114,13 @@ class PrizeRedemptionController extends Controller
             'shipping_address.max' => '收件地址不能超過 :max 個字。',
         ]);
 
-        $redemption = PrizeRedemption::findOrFail($id);
         $this->prizeRedemptionservice->updateRedemptionInfo($redemption, $validated);
 
         return redirect()->route('redemptions.index')->with('success', '兌換資料已更新。');
     }
 
-    public function destroy($id)
+    public function destroy(PrizeRedemption $redemption)
     {
-        $redemption = PrizeRedemption::findOrFail($id);
         $this->prizeRedemptionservice->deleteRedemption($redemption);
 
         return back()->with('success', '兌換紀錄已刪除。');

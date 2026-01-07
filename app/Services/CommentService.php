@@ -6,36 +6,32 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 
 class CommentService
 {
-    public function storeComment(Post $post, array $data): Comment
+    public function storeComment(Post $post, array $data)
     {
         $comment = new Comment([
-            'title' => $data['title'],
+            'title'   => $data['title'],
             'content' => nl2br($data['content']),
         ]);
 
         $comment->post_id = $post->id;
-
         $comment->user_id = Auth::id();
 
         $comment->save();
 
-        return $comment;
+        return $comment->fresh();
     }
 
-    public function deleteComment(int $postId, int $commentId): void
+    public function deleteComment(Comment $comment): array
     {
-        $comment = Comment::where('post_id', $postId)->findOrFail($commentId);
-
-        if (Gate::denies('delete-comment', $comment)) {
-            throw ValidationException::withMessages([
-                'authorization' => '您沒有權限刪除此資源',
-            ]);
+        if (!Gate::allows('delete-comment', $comment)) {
+            return ['success' => false, 'message' => '您沒有權限刪除此評論'];
         }
 
         $comment->delete();
+
+        return ['success' => true];
     }
 }

@@ -26,48 +26,43 @@
 
 	@include('component.toolbar')
 
-	<div class="container animate__animated animate__fadeInUp animate__delay-1s">
-		<div class="row">
-			<div class="col m12 s12">
-				<div>
-					<h3 class="animate__animated animate__fadeInDown"><b>{{ $article->title }}</b></h3>
-
-					<div class="chip brown white-text animate__animated animate__fadeInUp animate__delay-1s">
-						{{ $article->tag }}
-					</div>
-
-					<br><br>
-
-					<div class="row animate__animated animate__fadeInRight animate__delay-1s">
-						<a @click="decreaseFontSize" class="waves-light btn brown right"><b>A-</b></a>
-						<a @click="increaseFontSize" class="waves-light btn brown right"><b>A+</b></a>
-
-						@if(Auth::user()->administration == 5 || $article->user->id == Auth::user()->id)
-							<form action="{{ route('article.destroy', ['article' => $article->id ]) }}" method="POST">
-								@csrf
-								@method('DELETE')
-								<button type="submit" class="waves-effect waves-light btn brown left">
-									<i class="material-icons">delete</i>
-								</button>
-							</form>
-						@endif
-					</div>
-
-					<h5 class="left animate__animated animate__fadeInLeft animate__delay-1s"><b>作者: {{ $article->user->account }}</b></h5>
-					<h5 class="right animate__animated animate__fadeInRight animate__delay-1s"><b>發文時間: {{ $article->created_at }}</b></h5>
-				</div>
-
-				<br><br><br>
-				<hr id="divider">
-
-				<article class="animate__animated animate__fadeIn animate__delay-2s">
-					<h5 :style="{ fontSize: fontSize + 'px', 'word-wrap': 'break-word' }">
-						{!! \Illuminate\Support\Str::markdown($article->content) !!}
-					</h5>
-				</article>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="container animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="row">
+                <div class="col m12 s12">
+                    <div>
+                        <h3 class="animate__animated animate__fadeInDown"><b>{{ $article->title }}</b></h3>
+                        <div class="chip brown white-text animate__animated animate__fadeInUp animate__delay-1s">
+                            {{ $article->tag }}
+                        </div>
+                        <br><br>
+                        <div class="row animate__animated animate__fadeInRight animate__delay-1s">
+                            <a @click="decreaseFontSize" class="waves-light btn brown right" style="margin-left:8px; margin-right:8px;"><b>A-</b></a>
+                            <a @click="increaseFontSize" class="waves-light btn brown right" style="margin-left:8px; margin-right:8px;"><b>A+</b></a>
+                            @if(Auth::user()->administration == 5 || $article->user->id == Auth::user()->id)
+                                <form action="{{ route('article.destroy', ['article' => $article->id ]) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="waves-effect waves-light btn brown left">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                        <h5 class="left animate__animated animate__fadeInLeft animate__delay-1s"><b>作者: {{ $article->user->account }}</b></h5>
+                        <h5 class="right animate__animated animate__fadeInRight animate__delay-1s"><b>發文時間: {{ $article->created_at }}</b></h5>
+                    </div>
+                    <br><br><br>
+                    <hr id="divider">
+                    <article class="animate__animated animate__fadeIn animate__delay-2s">
+                        <h5 :style="{ fontSize: fontSize + 'px', 'word-wrap': 'break-word' }">
+                            {!! \Illuminate\Support\Str::markdown($article->content) !!}
+                        </h5>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
 
 	<br><br>
 

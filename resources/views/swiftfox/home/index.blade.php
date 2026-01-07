@@ -10,34 +10,11 @@
 
     @include('component.logoutbanner')
 
-    <div class="fixed-action-btn click-to-toggle animate__animated animate__bounceIn">
-        <a class="btn-floating btn-large red">
-            <i class="large material-icons brown">menu</i>
-        </a>
-        <ul>
-            <li>
-                <a href="#modal1" class="btn-floating red tooltipped modal-trigger" data-position="top" data-tooltip="發布日記">
-                    <i class="material-icons">mode_edit</i>
-                </a>
-            </li>
-            <li>
-                <a href="{{route('home.index')}}" class="btn-floating yellow tooltipped modal-trigger" data-position="top" data-tooltip="我的小屋">
-                    <i class="material-icons">view_quilt</i>
-                </a>
-            </li>
-            <li>
-                <a href="{{route('profile.index')}}" class="btn-floating green tooltipped modal-trigger" data-position="top" data-tooltip="個人資料">
-                    <i class="material-icons">perm_identity</i>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    @include('component.form.note')
+    @include('component.toolbar')
 
     <br>
 
-    <div class="container">
+    <div class="container animate__animated animate__fadeIn">
         <div class="row">
             <div class="col s12 m6 offset-m3 l4 offset-l4">
                 <a  href="{{ route('note.create') }}"
@@ -51,10 +28,10 @@
 
     @include('component.userlist')
 
-    <div class="container animate__animated animate__fadeIn">
+    <div class="container">
         <div class="row">
             <div class="col s12 m9">
-                <div class="card-panel teal brown" id="note-panel">
+                <div class="card-panel teal brown animate__animated animate__fadeInLeft" id="note-panel">
                     <h4 class="white-text center"><b>日誌列表</b></h4>
                     <hr>
                     @if ($notes->currentPage() > 1)
@@ -62,7 +39,7 @@
                     @endif
                     @if ($notes->count() > 0)
                         @foreach ($notes as $index => $note)
-                            <ul class="collection animate__animated animate__fadeInUp animate__delay-{{ $index + 1 }}s">
+                            <ul class="collection animate__animated animate__fadeInRight animate__delay-{{ $index + 1 }}s">
                                 <li class="collection-item avatar">
                                     @if ($user->avatar_filename)
                                         <img class="circle" src="{{ asset('storage/avatars/' . $user->avatar_filename) }}" alt="User Avatar">
@@ -124,11 +101,14 @@
                     <h5 class="card-title grey-text text-darken-4">點數:</h5>
                     <h5>{{ $user->points }}</h5>
                     <br>
-                    <h5>登入次數: {{ $user->times }}</h5>
+                    <h5>登入次數:</h5>
+                    <h5>{{ $user->times }}</h5>
                     <br>
-                    <h5>日記數量: {{ $totalPosts }}</h5>
+                    <h5>日記數量</h5>
+                    <h5>{{ $totalPosts }}</h5>
                     <br>
-                    <h5>文章數量: {{ $totalNotes }}</h5>
+                    <h5>文章數量:</h5>
+                    <h5>{{ $totalNotes }}</h5>
                     <br>
                 </div>
             </div>

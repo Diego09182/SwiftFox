@@ -59,7 +59,7 @@ class WorkController extends Controller
         $photos = $work->photos;
 
         foreach ($photos as $photo) {
-            $photo->url = Storage::url('public/photos/' . $photo->filename);
+            $photo->url = Storage::url('public/photos/'.$photo->filename);
         }
 
         return view('swiftfox.work.show', compact('work', 'photos'));

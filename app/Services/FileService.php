@@ -9,23 +9,41 @@ use Illuminate\Support\Facades\Storage;
 
 class FileService
 {
-    public function likeFile(File $file)
+    public function likeFile(File $file): array
     {
-        $this->evaluateFile($file, 1);
+        $result = $this->evaluateFile($file, 1);
+
+        if (!$result['success']) {
+            return $result;
+        }
+
         $file->increment('like');
 
-        return $file;
+        return [
+            'success' => true,
+            'message' => '已喜歡',
+            'data'    => $file->fresh(),
+        ];
     }
 
-    public function dislikeFile(File $file)
+    public function dislikeFile(File $file): array
     {
-        $this->evaluateFile($file, -1);
+        $result = $this->evaluateFile($file, -1);
+
+        if (!$result['success']) {
+            return $result;
+        }
+
         $file->increment('dislike');
 
-        return $file;
+        return [
+            'success' => true,
+            'message' => '已不喜歡',
+            'data'    => $file->fresh(),
+        ];
     }
 
-    private function evaluateFile(File $file, int $evaluationValue)
+    private function evaluateFile(File $file, int $evaluationValue): array
     {
         $user = Auth::user();
 
@@ -34,19 +52,21 @@ class FileService
             ->first();
 
         if ($evaluation) {
-            throw new \Exception('已經評價過了');
+            return ['success' => false, 'message' => '已經評價過了'];
         }
 
         FileEvaluation::create([
-            'file_id' => $file->id,
-            'user_id' => $user->id,
+            'file_id'    => $file->id,
+            'user_id'    => $user->id,
             'evaluation' => $evaluationValue,
         ]);
+
+        return ['success' => true];
     }
 
-    public function getFilesByPage(int $page)
+    public function getFilesByPage(int $perPage = 8)
     {
-        return File::paginate($page);
+        return File::paginate($perPage);
     }
 
     public function createFile(array $data)
@@ -56,12 +76,12 @@ class FileService
 
     public function getFileById(int $id)
     {
-        return File::findOrFail($id);
+        return File::find($id);
     }
 
     public function deleteFile(File $file)
     {
-        Storage::delete('public/files/'.$file->filename);
+        Storage::delete('public/files/' . $file->filename);
         $file->delete();
     }
 }

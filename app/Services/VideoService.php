@@ -24,7 +24,7 @@ class VideoService
 
     public function createVideo($uploadedFile): array
     {
-        $filename = time() . '_' . mt_rand() . '.' . $uploadedFile->getClientOriginalExtension();
+        $filename = time().'_'.mt_rand().'.'.$uploadedFile->getClientOriginalExtension();
         $path = $uploadedFile->storeAs('videos', $filename, 'public');
 
         return [
@@ -40,8 +40,8 @@ class VideoService
 
     public function deleteVideo(Video $video)
     {
-        if ($video->filename && Storage::disk('public')->exists('videos/' . $video->filename)) {
-            Storage::disk('public')->delete('videos/' . $video->filename);
+        if ($video->filename && Storage::disk('public')->exists('videos/'.$video->filename)) {
+            Storage::disk('public')->delete('videos/'.$video->filename);
         }
 
         $video->delete();

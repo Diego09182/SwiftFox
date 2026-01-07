@@ -33,7 +33,7 @@ class ActivityController extends Controller
             'location' => 'required',
             'date' => 'required',
             'url' => 'nullable|url',
-            'file' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:4096',
         ], [
             'title.required' => '標題為必填項目',
             'title.min' => '標題至少需要2個字',
@@ -45,13 +45,13 @@ class ActivityController extends Controller
             'location.required' => '地點為必填項目',
             'file.image' => '上傳的檔案必須是圖片格式',
             'file.mimes' => '圖片格式僅限 jpeg, png, jpg, svg',
-            'file.max' => '圖片大小不可超過 2MB',
+            'file.max' => '圖片大小不可超過 4MB',
         ]);
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('public/activity_images', $filename);
+            $filename = time().'_'.$file->getClientOriginalName();
+            $path = $file->storeAs('public/activity', $filename);
             $validatedData['filename'] = $filename;
             $validatedData['path'] = str_replace('public/', '', $path);
         }
@@ -61,10 +61,8 @@ class ActivityController extends Controller
         return response()->json(['success' => true, 'message' => '活動創建成功']);
     }
 
-    public function destroy($id)
+    public function destroy(Activity $activity)
     {
-        $activity = Activity::findOrFail($id);
-
         if (Gate::denies('delete-activity', $activity)) {
             return redirect()->back()->with('error', '您沒有權限刪除此資源');
         }

@@ -65,7 +65,7 @@ class OpinionService
 
     public function getOpinionsByPage(int $page)
     {
-        $cacheKey = 'opinions_index_page_' . $page;
+        $cacheKey = 'opinions_index_page_'.$page;
 
         return Cache::tags(['opinions'])->remember($cacheKey, 600, function () {
             return Opinion::orderBy('id', 'desc')->paginate(3);
@@ -86,7 +86,7 @@ class OpinionService
 
     public function getOpinionById(int $id)
     {
-        $cacheKey = 'opinion_' . $id;
+        $cacheKey = 'opinion_'.$id;
 
         return Cache::tags(['opinions'])->remember($cacheKey, 600, function () use ($id) {
             return Opinion::findOrFail($id);
@@ -105,7 +105,7 @@ class OpinionService
         Cache::tags(['opinions'])->flush();
 
         if ($opinion) {
-            Cache::forget('opinion_' . $opinion->id);
+            Cache::forget('opinion_'.$opinion->id);
         }
     }
 }
