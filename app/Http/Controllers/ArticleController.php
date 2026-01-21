@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreArticleRequest;
 use App\Models\Article;
 use App\Notifications\ResourceNotification;
 use App\Services\ArticleService;
@@ -15,11 +16,9 @@ class ArticleController extends Controller
         protected ArticleService $articleService
     ) {}
 
-    public function index(Request $request)
+    public function index()
     {
-        $page = $request->input('page', 1);
-
-        $articles = $this->articleService->getArticlesByPage($page);
+        $articles = $this->articleService->getArticles();
 
         return view('swiftfox.article.index', compact('articles'));
     }
@@ -38,24 +37,9 @@ class ArticleController extends Controller
         return view('swiftfox.article.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
-        $validatedData = $request->validate([
-            'title'   => 'required|min:2|max:40',
-            'content' => 'required|min:50|max:2000',
-            'tag'     => 'required|in:大學面試,競賽經驗,學習歷程,活動分享',
-        ], [
-            'title.required'   => '標題為必填項目',
-            'title.min'        => '標題至少需要2個字',
-            'title.max'        => '標題不能超過40個字',
-            'content.required' => '內容為必填項目',
-            'content.min'      => '內容至少需要50個字',
-            'content.max'      => '內容不能超過2000個字',
-            'tag.required'     => '標籤為必填項目',
-            'tag.in'           => '標籤必須符合選項',
-        ]);
-
-        $this->articleService->createArticle($validatedData);
+        $this->articleService->createArticle($request->validated());
 
         Auth::user()->increment('points', 10);
 

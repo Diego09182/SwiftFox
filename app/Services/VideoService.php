@@ -8,51 +8,57 @@ use Illuminate\Support\Facades\Storage;
 
 class VideoService
 {
-    public function getVideosByPage($page)
+    protected string $cacheTag = 'videos';
+
+    public function getVideos()
     {
-        return Cache::tags(['videos'])->remember("videos_index_page_{$page}", 600, function () {
-            return Video::orderBy('id', 'desc')->paginate(6);
-        });
+        $page = request('page', 1);
+
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Video::latest()->paginate(6));
     }
 
-    public function getVideoById($id)
+    public function getVideoById(int $id)
     {
-        return Cache::tags(['videos'])->remember("video_{$id}", 600, function () use ($id) {
-            return Video::findOrFail($id);
-        });
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Video::findOrFail($id));
     }
 
-    public function createVideo($uploadedFile): array
+    public function createVideoFile($uploadedFile)
     {
-        $filename = time().'_'.mt_rand().'.'.$uploadedFile->getClientOriginalExtension();
+        $filename = time().'_'.uniqid().'.'.$uploadedFile->getClientOriginalExtension();
         $path = $uploadedFile->storeAs('videos', $filename, 'public');
 
-        return [
-            'filename' => $filename,
-            'path' => $path,
-        ];
+        return ['filename' => $filename, 'path' => $path];
     }
 
-    public function storeVideoData(array $data): Video
+    public function storeVideoData(array $data)
     {
-        return Video::create($data);
+        $video = Video::create($data);
+        $this->clearCache();
+
+        return $video->fresh();
     }
 
-    public function deleteVideo(Video $video)
+    public function deleteVideo(Video $video): void
     {
         if ($video->filename && Storage::disk('public')->exists('videos/'.$video->filename)) {
             Storage::disk('public')->delete('videos/'.$video->filename);
         }
-
         $video->delete();
+        $this->clearCache();
     }
 
-    public function clearCache($videoId = null)
+    protected function cacheKey(string $key): string
     {
-        Cache::tags(['videos'])->flush();
+        return "{$this->cacheTag}_{$key}";
+    }
 
-        if ($videoId) {
-            Cache::tags(['videos'])->forget("video_{$videoId}");
+    protected function clearCache(?int $id = null): void
+    {
+        Cache::tags([$this->cacheTag])->flush();
+        if ($id) {
+            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$id}"));
         }
     }
 }

@@ -2,138 +2,51 @@
 
 namespace App\Services;
 
+use App\Models\Evaluation;
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Evaluation;
 use App\Notifications\ResourceNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostService
 {
-    /* ===================== 查詢 ===================== */
+    protected string $cacheTag = 'posts';
 
-    public function getPostsByPage(int $page)
+    public function getPosts()
     {
-        return Cache::tags(['posts'])->remember(
-            "posts_page_{$page}",
-            600,
-            fn () => Post::latest()->paginate(9, ['*'], 'page', $page)
-        );
+        $page = request('page', 1);
+
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Post::latest()->paginate(9));
     }
 
-    public function getWeeklyTopPosts(int $limit = 10)
+    public function getPostById(int $id)
     {
-        return Cache::tags(['posts', 'weekly'])->remember(
-            "weekly_top_{$limit}",
-            600,
-            fn () => Post::where('created_at', '>=', now()->subDays(7))
-                ->orderByRaw('(view * 2) + (`like` * 3) DESC')
-                ->limit($limit)
-                ->get()
-        );
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Post::with('comments')->findOrFail($id));
     }
 
-    public function getPostsByFilter(string $filter, int $page)
+    public function viewPost(Post $post)
     {
-        return Cache::tags(['posts'])->remember(
-            "posts_filter_{$filter}_{$page}",
-            600,
-            function () use ($filter, $page) {
-                return match ($filter) {
-                    '觀看次數' => Post::orderBy('view', 'desc')->paginate(9, ['*'], 'page', $page),
-                    '喜歡次數' => Post::orderBy('like', 'desc')->paginate(9, ['*'], 'page', $page),
-                    default    => Post::latest()->paginate(9, ['*'], 'page', $page),
-                };
-            }
-        );
-    }
-
-    public function searchPosts(?string $search, int $page)
-    {
-        if (empty($search)) {
-            return $this->getPostsByPage($page);
-        }
-
-        return Cache::tags(['posts'])->remember(
-            "posts_search_" . md5($search) . "_{$page}",
-            600,
-            fn () => Post::where('title', 'like', "%{$search}%")
-                ->orWhere('content', 'like', "%{$search}%")
-                ->orWhere('tag', 'like', "%{$search}%")
-                ->paginate(9, ['*'], 'page', $page)
-        );
-    }
-
-    public function getRelatedPosts(Post $post, int $limit = 3)
-    {
-        return Post::where('id', '!=', $post->id)
-            ->where('tag', $post->tag)
-            ->latest()
-            ->limit($limit)
-            ->get();
-    }
-
-    /* ===================== 行為（不丟 Exception） ===================== */
-
-    public function viewPost(int $id): ?Post
-    {
-        $post = Cache::tags(['posts'])->remember(
-            "post_{$id}",
-            600,
-            fn () => Post::with('comments')->find($id)
-        );
-
-        if (!$post) {
-            return null;
-        }
-
         $post->increment('view');
-        $this->clearPostCache($id);
+        $this->clearCache($post->id);
 
         return $post->fresh();
     }
 
-    public function createPost(array $data, User $user): array
+    public function createPost(array $data, User $user)
     {
-        $data['content'] = nl2br($data['content']);
         $data['user_id'] = $user->id;
-
+        $data['content'] = nl2br($data['content'] ?? '');
         $post = Post::create($data);
-
         $user->increment('points', 10);
-        $this->clearAllCache();
+        $this->clearCache();
 
         return $this->success($post);
     }
 
-    public function like(Post $post, User $user): array
-    {
-        if ($this->hasEvaluated($post, $user)) {
-            return $this->fail('已經評價過了');
-        }
-
-        $post->increment('like');
-        $this->recordEvaluation($post, $user, 1);
-        $this->clearPostCache($post->id);
-
-        return $this->success($post->fresh());
-    }
-
-    public function dislike(Post $post, User $user): array
-    {
-        if ($this->hasEvaluated($post, $user)) {
-            return $this->fail('已經評價過了');
-        }
-
-        $post->increment('dislike');
-        $this->recordEvaluation($post, $user, -1);
-        $this->clearPostCache($post->id);
-
-        return $this->success($post->fresh());
-    }
-
-    public function deletePost(Post $post, User $actor): array
+    public function deletePost(Post $post, User $actor)
     {
         if (Gate::denies('delete-post', $post)) {
             return $this->fail('您沒有權限刪除此資源');
@@ -149,54 +62,62 @@ class PostService
         }
 
         $post->delete();
-        $this->clearAllCache();
+        $this->clearCache();
 
         return $this->success();
     }
 
-    /* ===================== 內部方法 ===================== */
-
-    private function hasEvaluated(Post $post, User $user): bool
+    public function like(Post $post, User $user)
     {
-        return Evaluation::where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->exists();
+        if ($this->hasEvaluated($post, $user)) {
+            return $this->fail('已經評價過了');
+        }
+
+        $post->increment('like');
+        Evaluation::create(['post_id' => $post->id, 'user_id' => $user->id, 'evaluation' => 1]);
+        $this->clearCache($post->id);
+
+        return $this->success($post->fresh(), '已喜歡');
     }
 
-    private function recordEvaluation(Post $post, User $user, int $value): void
+    public function dislike(Post $post, User $user)
     {
-        Evaluation::create([
-            'post_id'    => $post->id,
-            'user_id'    => $user->id,
-            'evaluation' => $value,
-        ]);
+        if ($this->hasEvaluated($post, $user)) {
+            return $this->fail('已經評價過了');
+        }
+
+        $post->increment('dislike');
+        Evaluation::create(['post_id' => $post->id, 'user_id' => $user->id, 'evaluation' => -1]);
+        $this->clearCache($post->id);
+
+        return $this->success($post->fresh(), '已不喜歡');
     }
 
-    private function clearAllCache(): void
+    protected function hasEvaluated(Post $post, User $user): bool
     {
-        Cache::tags(['posts'])->flush();
+        return Evaluation::where('post_id', $post->id)->where('user_id', $user->id)->exists();
     }
 
-    private function clearPostCache(int $id): void
+    protected function cacheKey(string $key): string
     {
-        Cache::tags(['posts'])->forget("post_{$id}");
+        return "{$this->cacheTag}_{$key}";
     }
 
-    private function success($data = null): array
+    protected function clearCache(?int $postId = null): void
     {
-        return [
-            'success' => true,
-            'message' => null,
-            'data'    => $data,
-        ];
+        Cache::tags([$this->cacheTag])->flush();
+        if ($postId) {
+            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$postId}"));
+        }
     }
 
-    private function fail(string $message): array
+    protected function success($data = null, ?string $message = null): array
     {
-        return [
-            'success' => false,
-            'message' => $message,
-            'data'    => null,
-        ];
+        return ['success' => true, 'message' => $message, 'data' => $data];
+    }
+
+    protected function fail(string $message): array
+    {
+        return ['success' => false, 'message' => $message, 'data' => null];
     }
 }

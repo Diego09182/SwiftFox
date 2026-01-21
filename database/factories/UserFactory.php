@@ -2,36 +2,65 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = User::class;
+
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            // 必填唯一欄位
+            'account' => $this->faker->unique()->userName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'cellphone' => '09' . $this->faker->unique()->numerify('########'),
+
+            // 必填欄位
+            'name' => $this->faker->name(),
+            'password' => Hash::make('password123'),
+            'birthday' => $this->faker->date('Y-m-d', '2005-01-01'),
+
+            // 系統欄位
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+
+            // 預設值欄位
+            'times' => 0,
+            'points' => 0,
+            'administration' => 0,
+            'status' => 1,
+
+            // Nullable 欄位
+            'avatar_filename' => null,
+            'avatar_path' => null,
+            'interest' => null,
+            'url' => null,
+            'info' => null,
+            'club' => null,
+            'ip_address' => null,
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * 管理員帳號 state
+     */
+    public function admin(): static
+    {
+        return $this->state(fn () => [
+            'administration' => 1,
+        ]);
+    }
+
+    /**
+     * 未驗證信箱帳號 state
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'email_verified_at' => null,
         ]);
     }

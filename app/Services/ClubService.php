@@ -7,34 +7,37 @@ use Illuminate\Support\Facades\Cache;
 
 class ClubService
 {
-    public function getClubsByPage(int $page)
-    {
-        $cacheKey = 'club_index_page_' . $page;
+    protected string $cacheTag = 'clubs';
 
-        return Cache::tags(['clubs'])->remember($cacheKey, 600, function () {
-            return Club::orderBy('id', 'desc')->paginate(9);
-        });
+    public function getClubs()
+    {
+        $page = request('page', 1);
+
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Club::latest()->paginate(6));
     }
 
     public function createClub(array $data)
     {
-        $data['content'] = nl2br($data['content']);
-
         $club = Club::create($data);
-
         $this->clearCache();
 
         return $club->fresh();
     }
 
-    public function deleteClub(Club $club)
+    public function deleteClub(Club $club): void
     {
         $club->delete();
         $this->clearCache();
     }
 
-    private function clearCache()
+    protected function cacheKey(string $key): string
     {
-        Cache::tags(['clubs'])->flush();
+        return "{$this->cacheTag}_{$key}";
+    }
+
+    protected function clearCache(): void
+    {
+        Cache::tags([$this->cacheTag])->flush();
     }
 }

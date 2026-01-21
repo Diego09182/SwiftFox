@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNoteRequest;
 use App\Models\Note;
 use App\Services\NoteService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -14,16 +14,14 @@ class NoteController extends Controller
         protected NoteService $noteService
     ) {}
 
-    public function index(Request $request)
+    public function index()
     {
-        $page = $request->input('page', 1);
-
-        $notes = $this->noteService->getNotesByPage($page);
+        $notes = $this->noteService->getNotes();
         $user = Auth::user();
         $totalPosts = $user->posts->count();
         $totalNotes = $user->notes->count();
 
-        return view('swiftfox.home.index', compact('user', 'totalPosts', 'totalNotes', 'notes'));
+        return view('swiftfox.home.index', compact('notes', 'totalPosts', 'totalNotes', 'user'));
     }
 
     public function create()
@@ -31,22 +29,9 @@ class NoteController extends Controller
         return view('swiftfox.home.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreNoteRequest $request)
     {
-        $validatedData = $request->validate([
-            'title'   => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:100',
-            'tag'     => 'required|max:4',
-        ], [
-            'title.required'   => '標題為必填項目',
-            'title.min'        => '標題至少需要2個字',
-            'title.max'        => '標題不能超過20個字',
-            'content.required' => '內容為必填項目',
-            'content.min'      => '內容至少需要2個字',
-            'content.max'      => '內容不能超過100個字',
-            'tag.required'     => '標籤為必填項目',
-            'tag.max'          => '標籤不能超過4個字',
-        ]);
+        $validatedData = $request->validated();
 
         $this->noteService->createNote($validatedData);
 
@@ -58,10 +43,6 @@ class NoteController extends Controller
     public function show(int $id)
     {
         $note = $this->noteService->getNoteById($id);
-
-        if (!$note) {
-            abort(404);
-        }
 
         return view('swiftfox.home.show', compact('note'));
     }

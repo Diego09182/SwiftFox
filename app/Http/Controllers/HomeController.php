@@ -12,56 +12,53 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    protected int $perPage = 8;
+
+    protected function getUserResources(string $modelClass)
+    {
+        return $modelClass::where('user_id', Auth::id())
+            ->orderBy('id', 'desc')
+            ->paginate($this->perPage);
+    }
+
     public function posts()
     {
-        $posts = Post::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $posts = $this->getUserResources(Post::class);
 
         return view('swiftfox.home.posts', compact('posts'));
     }
 
     public function articles()
     {
-        $articles = Article::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $articles = $this->getUserResources(Article::class);
 
         return view('swiftfox.home.articles', compact('articles'));
     }
 
     public function opinions()
     {
-        $opinions = Opinion::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $opinions = $this->getUserResources(Opinion::class);
 
         return view('swiftfox.home.opinions', compact('opinions'));
     }
 
     public function works()
     {
-        $works = Work::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $works = $this->getUserResources(Work::class);
 
         return view('swiftfox.home.works', compact('works'));
     }
 
     public function videos()
     {
-        $videos = Video::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $videos = $this->getUserResources(Video::class);
 
         return view('swiftfox.home.videos', compact('videos'));
     }
 
     public function files()
     {
-        $files = File::where('user_id', Auth::id())
-            ->orderBy('id', 'desc')
-            ->paginate(8);
+        $files = $this->getUserResources(File::class);
 
         return view('swiftfox.home.files', compact('files'));
     }

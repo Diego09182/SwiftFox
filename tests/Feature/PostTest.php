@@ -12,39 +12,30 @@ class PostTest extends TestCase
 
     public function test_user_can_create_post()
     {
-        $response = $this->post('/register', [
-            'account' => 'testuser',
-            'password' => 'password123',
-            'email' => 'testuser@example.com',
-            'name' => 'Test',
-            'cellphone' => '0912345678',
-            'birthday' => '2000-01-01',
-        ]);
+        // Arrange：準備測試資料
+        $user = User::factory()->create();
 
-        $response->assertRedirect(route('main'));
-
-        $user = User::where('account', 'testuser')->first();
-
+        // Act：執行行為
         $response = $this->actingAs($user)->post('/forum/post', [
             'title' => '測試文章標題',
             'content' => '這是一篇測試文章內容',
-            'tag' => '學科問題',
-            'view' => 0,
-            'like' => 0,
-            'dislike' => 0,
-            'user_id' => $user->id,
+            'tag' => '學習問題',
         ]);
 
+        // Assert：驗證結果
         $response->assertRedirect(route('forum.index'));
+
+        $this->assertDatabaseCount('posts', 1);
 
         $this->assertDatabaseHas('posts', [
             'title' => '測試文章標題',
             'content' => '這是一篇測試文章內容',
-            'tag' => '學科問題',
+            'tag' => '學習問題',
+            'user_id' => $user->id,
             'view' => 0,
             'like' => 0,
             'dislike' => 0,
-            'user_id' => $user->id,
         ]);
     }
+
 }

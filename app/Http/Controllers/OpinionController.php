@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOpinionRequest;
 use App\Models\Opinion;
 use App\Notifications\ResourceNotification;
 use App\Services\OpinionService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -64,11 +64,9 @@ class OpinionController extends Controller
         return $totalVotes > 0 ? ($votes / $totalVotes) * 100 : 0;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        $page = $request->input('page', 1);
-
-        $opinions = $this->opinionService->getOpinionsByPage($page);
+        $opinions = $this->opinionService->getOpinions();
 
         return view('swiftfox.opinion.index', compact('opinions'));
     }
@@ -78,26 +76,17 @@ class OpinionController extends Controller
         return view('swiftfox.opinion.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreOpinionRequest $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:50',
-            'finished_time' => 'required|after:now',
-        ], [
-            'title.required' => '標題為必填項目',
-            'content.required' => '內容為必填項目',
-            'finished_time.required' => '投票結束時間為必填項目',
-            'finished_time.after' => '投票結束時間必須大於當前時間',
-        ]);
+        $validatedData = $request->validated();
 
         $this->opinionService->createOpinion($validatedData);
 
-        $user = Auth::user();
+        Auth::user()->increment('points', 10);
 
-        $user->increment('points', 10);
-
-        return redirect()->route('opinion.index')->with('success', '投票已創建成功！');
+        return redirect()
+            ->route('opinion.index')
+            ->with('success', '投票已創建成功！');
     }
 
     public function show($id)

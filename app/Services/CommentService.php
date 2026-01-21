@@ -11,13 +11,7 @@ class CommentService
 {
     public function storeComment(Post $post, array $data)
     {
-        $comment = new Comment([
-            'title'   => $data['title'],
-            'content' => nl2br($data['content']),
-        ]);
-
-        $comment->post_id = $post->id;
-        $comment->user_id = Auth::id();
+        $comment = $this->buildComment($post, $data);
 
         $comment->save();
 
@@ -26,12 +20,42 @@ class CommentService
 
     public function deleteComment(Comment $comment): array
     {
-        if (!Gate::allows('delete-comment', $comment)) {
-            return ['success' => false, 'message' => '您沒有權限刪除此評論'];
+        if (! $this->canDeleteComment($comment)) {
+            return $this->deleteFailed();
         }
 
         $comment->delete();
 
-        return ['success' => true];
+        return $this->deleteSuccess();
+    }
+
+    protected function buildComment(Post $post, array $data): Comment
+    {
+        return new Comment([
+            'title' => $data['title'],
+            'content' => nl2br($data['content']),
+            'post_id' => $post->id,
+            'user_id' => Auth::id(),
+        ]);
+    }
+
+    protected function canDeleteComment(Comment $comment): bool
+    {
+        return Gate::allows('delete-comment', $comment);
+    }
+
+    protected function deleteSuccess(): array
+    {
+        return [
+            'success' => true,
+        ];
+    }
+
+    protected function deleteFailed(): array
+    {
+        return [
+            'success' => false,
+            'message' => '您沒有權限刪除此評論',
+        ];
     }
 }

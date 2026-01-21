@@ -8,41 +8,40 @@ use Illuminate\Support\Facades\Cache;
 
 class ArticleService
 {
-    public function searchArticles(?string $search = null)
+    protected string $cacheTag = 'articles';
+
+    public function searchArticles(?string $search = null, int $perPage = 6)
     {
-        $cacheKey = 'search_articles_' . md5($search);
+        $cacheKey = $this->cacheKey('search_'.md5((string) $search));
 
-        return Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($search) {
-            if (empty($search)) {
-                return Article::latest()->paginate(6);
-            }
-
-            return Article::where('title', 'LIKE', "%$search%")->paginate(6);
+        return Cache::tags([$this->cacheTag])->remember($cacheKey, 600, function () use ($search, $perPage) {
+            return $this->buildSearchQuery($search)->paginate($perPage);
         });
     }
 
-    public function getArticlesByPage(int $page)
+    public function getArticles(int $perPage = 8)
     {
-        $cacheKey = 'articles_page_' . $page;
+        $page = request('page', 1);
+        $cacheKey = $this->cacheKey("index_page_{$page}");
 
-        return Cache::tags(['articles'])->remember($cacheKey, 600, function () {
-            return Article::orderBy('id', 'desc')->paginate(8);
+        return Cache::tags([$this->cacheTag])->remember($cacheKey, 600, function () use ($perPage) {
+            return Article::orderByDesc('id')->paginate($perPage);
         });
     }
 
     public function getArticleById(int $id)
     {
-        $cacheKey = 'article_' . $id;
+        $cacheKey = $this->cacheKey("show_{$id}");
 
-        return Cache::tags(['articles'])->remember($cacheKey, 600, function () use ($id) {
-            return Article::find($id); // 不使用 findOrFail，避免 Exception
+        return Cache::tags([$this->cacheTag])->remember($cacheKey, 600, function () use ($id) {
+            return Article::findOrFail($id);
         });
     }
 
-    public function createArticle(array $data)
+    public function createArticle(array $data): Article
     {
         $data['user_id'] = Auth::id();
-        $data['summary'] = mb_substr(strip_tags($data['content']), 0, 30) . '...';
+        $data['summary'] = $this->makeSummary($data['content'] ?? '');
 
         $article = Article::create($data);
 
@@ -51,14 +50,33 @@ class ArticleService
         return $article->fresh();
     }
 
-    public function deleteArticle(Article $article)
+    public function deleteArticle(Article $article): void
     {
         $article->delete();
         $this->clearCache();
     }
 
-    private function clearCache()
+    protected function buildSearchQuery(?string $search)
     {
-        Cache::tags(['articles'])->flush();
+        if (empty($search)) {
+            return Article::latest();
+        }
+
+        return Article::where('title', 'LIKE', '%'.$search.'%');
+    }
+
+    protected function makeSummary(string $content, int $length = 30): string
+    {
+        return mb_substr(strip_tags($content), 0, $length).'...';
+    }
+
+    protected function cacheKey(string $key): string
+    {
+        return "{$this->cacheTag}_{$key}";
+    }
+
+    protected function clearCache(): void
+    {
+        Cache::tags([$this->cacheTag])->flush();
     }
 }

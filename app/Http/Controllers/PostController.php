@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class PostController extends Controller
         $top_posts = $this->postService->getWeeklyTopPosts(3);
 
         return view('swiftfox.post.index', [
-            'posts'     => $posts,
+            'posts' => $posts,
             'top_posts' => $top_posts,
         ]);
     }
@@ -29,12 +30,12 @@ class PostController extends Controller
     public function filter(Request $request)
     {
         $filter = $request->input('filter');
-        $page   = $request->input('page', 1);
+        $page = $request->input('page', 1);
 
         $posts = $this->postService->getPostsByFilter($filter, $page);
 
         return view('swiftfox.post.filter', [
-            'posts'  => $posts,
+            'posts' => $posts,
             'filter' => $filter,
         ]);
     }
@@ -42,12 +43,12 @@ class PostController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $page   = $request->input('page', 1);
+        $page = $request->input('page', 1);
 
         $posts = $this->postService->searchPosts($search, $page);
 
         return view('swiftfox.post.search', [
-            'posts'  => $posts,
+            'posts' => $posts,
             'search' => $search,
         ]);
     }
@@ -55,28 +56,24 @@ class PostController extends Controller
     public function show(int $id)
     {
         $post = $this->postService->viewPost($id);
-
-        if (!$post) {
-            abort(404);
-        }
-
         $comments = $post->comments()->paginate(6);
         $relatedPosts = $this->postService->getRelatedPosts($post);
 
         return view('swiftfox.post.show', [
-            'post'         => $post,
-            'comments'     => $comments,
+            'post' => $post,
+            'comments' => $comments,
             'relatedPosts' => $relatedPosts,
         ]);
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $data = $request->validate([
-            'title'   => 'required|min:2|max:20',
-            'content' => 'required|min:2|max:1000',
-            'tag'     => 'required|in:學習問題,學習資源,活動宣傳,其他內容',
-        ]);
+        return view('swiftfox.post.create');
+    }
+
+    public function store(StorePostRequest $request)
+    {
+        $data = $request->validated();
 
         $this->postService->createPost($data, Auth::user());
 
@@ -89,12 +86,12 @@ class PostController extends Controller
     {
         $result = $this->postService->like($post, Auth::user());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['message' => $result['message']], 403);
         }
 
         return response()->json([
-            'like'    => $result['data']->like,
+            'like' => $result['data']->like,
             'dislike' => $result['data']->dislike,
         ]);
     }
@@ -103,12 +100,12 @@ class PostController extends Controller
     {
         $result = $this->postService->dislike($post, Auth::user());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['message' => $result['message']], 403);
         }
 
         return response()->json([
-            'like'    => $result['data']->like,
+            'like' => $result['data']->like,
             'dislike' => $result['data']->dislike,
         ]);
     }
@@ -117,7 +114,7 @@ class PostController extends Controller
     {
         $result = $this->postService->deletePost($post, Auth::user());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return back()->with('error', $result['message']);
         }
 

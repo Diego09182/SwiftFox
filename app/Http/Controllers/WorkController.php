@@ -19,11 +19,9 @@ class WorkController extends Controller
         $this->workService = $workService;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        $page = $request->input('page', 1);
-
-        $works = $this->workService->getWorksByPage($page);
+        $works = $this->workService->getWorks();
 
         return view('swiftfox.work.index', compact('works'));
     }

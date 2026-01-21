@@ -5,47 +5,27 @@ namespace App\Services;
 use App\Models\Prize;
 use App\Models\PrizeRedemption;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class PrizeRedemptionService
 {
-    public function redeem(User $user, Prize $prize, Request $request): bool|string
+    protected string $cacheTag = 'prize_redemptions';
+
+    public function redeem(User $user, Prize $prize, array $data): array
     {
-        $validator = Validator::make($request->all(), [
-            'quantity' => 'required|integer|min:1',
-            'shipping_address' => 'required|string|max:255',
-            'note' => 'nullable|string|max:500',
-        ], [
-            'quantity.required' => '請輸入兌換數量。',
-            'quantity.integer' => '兌換數量需為整數。',
-            'quantity.min' => '兌換數量至少為 1。',
-            'shipping_address.required' => '請輸入收件地址。',
-            'shipping_address.max' => '收件地址長度不可超過 255 字。',
-            'note.max' => '備註長度不可超過 500 字。',
-        ]);
-
-        if ($validator->fails()) {
-            return $validator->errors()->first();
-        }
-
-        $quantity = (int) $request->input('quantity');
-        $shippingAddress = $request->input('shipping_address');
-        $note = $request->input('note');
+        $quantity = (int) ($data['quantity'] ?? 1);
         $totalPoints = $prize->price * $quantity;
 
-        if ($prize->quantity < $quantity) {
-            return '獎品庫存不足，請重新確認數量。';
+        if ($quantity > $prize->quantity) {
+            return $this->fail('獎品庫存不足。');
         }
-
         if ($user->points < $totalPoints) {
-            return '您的點數不足，無法兌換此獎品。';
+            return $this->fail('您的點數不足，無法兌換此獎品。');
         }
 
-        DB::transaction(function () use ($user, $prize, $quantity, $totalPoints, $shippingAddress, $note) {
+        DB::transaction(function () use ($user, $prize, $quantity, $totalPoints, $data) {
             $user->decrement('points', $totalPoints);
-
             $prize->decrement('quantity', $quantity);
 
             PrizeRedemption::create([
@@ -53,23 +33,23 @@ class PrizeRedemptionService
                 'prize_id' => $prize->id,
                 'quantity' => $quantity,
                 'status' => 'pending',
-                'shipping_address' => $shippingAddress,
-                'note' => $note,
+                'shipping_address' => $data['shipping_address'] ?? '',
+                'note' => $data['note'] ?? null,
             ]);
         });
 
-        return true;
+        return $this->success(null, '兌換成功，我們將儘速處理您的訂單！');
     }
 
-    public function updateStatus(PrizeRedemption $redemption, string $status): string
+    public function updateStatus(PrizeRedemption $redemption, string $status): array
     {
         if ($redemption->status === $status) {
-            return 'no-change';
+            return $this->fail('狀態未變更');
         }
 
         $redemption->update(['status' => $status]);
 
-        return 'updated';
+        return $this->success(null, "兌換狀態已更新為「{$status}」。");
     }
 
     public function updateRedemptionInfo(PrizeRedemption $redemption, array $data): void
@@ -77,12 +57,43 @@ class PrizeRedemptionService
         $redemption->update([
             'status' => $data['status'],
             'note' => $data['note'] ?? null,
-            'shipping_address' => $data['shipping_address'],
+            'shipping_address' => $data['shipping_address'] ?? '',
         ]);
     }
 
     public function deleteRedemption(PrizeRedemption $redemption): void
     {
         $redemption->delete();
+    }
+
+    public function approveRedemption(PrizeRedemption $redemption): array
+    {
+        if ($redemption->status !== 'pending') {
+            return $this->fail('只能審核待處理的兌換紀錄。');
+        }
+
+        $redemption->update(['status' => 'approved']);
+
+        return $this->success(null, '兌換已通過審核。');
+    }
+
+    protected function cacheKey(string $key): string
+    {
+        return "{$this->cacheTag}_{$key}";
+    }
+
+    protected function clearCache(): void
+    {
+        Cache::tags([$this->cacheTag])->flush();
+    }
+
+    protected function success($data = null, ?string $message = null): array
+    {
+        return ['success' => true, 'message' => $message, 'data' => $data];
+    }
+
+    protected function fail(string $message): array
+    {
+        return ['success' => false, 'message' => $message, 'data' => null];
     }
 }

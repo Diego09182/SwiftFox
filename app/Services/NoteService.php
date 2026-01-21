@@ -8,45 +8,45 @@ use Illuminate\Support\Facades\Cache;
 
 class NoteService
 {
-    public function getNotesByPage(int $page)
-    {
-        $cacheKey = 'notes_index_page_' . $page;
+    protected string $cacheTag = 'notes';
 
-        return Cache::tags(['notes'])->remember($cacheKey, 600, function () {
-            return Note::orderBy('id', 'desc')->paginate(4);
-        });
+    public function getNotes()
+    {
+        $page = request('page', 1);
+
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Note::latest()->paginate(4));
+    }
+
+    public function getNoteById(int $id)
+    {
+        return Cache::tags([$this->cacheTag])
+            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Note::findOrFail($id));
     }
 
     public function createNote(array $data)
     {
-        $data['content'] = nl2br($data['content']);
         $data['user_id'] = Auth::id();
-
+        $data['content'] = nl2br($data['content'] ?? '');
         $note = Note::create($data);
-
         $this->clearCache();
 
         return $note->fresh();
     }
 
-    public function getNoteById(int $id)
-    {
-        $cacheKey = 'note_show_' . $id;
-
-        return Cache::tags(['notes'])->remember($cacheKey, 600, function () use ($id) {
-            return Note::find($id);
-        });
-    }
-
-    public function deleteNote(Note $note)
+    public function deleteNote(Note $note): void
     {
         $note->delete();
-
         $this->clearCache();
     }
 
-    private function clearCache()
+    protected function cacheKey(string $key): string
     {
-        Cache::tags(['notes'])->flush();
+        return "{$this->cacheTag}_{$key}";
+    }
+
+    protected function clearCache(): void
+    {
+        Cache::tags([$this->cacheTag])->flush();
     }
 }

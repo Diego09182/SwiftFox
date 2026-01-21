@@ -19,11 +19,7 @@ class MainController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        $bulletin = Cache::remember('latest_bulletin', 600, function () {
-            return Bulletin::orderBy('id', 'desc')->first();
-        });
-
+        $bulletin = Bulletin::latest()->first();
         $userCount = Cache::remember('user_count', 600, fn () => User::count());
         $postCount = Cache::remember('post_count', 600, fn () => Post::count());
         $articleCount = Cache::remember('article_count', 600, fn () => Article::count());
@@ -39,7 +35,6 @@ class MainController extends Controller
                 ->take(5)
                 ->get();
         });
-
         $articleTopUsers = Cache::remember('top_users_article', 600, function () {
             return Article::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
@@ -48,7 +43,6 @@ class MainController extends Controller
                 ->take(5)
                 ->get();
         });
-
         $workTopUsers = Cache::remember('top_users_work', 600, function () {
             return Work::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
@@ -57,7 +51,6 @@ class MainController extends Controller
                 ->take(5)
                 ->get();
         });
-
         $opinionTopUsers = Cache::remember('top_users_opinion', 600, function () {
             return Opinion::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
@@ -66,7 +59,6 @@ class MainController extends Controller
                 ->take(5)
                 ->get();
         });
-
         $videoTopUsers = Cache::remember('top_users_video', 600, function () {
             return Video::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
@@ -75,7 +67,6 @@ class MainController extends Controller
                 ->take(5)
                 ->get();
         });
-
         $fileTopUsers = Cache::remember('top_users_file', 600, function () {
             return File::selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
