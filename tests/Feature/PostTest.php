@@ -12,17 +12,16 @@ class PostTest extends TestCase
 
     public function test_user_can_create_post()
     {
-        // Arrange：準備測試資料
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+
         $user = User::factory()->create();
 
-        // Act：執行行為
         $response = $this->actingAs($user)->post('/forum/post', [
             'title' => '測試文章標題',
             'content' => '這是一篇測試文章內容',
             'tag' => '學習問題',
         ]);
 
-        // Assert：驗證結果
         $response->assertRedirect(route('forum.index'));
 
         $this->assertDatabaseCount('posts', 1);
