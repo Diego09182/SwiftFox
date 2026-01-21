@@ -9,7 +9,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function user_can_be_created()
+    public function test_user_can_be_created()
     {
         $response = $this->post('/register', [
             'account' => 'testuser',
