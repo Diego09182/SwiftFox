@@ -21,10 +21,9 @@ class OpinionController extends Controller
     public function agree($id)
     {
         $opinion = $this->opinionService->getOpinionById($id);
-        $userId = Auth::id();
 
         try {
-            $opinion = $this->opinionService->vote($userId, $opinion, 'agree');
+            $opinion = $this->opinionService->vote($opinion, 'agree');
 
             return response()->json([
                 'totalVotes' => $opinion->count,
@@ -33,19 +32,23 @@ class OpinionController extends Controller
                 'agreeRatio' => $this->calculatePercentage($opinion->agree, $opinion->count),
                 'disagreeRatio' => $this->calculatePercentage($opinion->disagree, $opinion->count),
             ]);
-        } catch (\Exception $e) {
-
-            return response()->json(['error' => $e->getMessage()], 400);
+        } catch (\DomainException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 409);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 400);
         }
     }
 
     public function disagree($id)
     {
         $opinion = $this->opinionService->getOpinionById($id);
-        $userId = Auth::id();
 
         try {
-            $opinion = $this->opinionService->vote($userId, $opinion, 'disagree');
+            $opinion = $this->opinionService->vote($opinion, 'disagree');
 
             return response()->json([
                 'totalVotes' => $opinion->count,
@@ -54,8 +57,14 @@ class OpinionController extends Controller
                 'agreeRatio' => $this->calculatePercentage($opinion->agree, $opinion->count),
                 'disagreeRatio' => $this->calculatePercentage($opinion->disagree, $opinion->count),
             ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+        } catch (\DomainException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 409);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 400);
         }
     }
 
@@ -101,9 +110,7 @@ class OpinionController extends Controller
 
     public function destroy(Opinion $opinion)
     {
-        if (Gate::denies('delete-opinion', $opinion)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $opinion);
 
         $user = $opinion->user;
 

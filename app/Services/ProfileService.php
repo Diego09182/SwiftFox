@@ -4,14 +4,11 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileService
 {
-    protected string $cacheTag = 'profiles';
-
     public function getUser()
     {
         return Auth::user();
@@ -64,19 +61,7 @@ class ProfileService
 
         $user->save();
 
-        $this->clearCache();
-
         return $this->success($user->fresh(), '資料已更新');
-    }
-
-    protected function cacheKey(string $key): string
-    {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
     }
 
     protected function success($data = null, ?string $message = null): array

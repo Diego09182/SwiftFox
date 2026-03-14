@@ -6,9 +6,14 @@ use App\Models\Prize;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
-class PrizeService
+class PrizeService extends AbstractService
 {
     protected string $cacheTag = 'prizes';
+
+    protected function getModelClass(): string
+    {
+        return Prize::class;
+    }
 
     public function createPrize(array $data)
     {
@@ -47,13 +52,12 @@ class PrizeService
         $this->clearCache();
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
+        if ($id) {
+            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$id}"));
+        }
 
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
+        $this->flushCache();
     }
 }

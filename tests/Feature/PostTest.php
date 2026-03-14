@@ -12,8 +12,6 @@ class PostTest extends TestCase
 
     public function test_user_can_create_post()
     {
-        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
-
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post('/forum/post', [
@@ -36,5 +34,4 @@ class PostTest extends TestCase
             'dislike' => 0,
         ]);
     }
-
 }

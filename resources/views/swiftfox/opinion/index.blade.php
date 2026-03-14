@@ -62,7 +62,6 @@
         </div>
     </div>
 
-
 	<br>
 
 	@include('component.contact')

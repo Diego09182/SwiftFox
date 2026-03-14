@@ -46,9 +46,7 @@ class PhotoController extends Controller
     {
         $photo = Photo::findOrFail($photoId);
 
-        if (Gate::denies('delete-photo', $photo)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $photo);
 
         $this->photoService->deletePhoto($photo);
 

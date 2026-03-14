@@ -76,9 +76,7 @@ class FileController extends Controller
 
     public function destroy(File $file)
     {
-        if (Gate::denies('delete-file', $file)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $file);
 
         $owner = $file->user;
         $admin = Auth::user();

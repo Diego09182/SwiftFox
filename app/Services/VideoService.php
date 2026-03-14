@@ -3,38 +3,53 @@
 namespace App\Services;
 
 use App\Models\Video;
-use Illuminate\Support\Facades\Cache;
+use DomainException;
 use Illuminate\Support\Facades\Storage;
 
-class VideoService
+class VideoService extends AbstractService
 {
     protected string $cacheTag = 'videos';
 
-    public function getVideos()
+    protected function getModelClass(): string
     {
-        $page = request('page', 1);
-
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Video::latest()->paginate(6));
+        return Video::class;
     }
 
-    public function getVideoById(int $id)
+    public function getVideos(int $page = 1, int $perPage = 9)
     {
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Video::findOrFail($id));
+        $key = $this->cacheKey("index_page_{$page}_{$perPage}");
+
+        return $this->rememberEmpty($key, 600, fn () => Video::latest()->paginate($perPage));
     }
 
-    public function createVideoFile($uploadedFile)
+    public function getVideoById(int $id): Video
     {
-        $filename = time().'_'.uniqid().'.'.$uploadedFile->getClientOriginalExtension();
-        $path = $uploadedFile->storeAs('videos', $filename, 'public');
+        $key = $this->cacheKey("show_{$id}");
 
-        return ['filename' => $filename, 'path' => $path];
+        return $this->rememberEmpty($key, 600, fn () => Video::findOrFail($id));
     }
 
-    public function storeVideoData(array $data)
+    public function createVideo($file): array
     {
+        if (! $file) {
+            throw new DomainException('未提供影片檔案');
+        }
+
+        $filename = time().'_'.$file->getClientOriginalName();
+        $path = $file->storeAs('videos', $filename, 'public');
+
+        return compact('filename', 'path');
+    }
+
+    public function storeVideoData(array $data): Video
+    {
+        if (! isset($data['user_id'])) {
+            throw new DomainException('缺少使用者 ID');
+        }
+
+        $data['content'] = nl2br($data['content'] ?? '');
         $video = Video::create($data);
+
         $this->clearCache();
 
         return $video->fresh();
@@ -42,23 +57,21 @@ class VideoService
 
     public function deleteVideo(Video $video): void
     {
-        if ($video->filename && Storage::disk('public')->exists('videos/'.$video->filename)) {
-            Storage::disk('public')->delete('videos/'.$video->filename);
+        if ($video->path && Storage::disk('public')->exists($video->path)) {
+            Storage::disk('public')->delete($video->path);
         }
+
         $video->delete();
-        $this->clearCache();
+
+        $this->clearCache($video->id);
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $videoId = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(?int $id = null): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
-        if ($id) {
-            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$id}"));
+        if ($videoId) {
+            $this->flushCache($this->cacheKey("show_{$videoId}"));
         }
+
+        $this->flushCache();
     }
 }

@@ -6,7 +6,6 @@
 	<meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Swift Fox:開源的學生社群軟體" />
     <meta name="keywords" content="學生社群軟體" />
-    <meta name="author" content="ssss.glad" />
     <title>Swift Fox</title>
 	@vite(['resources/css/style.css','resources/css/materialize.css','resources/js/app.js','resources/js/materialize.js','resources/js/init.js'])
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">

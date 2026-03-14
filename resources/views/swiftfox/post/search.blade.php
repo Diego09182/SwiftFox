@@ -12,32 +12,7 @@
 
 	@include('component.toolbar')
 
-	<div class="container">
-		<div class="row">
-			<form action="{{ route('forum.search') }}" method="GET">
-				<div class="input-field col m12">
-					<i class="material-icons prefix">search</i>
-					<input value="{{ $search }}" name="search" id="icon_prefix" type="text" class="validate">
-					<label for="icon_prefix">Search</label>
-				</div>
-			</form>
-		</div>
-		<div class="row">
-			<form action="{{ route('forum.filter') }}" method="GET">
-				<div class="input-field col m4">
-					<select name="filter">
-						<option value="" disabled selected>熱度篩選</option>
-						<option value="觀看次數">觀看次數</option>
-						<option value="喜歡次數">喜歡次數</option>
-					</select>
-					<label>熱度篩選</label>
-				</div>
-				<div class="input-field">
-					<button type="submit" class="btn waves-effect waves-light brown right">貼文篩選</button>
-				</div>
-			</form>
-		</div>
-	</div>
+    @include('component.searchpanel')
 
 	<div class="container">
 		<div class="row">

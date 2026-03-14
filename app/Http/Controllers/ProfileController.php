@@ -27,9 +27,9 @@ class ProfileController extends Controller
         $user = $this->profileService->getUser();
 
         $redemptions = PrizeRedemption::with('prize')
-            ->where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(8);
+                                        ->where('user_id', $user->id)
+                                        ->orderBy('created_at', 'desc')
+                                        ->paginate(8);
 
         return view('swiftfox.profile.redemptions', compact('user', 'redemptions'));
     }

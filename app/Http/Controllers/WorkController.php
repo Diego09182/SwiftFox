@@ -67,9 +67,7 @@ class WorkController extends Controller
     {
         $work = Work::findOrFail($id);
 
-        if (Gate::denies('delete-work', $work)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $work);
 
         $user = $work->user;
 

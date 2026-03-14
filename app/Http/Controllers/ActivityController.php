@@ -27,7 +27,7 @@ class ActivityController extends Controller
     {
         $this->activityService->createActivity(
             $request->validated(),
-            $request
+            $request->file('file')
         );
 
         return response()->json([
@@ -38,9 +38,7 @@ class ActivityController extends Controller
 
     public function destroy(Activity $activity)
     {
-        if (Gate::denies('delete-activity', $activity)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $activity);
 
         $this->activityService->deleteActivity($activity);
 

@@ -49,9 +49,7 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        if (Gate::denies('delete-note', $note)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $note);
 
         $this->noteService->deleteNote($note);
 

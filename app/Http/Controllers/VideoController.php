@@ -57,9 +57,7 @@ class VideoController extends Controller
     {
         $video = $this->videoService->getVideoById($id);
 
-        if (Gate::denies('delete-video', $video)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $video);
 
         $currentUser = Auth::user();
 

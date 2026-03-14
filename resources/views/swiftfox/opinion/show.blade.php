@@ -237,7 +237,11 @@
 					var response = JSON.parse(xhr.responseText);
 					M.toast({html: response.error});
 				} else {
-					alert('發生錯誤，請稍後再試。');
+					M.toast({
+                        html: '已經投過票了。',
+                        displayLength: 3000,
+                        classes: 'rounded red lighten-2'
+                    });
 				}
 			}
 		});
@@ -257,7 +261,11 @@
 					var response = JSON.parse(xhr.responseText);
 					M.toast({html: response.error});
 				} else {
-					alert('發生錯誤，請稍後再試。');
+					M.toast({
+                        html: '已經投過票了。',
+                        displayLength: 3000,
+                        classes: 'rounded red lighten-2'
+                    });
 				}
 			}
 		});

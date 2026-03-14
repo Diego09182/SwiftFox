@@ -4,12 +4,9 @@ namespace App\Services;
 
 use App\Models\Report;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class ReportService
 {
-    protected string $cacheTag = 'reports';
-
     public function createReport(array $data, int $postId)
     {
         $data['content'] = nl2br($data['content']);
@@ -31,16 +28,6 @@ class ReportService
         $report->delete();
 
         return $this->success();
-    }
-
-    protected function cacheKey(string $key): string
-    {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
     }
 
     protected function success($data = null, ?string $message = null): array

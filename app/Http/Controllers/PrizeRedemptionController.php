@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePrizeRedemptionStatusRequest;
 use App\Models\Prize;
 use App\Models\PrizeRedemption;
 use App\Services\PrizeRedemptionService;
+use App\Services\RedeemResult;
 use Illuminate\Support\Facades\Auth;
 
 class PrizeRedemptionController extends Controller
@@ -22,20 +23,34 @@ class PrizeRedemptionController extends Controller
     public function redeem(RedeemPrizeRequest $request, Prize $prize)
     {
         $user = Auth::user();
-        $result = $this->service->redeem($user, $prize, $request->validated());
+        $quantity = $request->input('quantity', 1);
+        $data = $request->validated();
 
-        if ($result !== true) {
-            return back()->withInput()->with('error', $result);
+        /** @var RedeemResult $result */
+        $result = $this->service->redeem($user, $prize, $quantity, $data);
+
+        if (! $result->success) {
+            $message = match ($result->reason) {
+                'INSUFFICIENT_STOCK' => '獎品庫存不足。',
+                'INSUFFICIENT_POINTS' => '點數不足，無法兌換此獎品。',
+                default => '兌換失敗，請稍後再試。',
+            };
+
+            return back()->withInput()->with('error', $message);
         }
 
-        return redirect()->route('prize.index')->with('success', '兌換成功，我們將儘速處理您的訂單！');
+        return redirect()->route('prize.index')
+            ->with('success', '兌換成功，我們將儘速處理您的訂單！');
     }
 
     public function approve(PrizeRedemption $redemption)
     {
-        $result = $this->service->approveRedemption($redemption);
-        if ($result !== true) {
-            return back()->with('error', $result);
+        $this->authorize('approve', $redemption);
+
+        $success = $this->service->approveRedemption($redemption);
+
+        if (! $success) {
+            return back()->with('error', '只能審核待處理的兌換紀錄。');
         }
 
         return back()->with('success', '兌換已通過審核。');
@@ -43,11 +58,13 @@ class PrizeRedemptionController extends Controller
 
     public function updateStatus(UpdatePrizeRedemptionStatusRequest $request, PrizeRedemption $redemption)
     {
-        $status = $request->input('status');
-        $result = $this->service->updateStatus($redemption, $status);
+        $this->authorize('update', $redemption);
 
-        if ($result === 'no-change') {
-            return back()->with('info', "兌換狀態未變更，維持為「{$status}」。");
+        $status = $request->input('status');
+        $success = $this->service->updateStatus($redemption, $status);
+
+        if (! $success) {
+            return back()->with('info', '狀態未變更。');
         }
 
         return back()->with('success', "兌換狀態已更新為「{$status}」。");
@@ -55,13 +72,18 @@ class PrizeRedemptionController extends Controller
 
     public function update(UpdatePrizeRedemptionRequest $request, PrizeRedemption $redemption)
     {
+        $this->authorize('update', $redemption);
+
         $this->service->updateRedemptionInfo($redemption, $request->validated());
 
-        return redirect()->route('redemptions.index')->with('success', '兌換資料已更新。');
+        return redirect()->route('redemptions.index')
+            ->with('success', '兌換資料已更新。');
     }
 
     public function destroy(PrizeRedemption $redemption)
     {
+        $this->authorize('delete', $redemption);
+
         $this->service->deleteRedemption($redemption);
 
         return back()->with('success', '兌換紀錄已刪除。');

@@ -5,52 +5,38 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Services\PostService;
-use Illuminate\Http\Request;
+use DomainException;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function __construct(
-        protected PostService $postService
-    ) {}
+    protected PostService $postService;
 
-    public function index(Request $request)
+    public function __construct(PostService $postService)
     {
-        $page = $request->input('page', 1);
+        $this->postService = $postService;
+    }
 
-        $posts = $this->postService->getPostsByPage($page);
+    public function index()
+    {
+        $posts = $this->postService->getPostsByPage();
         $top_posts = $this->postService->getWeeklyTopPosts(3);
 
-        return view('swiftfox.post.index', [
-            'posts' => $posts,
-            'top_posts' => $top_posts,
-        ]);
+        return view('swiftfox.post.index', compact('posts', 'top_posts'));
     }
 
-    public function filter(Request $request)
+    public function filter(?string $filter = null)
     {
-        $filter = $request->input('filter');
-        $page = $request->input('page', 1);
+        $posts = $this->postService->getPostsByFilter($filter);
 
-        $posts = $this->postService->getPostsByFilter($filter, $page);
-
-        return view('swiftfox.post.filter', [
-            'posts' => $posts,
-            'filter' => $filter,
-        ]);
+        return view('swiftfox.post.filter', compact('posts', 'filter'));
     }
 
-    public function search(Request $request)
+    public function search(?string $keyword = null)
     {
-        $search = $request->input('search');
-        $page = $request->input('page', 1);
+        $posts = $this->postService->searchPosts($keyword);
 
-        $posts = $this->postService->searchPosts($search, $page);
-
-        return view('swiftfox.post.search', [
-            'posts' => $posts,
-            'search' => $search,
-        ]);
+        return view('swiftfox.post.search', compact('posts', 'keyword'));
     }
 
     public function show(int $id)
@@ -59,11 +45,7 @@ class PostController extends Controller
         $comments = $post->comments()->paginate(6);
         $relatedPosts = $this->postService->getRelatedPosts($post);
 
-        return view('swiftfox.post.show', [
-            'post' => $post,
-            'comments' => $comments,
-            'relatedPosts' => $relatedPosts,
-        ]);
+        return view('swiftfox.post.show', compact('post', 'comments', 'relatedPosts'));
     }
 
     public function create()
@@ -84,42 +66,44 @@ class PostController extends Controller
 
     public function like(Post $post)
     {
-        $result = $this->postService->like($post, Auth::user());
+        try {
+            $post = $this->postService->like($post, Auth::user());
 
-        if (! $result['success']) {
-            return response()->json(['message' => $result['message']], 403);
+            return response()->json([
+                'like' => $post->like,
+                'dislike' => $post->dislike,
+            ]);
+        } catch (DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         }
-
-        return response()->json([
-            'like' => $result['data']->like,
-            'dislike' => $result['data']->dislike,
-        ]);
     }
 
     public function dislike(Post $post)
     {
-        $result = $this->postService->dislike($post, Auth::user());
+        try {
+            $post = $this->postService->dislike($post, Auth::user());
 
-        if (! $result['success']) {
-            return response()->json(['message' => $result['message']], 403);
+            return response()->json([
+                'like' => $post->like,
+                'dislike' => $post->dislike,
+            ]);
+        } catch (DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         }
-
-        return response()->json([
-            'like' => $result['data']->like,
-            'dislike' => $result['data']->dislike,
-        ]);
     }
 
     public function destroy(Post $post)
     {
-        $result = $this->postService->deletePost($post, Auth::user());
+        $this->authorize('delete', $post);
 
-        if (! $result['success']) {
-            return back()->with('error', $result['message']);
+        try {
+            $this->postService->deletePost($post, Auth::user());
+
+            return redirect()
+                ->route('forum.index')
+                ->with('success', '貼文已成功刪除！');
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        return redirect()
-            ->route('forum.index')
-            ->with('success', '貼文已成功刪除！');
     }
 }

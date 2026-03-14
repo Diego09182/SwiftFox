@@ -57,9 +57,7 @@ class ArticleController extends Controller
 
     public function destroy(Article $article)
     {
-        if (Gate::denies('delete-article', $article)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $article);
 
         $currentUser = Auth::user();
         $author = $article->user;

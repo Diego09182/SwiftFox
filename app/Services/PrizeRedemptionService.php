@@ -5,53 +5,78 @@ namespace App\Services;
 use App\Models\Prize;
 use App\Models\PrizeRedemption;
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class PrizeRedemptionService
+class PrizeRedemptionService extends AbstractService
 {
     protected string $cacheTag = 'prize_redemptions';
 
-    public function redeem(User $user, Prize $prize, array $data): array
+    protected function getModelClass(): string
     {
-        $quantity = (int) ($data['quantity'] ?? 1);
-        $totalPoints = $prize->price * $quantity;
+        return PrizeRedemption::class;
+    }
 
-        if ($quantity > $prize->quantity) {
-            return $this->fail('獎品庫存不足。');
-        }
-        if ($user->points < $totalPoints) {
-            return $this->fail('您的點數不足，無法兌換此獎品。');
-        }
+    /**
+     * 執行兌換
+     */
+    public function redeem(User $user, Prize $prize, int $quantity = 1, array $data = []): RedeemResult
+    {
+        return DB::transaction(function () use ($user, $prize, $quantity, $data) {
 
-        DB::transaction(function () use ($user, $prize, $quantity, $totalPoints, $data) {
+            // 正確併發鎖
+            $prize = Prize::whereKey($prize->id)
+                ->lockForUpdate()
+                ->first();
+
+            $totalPoints = $prize->price * $quantity;
+
+            // 檢查庫存
+            if ($quantity > $prize->quantity) {
+                return new RedeemResult(false, 'INSUFFICIENT_STOCK');
+            }
+
+            // 檢查使用者點數
+            if ($user->points < $totalPoints) {
+                return new RedeemResult(false, 'INSUFFICIENT_POINTS');
+            }
+
+            // 執行兌換
             $user->decrement('points', $totalPoints);
             $prize->decrement('quantity', $quantity);
 
-            PrizeRedemption::create([
+            $redemption = PrizeRedemption::create([
                 'user_id' => $user->id,
                 'prize_id' => $prize->id,
                 'quantity' => $quantity,
-                'status' => 'pending',
+                'status' => PrizeRedemptionStatus::PENDING,
                 'shipping_address' => $data['shipping_address'] ?? '',
                 'note' => $data['note'] ?? null,
             ]);
-        });
 
-        return $this->success(null, '兌換成功，我們將儘速處理您的訂單！');
+            $this->flushCache();
+
+            return new RedeemResult(true, null, $redemption);
+        });
     }
 
-    public function updateStatus(PrizeRedemption $redemption, string $status): array
+    /**
+     * 更新兌換狀態
+     */
+    public function updateStatus(PrizeRedemption $redemption, string $status): bool
     {
         if ($redemption->status === $status) {
-            return $this->fail('狀態未變更');
+            return false;
         }
 
         $redemption->update(['status' => $status]);
+        $this->flushCache($redemption->id);
 
-        return $this->success(null, "兌換狀態已更新為「{$status}」。");
+        return true;
     }
 
+    /**
+     * 更新兌換資訊
+     */
     public function updateRedemptionInfo(PrizeRedemption $redemption, array $data): void
     {
         $redemption->update([
@@ -59,41 +84,69 @@ class PrizeRedemptionService
             'note' => $data['note'] ?? null,
             'shipping_address' => $data['shipping_address'] ?? '',
         ]);
+
+        $this->flushCache($redemption->id);
     }
 
+    /**
+     * 刪除兌換紀錄
+     */
     public function deleteRedemption(PrizeRedemption $redemption): void
     {
         $redemption->delete();
+        $this->flushCache($redemption->id);
     }
 
-    public function approveRedemption(PrizeRedemption $redemption): array
+    /**
+     * 審核兌換
+     */
+    public function approveRedemption(PrizeRedemption $redemption): bool
     {
-        if ($redemption->status !== 'pending') {
-            return $this->fail('只能審核待處理的兌換紀錄。');
+        if (! PrizeRedemptionStatus::canApprove($redemption->status)) {
+            return false;
         }
 
-        $redemption->update(['status' => 'approved']);
+        $redemption->update(['status' => PrizeRedemptionStatus::APPROVED]);
+        $this->flushCache($redemption->id);
 
-        return $this->success(null, '兌換已通過審核。');
+        return true;
     }
 
-    protected function cacheKey(string $key): string
+    /**
+     * 清除快取
+     */
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
+        if ($id) {
+            $this->flushCache($this->cacheKey("show_{$id}"));
+        }
 
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
+        $this->flushCache();
     }
+}
 
-    protected function success($data = null, ?string $message = null): array
-    {
-        return ['success' => true, 'message' => $message, 'data' => $data];
-    }
+/**
+ * 域物件：兌換結果
+ */
+class RedeemResult
+{
+    public function __construct(
+        public bool $success,
+        public ?string $reason = null,
+        public ?PrizeRedemption $redemption = null
+    ) {}
+}
 
-    protected function fail(string $message): array
+/**
+ * 兌換狀態常數
+ */
+class PrizeRedemptionStatus
+{
+    public const PENDING = 'pending';
+    public const APPROVED = 'approved';
+
+    public static function canApprove(string $status): bool
     {
-        return ['success' => false, 'message' => $message, 'data' => null];
+        return $status === self::PENDING;
     }
 }

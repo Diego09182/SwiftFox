@@ -17,7 +17,7 @@ class UserFactory extends Factory
             // 必填唯一欄位
             'account' => $this->faker->unique()->userName(),
             'email' => $this->faker->unique()->safeEmail(),
-            'cellphone' => '09' . $this->faker->unique()->numerify('########'),
+            'cellphone' => '09'.$this->faker->unique()->numerify('########'),
 
             // 必填欄位
             'name' => $this->faker->name(),

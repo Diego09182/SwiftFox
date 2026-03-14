@@ -42,9 +42,7 @@ class ClubController extends Controller
 
     public function destroy(Club $club)
     {
-        if (Gate::denies('delete-club', $club)) {
-            return redirect()->back()->with('error', '您沒有權限刪除此資源');
-        }
+        $this->authorize('delete', $club);
 
         $this->clubService->deleteClub($club);
 

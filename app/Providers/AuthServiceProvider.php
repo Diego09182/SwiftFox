@@ -24,7 +24,17 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Post::class => \App\Policies\PostPolicy::class,
+        Activity::class => \App\Policies\ActivityPolicy::class,
+        Article::class => \App\Policies\ArticlePolicy::class,
+        Club::class => \App\Policies\ClubPolicy::class,
+        Comment::class => \App\Policies\CommentPolicy::class,
+        Note::class => \App\Policies\NotePolicy::class,
+        Opinion::class => \App\Policies\OpinionPolicy::class,
+        Video::class => \App\Policies\VideoPolicy::class,
+        Work::class => \App\Policies\WorkPolicy::class,
+        Photo::class => \App\Policies\PhotoPolicy::class,
+        File::class => \App\Policies\FilePolicy::class,
     ];
 
     /**
@@ -55,7 +65,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('delete-note', function ($user, Note $note) {
-            return $note->user_id == $user->id || $user->administration == 5;
+            return $note->user_id == $user->id;
         });
 
         Gate::define('delete-opinion', function ($user, Opinion $opinion) {

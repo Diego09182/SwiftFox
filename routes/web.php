@@ -1,274 +1,229 @@
 <?php
 
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BulletinController;
-use App\Http\Controllers\ClubController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MainController;
-use App\Http\Controllers\ManagementController;
-use App\Http\Controllers\NoteController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\OpinionController;
-use App\Http\Controllers\PhotoController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\PrizeController;
-use App\Http\Controllers\PrizeRedemptionController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\VideoController;
-use App\Http\Controllers\WorkController;
+use App\Http\Controllers\{
+    ActivityController,
+    ArticleController,
+    AuthController,
+    BulletinController,
+    ClubController,
+    CommentController,
+    FileController,
+    HomeController,
+    MainController,
+    ManagementController,
+    NoteController,
+    NotificationController,
+    OpinionController,
+    PhotoController,
+    PostController,
+    PrizeController,
+    PrizeRedemptionController,
+    ProfileController,
+    ReportController,
+    VideoController,
+    WorkController
+};
+
 use Illuminate\Support\Facades\Route;
 
-// 測速路由
-Route::get('/test', function () {
-    return response('OK', 200)->header('Content-Type', 'text/plain');
-});
+// 首頁
+Route::get('/', fn() => view('welcome'));
 
-// Laravel
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// 登入/註冊頁面
 Route::middleware('check.login')->group(function () {
-    // 註冊與登入頁面
-    Route::get('/registration', function () {
-        return view('swiftfox.registration');
-    })->name('welcome');
-
-    // 歡迎頁面
-    Route::get('/welcome', function () {
-        return view('swiftfox.welcome');
-    })->name('introduction');
+    Route::view('/registration', 'swiftfox.registration')->name('welcome');
+    Route::view('/welcome', 'swiftfox.welcome')->name('introduction');
 });
 
-// 登入
+// 登入/註冊
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-// 註冊
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
-// 身分驗證
+// 身分驗證的路由群組
 Route::middleware(['auth', 'user.data'])->group(function () {
 
-    // 登出
+    // 登出、首頁
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    // 首頁
     Route::get('/main', [MainController::class, 'index'])->name('main');
 
     // 通知系統
-    // 顯示所有通知
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    // 標記所有通知為已讀
-    Route::post('/notifications/read', [NotificationController::class, 'readAll'])->name('notifications.readAll');
+    Route::controller(NotificationController::class)
+        ->prefix('notifications')->name('notifications.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/read', 'readAll')->name('readAll');
+        });
 
-    // 管理後臺
-    Route::get('/management', [ManagementController::class, 'index'])->name('management.index');
-    // 公布更新
+    // 管理後台
+    Route::controller(ManagementController::class)
+        ->prefix('management')->name('management.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/users', 'users')->name('users');
+            Route::put('/users/{user}', 'update')->name('update');
+            Route::get('/posts', 'posts')->name('posts');
+            Route::get('/articles', 'articles')->name('articles');
+            Route::get('/reports', 'reports')->name('reports');
+            Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
+            Route::get('/works', 'works')->name('works');
+            Route::get('/clubs', 'clubs')->name('clubs');
+            Route::get('/opinions', 'opinions')->name('opinions');
+            Route::get('/videos', 'videos')->name('videos');
+            Route::get('/files', 'files')->name('files');
+            Route::get('/prizes', 'prizes')->name('prizes');
+            Route::get('/prizeRedemptions', 'prizeRedemptions')->name('prizeRedemptions');
+        });
+
+    // 公告
     Route::post('/management/bulletin', [BulletinController::class, 'store'])->name('bulletin.store');
-    // 刪除檢舉
-    Route::delete('/management/reports/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
-    // 使用者權限
-    Route::put('/management/users/{user}', [ManagementController::class, 'update'])->name('management.update');
-    // 使用者管理
-    Route::get('/management/users', [ManagementController::class, 'users'])->name('management.users');
-    // 貼文管理
-    Route::get('/management/posts', [ManagementController::class, 'posts'])->name('management.posts');
-    // 文章管理
-    Route::get('/management/articles', [ManagementController::class, 'articles'])->name('management.articles');
-    // 檢舉管理
-    Route::get('/management/reports', [ManagementController::class, 'reports'])->name('management.reports');
-    // 作品管理
-    Route::get('/management/works', [ManagementController::class, 'works'])->name('management.works');
-    // 社團管理
-    Route::get('/management/clubs', [ManagementController::class, 'clubs'])->name('management.clubs');
-    // 投票管理
-    Route::get('/management/opinions', [ManagementController::class, 'opinions'])->name('management.opinions');
-    // 影片管理
-    Route::get('/management/videos', [ManagementController::class, 'videos'])->name('management.videos');
-    // 檔案管理
-    Route::get('/management/files', [ManagementController::class, 'files'])->name('management.files');
-    // 兌換管理
-    Route::get('/management/prizeRedemptions', [ManagementController::class, 'prizeRedemptions'])->name('management.prizeRedemptions');
-    // 獎品管理
-    Route::get('/management/prizes', [ManagementController::class, 'prizes'])->name('management.prizes');
 
     // 論壇系統
-    //搜尋貼文
-    Route::get('/forum/search', [PostController::class, 'search'])->name('forum.search');
-    //篩選貼文
-    Route::get('/forum/filter', [PostController::class, 'filter'])->name('forum.filter');
-    // 認同貼文
-    Route::post('/forum/posts/{post}/like', [PostController::class, 'like'])->name('forum.like');
-    // 不認同貼文
-    Route::post('/forum/posts/{post}/dislike', [PostController::class, 'dislike'])->name('forum.dislike');
-    // 顯示所有貼文
-    Route::get('/forum', [PostController::class, 'index'])->name('forum.index');
-    // 顯示單個貼文
-    Route::get('/forum/posts/{post}/comment', [PostController::class, 'show'])->name('forum.show');
-    // 發布貼文頁面
-    Route::get('/forum/post', [PostController::class, 'create'])->name('forum.create');
-    // 發布貼文
-    Route::post('/forum/post', [PostController::class, 'store'])->name('forum.store');
-    // 刪除貼文
-    Route::delete('/forum/posts/{post}', [PostController::class, 'destroy'])->name('forum.destroy');
-    // 發布評論
-    Route::post('/forum/posts/{post}/comments', [CommentController::class, 'store'])->name('comment.store');
-    // 刪除評論
-    Route::delete('/forum/posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comment.destroy');
-    // 發布檢舉
-    Route::post('/forum/posts/{post}/report', [ReportController::class, 'store'])->name('report.store');
+    Route::controller(PostController::class)
+        ->prefix('forum')->name('forum.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/search', 'search')->name('search');
+            Route::get('/filter', 'filter')->name('filter');
+            Route::get('/posts/{post}/comment', 'show')->name('show');
+            Route::get('/post', 'create')->name('create');
+            Route::post('/post', 'store')->name('store');
+            Route::delete('/posts/{post}', 'destroy')->name('destroy');
+            Route::post('/posts/{post}/like', 'like')->name('like');
+            Route::post('/posts/{post}/dislike', 'dislike')->name('dislike');
+        });
 
-    // 個人系統
-    // 個人資訊
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    // 兌換紀錄
-    Route::get('/profile/redemptions', [ProfileController::class, 'redemptions'])->name('profile.redemptions');
-    // 個人資訊更新
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::controller(CommentController::class)->group(function () {
+        Route::post('/forum/posts/{post}/comments', 'store')->name('comment.store');
+        Route::delete('/forum/posts/{post}/comments/{comment}', 'destroy')->name('comment.destroy');
+    });
+    Route::controller(ReportController::class)->group(function () {
+        Route::post('/forum/posts/{post}/report', 'store')->name('report.store');
+    });
 
-    // 顯示所有日記
-    Route::get('/home', [NoteController::class, 'index'])->name('home.index');
-    // 顯示單個日記
-    Route::get('/home/notes/{note}', [NoteController::class, 'show'])->name('note.show');
-    // 創建日記頁面
-    Route::get('/home/notes', [NoteController::class, 'create'])->name('note.create');
-    // 發布日記
-    Route::post('/home/note', [NoteController::class, 'store'])->name('note.store');
-    // 刪除日記
-    Route::delete('/home/notes/{note}', [NoteController::class, 'destroy'])->name('note.destroy');
-    // 貼文管理
-    Route::get('/home/posts', [HomeController::class, 'posts'])->name('home.posts');
-    // 文章管理
-    Route::get('/home/articles', [HomeController::class, 'articles'])->name('home.articles');
-    // 作品管理
-    Route::get('/home/works', [HomeController::class, 'works'])->name('home.works');
-    // 投票管理
-    Route::get('/home/opinions', [HomeController::class, 'opinions'])->name('home.opinions');
-    // 影片管理
-    Route::get('/home/videos', [HomeController::class, 'videos'])->name('home.videos');
-    // 檔案管理
-    Route::get('/home/files', [HomeController::class, 'files'])->name('home.files');
+    // 個人資訊系統
+    Route::controller(ProfileController::class)
+        ->prefix('profile')->name('profile.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/redemptions', 'redemptions')->name('redemptions');
+            Route::put('/', 'update')->name('update');
+        });
+
+    // 日記系統
+    Route::controller(NoteController::class)->group(function () {
+        Route::get('/home', 'index')->name('home.index');
+        Route::get('/home/notes/{note}', 'show')->name('note.show');
+        Route::get('/home/notes', 'create')->name('note.create');
+        Route::post('/home/note', 'store')->name('note.store');
+        Route::delete('/home/notes/{note}', 'destroy')->name('note.destroy');
+    });
+
+    Route::controller(HomeController::class)
+        ->prefix('home')->name('home.')->group(function () {
+            Route::get('/posts', 'posts')->name('posts');
+            Route::get('/articles', 'articles')->name('articles');
+            Route::get('/works', 'works')->name('works');
+            Route::get('/opinions', 'opinions')->name('opinions');
+            Route::get('/videos', 'videos')->name('videos');
+            Route::get('/files', 'files')->name('files');
+        });
 
     // 投票系統
-    // 認同投票
-    Route::post('/opinions/{opinion}/agree', [OpinionController::class, 'agree'])->name('opinion.agree');
-    // 不認同投票
-    Route::post('/opinions/{opinion}/disagree', [OpinionController::class, 'disagree'])->name('opinion.disagree');
-    // 顯示所有投票
-    Route::get('/opinions', [OpinionController::class, 'index'])->name('opinion.index');
-    // 發布投票頁面
-    Route::get('/opinion', [OpinionController::class, 'create'])->name('opinion.create');
-    // 顯示單個投票
-    Route::get('/opinions/{opinion}', [OpinionController::class, 'show'])->name('opinion.show');
-    // 發布投票
-    Route::post('/opinion', [OpinionController::class, 'store'])->name('opinion.store');
-    // 刪除投票
-    Route::delete('/opinions/{opinion}', [OpinionController::class, 'destroy'])->name('opinion.destroy');
+    Route::controller(OpinionController::class)
+        ->prefix('opinions')->name('opinion.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{opinion}', 'show')->name('show');
+            Route::post('/{opinion}/agree', 'agree')->name('agree');
+            Route::post('/{opinion}/disagree', 'disagree')->name('disagree');
+        });
+    Route::controller(OpinionController::class)->group(function () {
+        Route::get('/opinion', 'create')->name('opinion.create');
+        Route::post('/opinion', 'store')->name('opinion.store');
+        Route::delete('/opinions/{opinion}', 'destroy')->name('opinion.destroy');
+    });
 
     // 文章系統
-    //搜尋文章
-    Route::get('/articles/search', [ArticleController::class, 'search'])->name('article.search');
-    // 顯示所有文章
-    Route::get('/articles', [ArticleController::class, 'index'])->name('article.index');
-    // 顯示單個文章
-    Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('article.show');
-    // 發布文章頁面
-    Route::get('/article', [ArticleController::class, 'create'])->name('article.create');
-    // 發布文章
-    Route::post('/article', [ArticleController::class, 'store'])->name('article.store');
-    // 刪除文章
-    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('article.destroy');
+    Route::controller(ArticleController::class)
+        ->prefix('articles')->name('article.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/search', 'search')->name('search');
+            Route::get('/{article}', 'show')->name('show');
+        });
+    Route::controller(ArticleController::class)->group(function () {
+        Route::get('/article', 'create')->name('article.create');
+        Route::post('/article', 'store')->name('article.store');
+        Route::delete('/articles/{article}', 'destroy')->name('article.destroy');
+    });
 
     // 社團系統
-    // 顯示所有社團
-    Route::get('/clubs', [ClubController::class, 'index'])->name('club.index');
-    // 發布社團
-    Route::post('/club', [ClubController::class, 'store'])->name('club.store');
-    // 刪除社團
-    Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('club.destroy');
+    Route::controller(ClubController::class)
+        ->prefix('clubs')->name('club.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{club}', 'destroy')->name('destroy');
+        });
 
     // 活動系統
-    // 顯示所有活動
-    Route::get('/activities', [ActivityController::class, 'index'])->name('activity.index');
-    // 發布活動
-    Route::post('/activity', [ActivityController::class, 'store'])->name('activity.store');
-    // 刪除活動
-    Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activity.destroy');
+    Route::controller(ActivityController::class)
+        ->prefix('activities')->name('activity.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{activity}', 'destroy')->name('destroy');
+        });
 
-    // 檔案系統
-    // 顯示所有作品
-    Route::get('/works', [WorkController::class, 'index'])->name('work.index');
-    // 顯示單個作品
-    Route::get('/works/{work}/photo', [WorkController::class, 'show'])->name('work.show');
-    // 發布作品
-    Route::post('/work', [WorkController::class, 'store'])->name('work.store');
-    // 發布作品頁面
-    Route::get('/work', [WorkController::class, 'create'])->name('work.create');
-    // 刪除作品
-    Route::delete('/works/{work}', [WorkController::class, 'destroy'])->name('work.destroy');
-    // 發布相片頁面
-    Route::get('/works/{work}/photos', [PhotoController::class, 'create'])->name('photo.create');
-    // 發布相片
-    Route::post('/works/{work}/photo', [PhotoController::class, 'store'])->name('photo.store');
-    // 顯示單個照片
-    Route::get('/works/{work}/photos/{photo}', [PhotoController::class, 'show'])->name('photo.show');
-    // 刪除相片
-    Route::delete('/works/{work}/photos/{photo}', [PhotoController::class, 'destroy'])->name('photo.destroy');
+    // 作品系統
+    Route::controller(WorkController::class)
+        ->prefix('works')->name('work.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{work}/photo', 'show')->name('show');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{work}', 'destroy')->name('destroy');
+        });
+    Route::controller(PhotoController::class)
+        ->prefix('works/{work}/photos')->name('photo.')->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{photo}', 'show')->name('show');
+            Route::delete('/{photo}', 'destroy')->name('destroy');
+        });
 
     // 影片系統
-    // 顯示所有影片
-    Route::get('/videos', [VideoController::class, 'index'])->name('video.index');
-    // 顯示單個影片
-    Route::get('/videos/{video}', [VideoController::class, 'show'])->name('video.show');
-    // 發布影片
-    Route::post('/video', [VideoController::class, 'store'])->name('video.store');
-    // 發布影片頁面
-    Route::get('/video', [VideoController::class, 'create'])->name('video.create');
-    // 刪除影片
-    Route::delete('/videos/{video}', [VideoController::class, 'destroy'])->name('video.destroy');
+    Route::controller(VideoController::class)
+        ->prefix('videos')->name('video.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{video}', 'show')->name('show');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{video}', 'destroy')->name('destroy');
+        });
 
     // 檔案系統
-    // 顯示所有檔案
-    Route::get('/files', [FileController::class, 'index'])->name('file.index');
-    // 顯示單個檔案
-    Route::get('/files/{file}', [FileController::class, 'show'])->name('file.show');
-    // 發布檔案
-    Route::post('/file', [FileController::class, 'store'])->name('file.store');
-    // 發布檔案頁面
-    Route::get('/file', [FileController::class, 'create'])->name('file.create');
-    // 刪除檔案
-    Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('file.destroy');
-    // 喜歡檔案
-    Route::post('/files/{file}/like', [FileController::class, 'like'])->name('file.like');
-    // 不喜歡檔案
-    Route::post('/files/{file}/dislike', [FileController::class, 'dislike'])->name('file.dislike');
+    Route::controller(FileController::class)
+        ->prefix('files')->name('file.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{file}', 'show')->name('show');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{file}', 'destroy')->name('destroy');
+            Route::post('/{file}/like', 'like')->name('like');
+            Route::post('/{file}/dislike', 'dislike')->name('dislike');
+        });
 
-    // 兌換系統
-    // 顯示所有兌換紀錄
-    Route::get('/prize-redemptions', [PrizeRedemptionController::class, 'index'])->name('redemptions.index');
-    // 儲存新兌換紀錄
-    Route::post('/prize-redemptions', [PrizeRedemptionController::class, 'store'])->name('redemptions.store');
-    // 更新兌換紀錄
-    Route::put('/prize-redemptions/{redemption}', [PrizeRedemptionController::class, 'update'])->name('redemptions.update');
-    // 刪除兌換紀錄
-    Route::delete('/prize-redemptions/{redemption}', [PrizeRedemptionController::class, 'destroy'])->name('redemptions.destroy');
-    // 核准兌換
-    Route::patch('/prize-redemptions/{redemption}/status', [PrizeRedemptionController::class, 'updateStatus'])->name('redemptions.updateStatus');
+    // 獎品兌換系統
+    Route::controller(PrizeRedemptionController::class)
+        ->prefix('prize-redemptions')->name('redemptions.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{redemption}', 'update')->name('update');
+            Route::delete('/{redemption}', 'destroy')->name('destroy');
+            Route::patch('/{redemption}/status', 'updateStatus')->name('updateStatus');
+        });
 
     // 獎品系統
-    // 顯示所有獎品
-    Route::get('/prizes', [PrizeController::class, 'index'])->name('prize.index');
-    // 顯示新增獎品頁面
-    Route::get('/prizes/create', [PrizeController::class, 'create'])->name('prize.create');
-    // 發布獎品
-    Route::post('/prizes', [PrizeController::class, 'store'])->name('prize.store');
-    // 更新獎品
-    Route::put('/prizes/{prize}', [PrizeController::class, 'update'])->name('prize.update');
-    // 刪除指定獎品
-    Route::delete('/prizes/{prize}', [PrizeController::class, 'destroy'])->name('prize.destroy');
-    // 兌換功能
-    Route::post('/prizes/{prize}/redeem', [PrizeRedemptionController::class, 'redeem'])->name('prize.redeem');
+    Route::controller(PrizeController::class)
+        ->prefix('prizes')->name('prize.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{prize}', 'update')->name('update');
+            Route::delete('/{prize}', 'destroy')->name('destroy');
+            Route::post('/{prize}/redeem', [PrizeRedemptionController::class, 'redeem'])->name('redeem');
+        });
 });

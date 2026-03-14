@@ -3,18 +3,22 @@
 namespace App\Services;
 
 use App\Models\Club;
-use Illuminate\Support\Facades\Cache;
 
-class ClubService
+class ClubService extends AbstractService
 {
     protected string $cacheTag = 'clubs';
 
-    public function getClubs()
+    protected function getModelClass(): string
+    {
+        return Club::class;
+    }
+
+    public function getClubs(int $perPage = 6)
     {
         $page = request('page', 1);
+        $key = $this->cacheKey("index_page_{$page}");
 
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Club::latest()->paginate(6));
+        return $this->rememberEmpty($key, 600, fn () => Club::latest()->paginate($perPage));
     }
 
     public function createClub(array $data)
@@ -28,16 +32,14 @@ class ClubService
     public function deleteClub(Club $club): void
     {
         $club->delete();
-        $this->clearCache();
+        $this->clearCache($club->id);
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
+        if ($id) {
+            $this->flushCache($this->cacheKey("show_{$id}"));
+        }
+        $this->flushCache();
     }
 }

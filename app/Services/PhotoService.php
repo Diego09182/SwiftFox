@@ -7,11 +7,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
-class PhotoService
+class PhotoService extends AbstractService
 {
     protected string $cacheTag = 'photos';
 
-    public function createPhoto($request, int $workId)
+    protected function getModelClass(): string
+    {
+        return Photo::class;
+    }
+
+    public function createPhoto($request, int $workId): array
     {
         $uploadedFile = $request->file('file');
         $filename = uniqid().'_'.time().'.'.$uploadedFile->getClientOriginalExtension();
@@ -28,10 +33,14 @@ class PhotoService
 
         $this->clearCache();
 
-        return $this->success($photo->fresh(), '照片已新增');
+        return [
+            'success' => true,
+            'message' => '照片已新增',
+            'data' => $photo->fresh(),
+        ];
     }
 
-    public function deletePhoto(Photo $photo)
+    public function deletePhoto(Photo $photo): array
     {
         if (Storage::disk('public')->exists($photo->path)) {
             Storage::disk('public')->delete($photo->path);
@@ -40,26 +49,19 @@ class PhotoService
         $photo->delete();
         $this->clearCache();
 
-        return $this->success(null, '照片已刪除');
+        return [
+            'success' => true,
+            'message' => '照片已刪除',
+            'data' => null,
+        ];
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
+        if ($id) {
+            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$id}"));
+        }
 
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
-    }
-
-    protected function success($data = null, ?string $message = null): array
-    {
-        return ['success' => true, 'message' => $message, 'data' => $data];
-    }
-
-    protected function fail(string $message): array
-    {
-        return ['success' => false, 'message' => $message, 'data' => null];
+        $this->flushCache();
     }
 }

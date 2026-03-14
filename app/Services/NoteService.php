@@ -4,24 +4,29 @@ namespace App\Services;
 
 use App\Models\Note;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
-class NoteService
+class NoteService extends AbstractService
 {
     protected string $cacheTag = 'notes';
 
-    public function getNotes()
+    protected function getModelClass(): string
+    {
+        return Note::class;
+    }
+
+    public function getNotes(int $perPage = 4)
     {
         $page = request('page', 1);
+        $key = $this->cacheKey("index_page_{$page}");
 
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Note::latest()->paginate(4));
+        return $this->rememberEmpty($key, 600, fn () => Note::latest()->paginate($perPage));
     }
 
     public function getNoteById(int $id)
     {
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Note::findOrFail($id));
+        $key = $this->cacheKey("show_{$id}");
+
+        return $this->rememberEmpty($key, 600, fn () => Note::findOrFail($id));
     }
 
     public function createNote(array $data)
@@ -37,16 +42,14 @@ class NoteService
     public function deleteNote(Note $note): void
     {
         $note->delete();
-        $this->clearCache();
+        $this->clearCache($note->id);
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
+        if ($id) {
+            $this->flushCache($this->cacheKey("show_{$id}"));
+        }
+        $this->flushCache();
     }
 }

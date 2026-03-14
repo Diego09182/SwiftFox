@@ -4,29 +4,35 @@ namespace App\Services;
 
 use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
-class WorkService
+class WorkService extends AbstractService
 {
     protected string $cacheTag = 'works';
 
-    public function getWorks()
+    protected function getModelClass(): string
     {
-        $page = request('page', 1);
-
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Work::latest()->paginate(6));
+        return Work::class;
     }
 
-    public function getWorkById(int $id)
+    public function getWorks(int $page = 1, int $perPage = 6)
     {
-        return Work::with('photos')->findOrFail($id);
+        $key = $this->cacheKey("index_page_{$page}_{$perPage}");
+
+        return $this->rememberEmpty($key, 600, fn () => Work::latest()->paginate($perPage));
     }
 
-    public function createWork(array $data)
+    public function getWorkById(int $id): Work
+    {
+        $key = $this->cacheKey("show_{$id}");
+
+        return $this->rememberEmpty($key, 600, fn () => Work::with('photos')->findOrFail($id));
+    }
+
+    public function createWork(array $data): Work
     {
         $data['user_id'] = Auth::id();
         $work = Work::create($data);
+
         $this->clearCache();
 
         return $work->fresh();
@@ -35,16 +41,15 @@ class WorkService
     public function deleteWork(Work $work): void
     {
         $work->delete();
-        $this->clearCache();
+        $this->clearCache($work->id);
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $workId = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
+        if ($workId) {
+            $this->flushCache($this->cacheKey("show_{$workId}"));
+        }
 
-    protected function clearCache(): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
+        $this->flushCache();
     }
 }

@@ -4,92 +4,88 @@ namespace App\Services;
 
 use App\Models\Opinion;
 use App\Models\Record;
+use DomainException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
-class OpinionService
+class OpinionService extends AbstractService
 {
     protected string $cacheTag = 'opinions';
 
-    public function getOpinions()
+    protected function getModelClass(): string
+    {
+        return Opinion::class;
+    }
+
+    public function getOpinions(int $perPage = 3)
     {
         $page = request('page', 1);
+        $key = $this->cacheKey("index_page_{$page}_{$perPage}");
 
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("index_page_{$page}"), 600, fn () => Opinion::orderByDesc('id')->paginate(3));
+        return $this->rememberEmpty($key, 600, fn () => Opinion::orderByDesc('id')->paginate($perPage));
     }
 
-    public function getOpinionById(int $id)
+    public function getOpinionById(int $id): Opinion
     {
-        return Cache::tags([$this->cacheTag])
-            ->remember($this->cacheKey("show_{$id}"), 600, fn () => Opinion::findOrFail($id));
+        $key = $this->cacheKey("show_{$id}");
+
+        return $this->rememberEmpty($key, 600, fn () => Opinion::findOrFail($id));
     }
 
-    public function createOpinion(array $data)
+    public function createOpinion(array $data): Opinion
     {
         $data['content'] = nl2br($data['content']);
         $data['user_id'] = Auth::id();
-
         $opinion = Opinion::create($data);
         $this->clearCache();
 
-        return $this->success($opinion->fresh());
+        return $opinion->fresh();
     }
 
-    public function deleteOpinion(Opinion $opinion)
+    public function deleteOpinion(Opinion $opinion): void
     {
         $opinion->delete();
-        $this->clearCache();
-
-        return $this->success();
+        $this->clearCache($opinion->id);
     }
 
-    public function vote(Opinion $opinion, string $voteType)
+    public function vote(Opinion $opinion, string $voteType): Opinion
     {
         $userId = Auth::id();
 
         if ($this->userVoted($userId, $opinion->id)) {
-            return $this->fail('您已經對這個投票進行過投票！');
+            throw new DomainException('您已經對這個議題投過票');
         }
 
-        if ($voteType === 'agree') {
-            $opinion->increment('agree');
-        } elseif ($voteType === 'disagree') {
-            $opinion->increment('disagree');
-        }
+        match ($voteType) {
+            'agree' => $opinion->increment('agree'),
+            'disagree' => $opinion->increment('disagree'),
+            default => throw new InvalidArgumentException('不合法的投票類型'),
+        };
 
         $opinion->increment('count');
-        Record::create(['user_id' => $userId, 'opinion_id' => $opinion->id]);
+
+        Record::create([
+            'user_id' => $userId,
+            'opinion_id' => $opinion->id,
+        ]);
+
         $this->clearCache($opinion->id);
 
-        return $this->success($opinion->fresh());
+        return $opinion->fresh();
     }
 
     protected function userVoted(int $userId, int $opinionId): bool
     {
-        return Record::where('user_id', $userId)->where('opinion_id', $opinionId)->exists();
+        return Record::where('user_id', $userId)
+            ->where('opinion_id', $opinionId)
+            ->exists();
     }
 
-    protected function cacheKey(string $key): string
+    public function clearCache(?int $id = null): void
     {
-        return "{$this->cacheTag}_{$key}";
-    }
-
-    protected function clearCache(?int $id = null): void
-    {
-        Cache::tags([$this->cacheTag])->flush();
         if ($id) {
-            Cache::tags([$this->cacheTag])->forget($this->cacheKey("show_{$id}"));
+            $this->flushCache($this->cacheKey("show_{$id}"));
         }
-    }
-
-    protected function success($data = null, ?string $message = null): array
-    {
-        return ['success' => true, 'message' => $message, 'data' => $data];
-    }
-
-    protected function fail(string $message): array
-    {
-        return ['success' => false, 'message' => $message, 'data' => null];
+        $this->flushCache();
     }
 }
