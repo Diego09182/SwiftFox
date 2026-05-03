@@ -9,32 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 取得程式碼
       - uses: actions/checkout@v3
 
-      # 安裝 PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           extensions: mbstring, pdo_sqlite
 
-      # 安裝 Composer 依賴
       - name: Install Dependencies
         run: composer install --no-progress --prefer-dist
 
-      # 複製測試環境設定
-      - name: Copy .env.testing
-        run: cp .env.testing .env
+      - name: Prepare Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
-      # 產生 Laravel Key
-      - name: Generate Key
-        run: php artisan key:generate
+      - name: Clear config cache
+        run: php artisan config:clear
 
-      # 執行資料庫遷移
-      - name: Run Migrations
-        run: php artisan migrate --env=testing
+      - name: Run Migrations (SQLite in-memory recommended)
+        run: php artisan migrate --force
 
-      # 執行 PHPUnit 測試
       - name: Run Tests
         run: vendor/bin/phpunit --colors=always
