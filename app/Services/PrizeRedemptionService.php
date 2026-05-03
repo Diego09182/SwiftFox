@@ -143,6 +143,7 @@ class RedeemResult
 class PrizeRedemptionStatus
 {
     public const PENDING = 'pending';
+
     public const APPROVED = 'approved';
 
     public static function canApprove(string $status): bool

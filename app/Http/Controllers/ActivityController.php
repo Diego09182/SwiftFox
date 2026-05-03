@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Models\Activity;
 use App\Services\ActivityService;
-use Illuminate\Support\Facades\Gate;
 
 class ActivityController extends Controller
 {

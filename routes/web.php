@@ -1,33 +1,30 @@
 <?php
 
-use App\Http\Controllers\{
-    ActivityController,
-    ArticleController,
-    AuthController,
-    BulletinController,
-    ClubController,
-    CommentController,
-    FileController,
-    HomeController,
-    MainController,
-    ManagementController,
-    NoteController,
-    NotificationController,
-    OpinionController,
-    PhotoController,
-    PostController,
-    PrizeController,
-    PrizeRedemptionController,
-    ProfileController,
-    ReportController,
-    VideoController,
-    WorkController
-};
-
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BulletinController;
+use App\Http\Controllers\ClubController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OpinionController;
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PrizeController;
+use App\Http\Controllers\PrizeRedemptionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\VideoController;
+use App\Http\Controllers\WorkController;
 use Illuminate\Support\Facades\Route;
 
 // 首頁
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn () => view('welcome'));
 
 // 登入/註冊頁面
 Route::middleware('check.login')->group(function () {

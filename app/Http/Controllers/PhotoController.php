@@ -6,7 +6,6 @@ use App\Models\Photo;
 use App\Models\Work;
 use App\Services\PhotoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller

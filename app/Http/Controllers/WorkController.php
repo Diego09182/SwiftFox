@@ -7,7 +7,6 @@ use App\Notifications\ResourceNotification;
 use App\Services\WorkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class WorkController extends Controller

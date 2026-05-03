@@ -6,7 +6,6 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Models\Note;
 use App\Services\NoteService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class NoteController extends Controller
 {

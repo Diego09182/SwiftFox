@@ -6,7 +6,6 @@ use App\Http\Requests\StoreVideoRequest;
 use App\Notifications\ResourceNotification;
 use App\Services\VideoService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class VideoController extends Controller
 {

@@ -7,7 +7,6 @@ use App\Models\Opinion;
 use App\Notifications\ResourceNotification;
 use App\Services\OpinionService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class OpinionController extends Controller
 {

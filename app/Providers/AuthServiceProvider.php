@@ -13,8 +13,19 @@ use App\Models\Photo;
 use App\Models\Post;
 use App\Models\Video;
 use App\Models\Work;
+
+use App\Policies\ActivityPolicy;
+use App\Policies\ArticlePolicy;
+use App\Policies\ClubPolicy;
+use App\Policies\CommentPolicy;
+use App\Policies\FilePolicy;
+use App\Policies\NotePolicy;
+use App\Policies\OpinionPolicy;
+use App\Policies\PhotoPolicy;
+use App\Policies\PostPolicy;
+use App\Policies\VideoPolicy;
+use App\Policies\WorkPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,17 +35,17 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Post::class => \App\Policies\PostPolicy::class,
-        Activity::class => \App\Policies\ActivityPolicy::class,
-        Article::class => \App\Policies\ArticlePolicy::class,
-        Club::class => \App\Policies\ClubPolicy::class,
-        Comment::class => \App\Policies\CommentPolicy::class,
-        Note::class => \App\Policies\NotePolicy::class,
-        Opinion::class => \App\Policies\OpinionPolicy::class,
-        Video::class => \App\Policies\VideoPolicy::class,
-        Work::class => \App\Policies\WorkPolicy::class,
-        Photo::class => \App\Policies\PhotoPolicy::class,
-        File::class => \App\Policies\FilePolicy::class,
+        Post::class => PostPolicy::class,
+        Activity::class => ActivityPolicy::class,
+        Article::class => ArticlePolicy::class,
+        Club::class => ClubPolicy::class,
+        Comment::class => CommentPolicy::class,
+        Note::class => NotePolicy::class,
+        Opinion::class => OpinionPolicy::class,
+        Video::class => VideoPolicy::class,
+        Work::class => WorkPolicy::class,
+        Photo::class => PhotoPolicy::class,
+        File::class => FilePolicy::class,
     ];
 
     /**
@@ -43,49 +54,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-
-        Gate::define('delete-post', function ($user, Post $post) {
-            return $user->id === $post->user_id || $user->administration == 5;
-        });
-
-        Gate::define('delete-activity', function ($user, Activity $activity) {
-            return $activity->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-article', function ($user, Article $article) {
-            return $article->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-club', function ($user, Club $club) {
-            return $club->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-comment', function ($user, Comment $comment) {
-            return $comment->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-note', function ($user, Note $note) {
-            return $note->user_id == $user->id;
-        });
-
-        Gate::define('delete-opinion', function ($user, Opinion $opinion) {
-            return $opinion->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-video', function ($user, Video $video) {
-            return $video->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-work', function ($user, Work $work) {
-            return $work->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-photo', function ($user, Photo $photo) {
-            return $photo->user_id == $user->id || $user->administration == 5;
-        });
-
-        Gate::define('delete-file', function ($user, File $file) {
-            return $file->user_id == $user->id || $user->administration == 5;
-        });
     }
 }

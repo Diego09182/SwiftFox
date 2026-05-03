@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Video;
 use App\Models\User;
+use App\Models\Video;
 
 class VideoPolicy
 {

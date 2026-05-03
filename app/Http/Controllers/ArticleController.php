@@ -8,7 +8,6 @@ use App\Notifications\ResourceNotification;
 use App\Services\ArticleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {

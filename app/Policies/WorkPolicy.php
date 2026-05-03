@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Work;
 use App\Models\User;
+use App\Models\Work;
 
 class WorkPolicy
 {

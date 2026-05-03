@@ -6,38 +6,63 @@ use Illuminate\Support\Facades\Cache;
 
 trait CacheStrategyTrait
 {
+    protected const CACHE_EMPTY = '__cache_empty__';
+
     /**
-     * 快取資料，如果結果為空，存入 '__empty__' 避免 DB 重複查詢
-     * 隨機 TTL 避免快取雪崩
-     * 支援 Redis lock 防止快取擊穿
+     * 取得快取資料，若不存在則建立
+     * 防止：
+     * - Cache Penetration
+     * - Cache Stampede
+     * - Cache Avalanche
      */
     protected function rememberEmpty(string $key, int $ttl, callable $callback)
     {
-        $ttl += rand(0, 60); // 隨機化 TTL 避免同時過期
+        $ttl += random_int(0, 60);
 
-        $lockKey = "lock:{$key}";
+        $taggedCache = Cache::tags([$this->cacheTag]);
 
-        return Cache::tags([$this->cacheTag])->remember($key, $ttl, function () use ($callback, $lockKey) {
-            $lock = Cache::lock($lockKey, 10); // 鎖最多 10 秒
+        // 先讀 cache
+        $value = $taggedCache->get($key);
 
-            try {
-                $lock->block(3); // 等待鎖 3 秒
-                $result = $callback();
+        if ($value !== null) {
+            return $value === self::CACHE_EMPTY ? null : $value;
+        }
 
-                return $result ?: '__empty__';
-            } finally {
-                optional($lock)->release();
+        $lock = Cache::lock("lock:{$key}", 10);
+
+        try {
+            $lock->block(3);
+
+            // double check
+            $value = $taggedCache->get($key);
+
+            if ($value !== null) {
+                return $value === self::CACHE_EMPTY ? null : $value;
             }
-        });
+
+            $result = $callback();
+
+            $taggedCache->put(
+                $key,
+                $result ?: self::CACHE_EMPTY,
+                $ttl
+            );
+
+            return $result;
+
+        } finally {
+            optional($lock)->release();
+        }
     }
 
     /**
-     * 從快取取得資料，若為空結果，回傳 null
+     * 直接取得 cache
      */
     protected function getFromCache(string $key)
     {
         $value = Cache::tags([$this->cacheTag])->get($key);
-        if ($value === '__empty__') {
+
+        if ($value === self::CACHE_EMPTY) {
             return null;
         }
 
@@ -45,15 +70,17 @@ trait CacheStrategyTrait
     }
 
     /**
-     * 清除快取
-     * 可指定 key 或清除整個 tag
+     * 清除 cache
      */
-    protected function flushCache(?string $key = null)
+    protected function flushCache(?string $key = null): void
     {
+        $cache = Cache::tags([$this->cacheTag]);
+
         if ($key) {
-            Cache::tags([$this->cacheTag])->forget($key);
-        } else {
-            Cache::tags([$this->cacheTag])->flush();
+            $cache->forget($key);
+            return;
         }
+
+        $cache->flush();
     }
 }

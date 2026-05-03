@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClubRequest;
 use App\Models\Club;
 use App\Services\ClubService;
-use Illuminate\Support\Facades\Gate;
 
 class ClubController extends Controller
 {
